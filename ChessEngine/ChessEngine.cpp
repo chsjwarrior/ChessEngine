@@ -67,12 +67,12 @@ Move findMove(BitBoard& bitBoard, const char* entry) {
 	Move target;
 	target.parseEntry(entry);
 
-	MoveList list;
+	Move moves[MAX_MOVES];
 	MoveGenerator& moveGenerator = MoveGenerator::getInstance();
-	moveGenerator.generateMoves(bitBoard, list);
+	uShort moveCount = moveGenerator.generateMoves(bitBoard, moves);
 	Piece promotion = NONE_PIECE;
 
-	for (Move* move = list.moves; move != list.moves + list.count; ++move) {
+	for (Move* move = moves; move != moves + moveCount; ++move) {
 		if (move->getFrom() == target.getFrom() && move->getTo() == target.getTo()) {
 			if (move->isPawnPromotion() && target.isPawnPromotion()) {
 				promotion = move->getPromotionPiece();

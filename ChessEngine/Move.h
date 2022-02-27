@@ -67,8 +67,3 @@ public:
 	*/
 	void parseEntry(const char* entry);
 };
-
-struct MoveList {
-	Move moves[MAX_MOVES]; //128
-	uShort count = 0U;
-};

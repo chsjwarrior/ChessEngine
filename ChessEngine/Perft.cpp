@@ -6,12 +6,12 @@ void perft(BitBoard& bitBoard, const short depth, uLong& leafNodes) {
 		return;
 	}
 
-	MoveList list;
+	Move moves[MAX_MOVES];
 	MoveGenerator& moveGenerator = MoveGenerator::getInstance();
-	moveGenerator.generateMoves(bitBoard, list);
+	uShort moveCount = moveGenerator.generateMoves(bitBoard, moves);
 	MoveMaker& moveMaker = MoveMaker::getInstance();
 
-	for (Move* move = list.moves; move != list.moves + list.count; ++move) {
+	for (Move* move = moves; move != moves + moveCount; ++move) {
 		if (!moveMaker.makeMove(bitBoard, *move))
 			continue;
 
@@ -26,12 +26,12 @@ void perftTest(BitBoard& bitBoard, const short depth) {
 	uLong leafNodes = 0UL;
 	uLong cumnodes;
 
-	MoveList list;
+	Move moves[MAX_MOVES];
 	MoveGenerator& moveGenerator = MoveGenerator::getInstance();
-	moveGenerator.generateMoves(bitBoard, list);
+	uShort moveCount = moveGenerator.generateMoves(bitBoard, moves);
 	MoveMaker& moveMaker = MoveMaker::getInstance();
 
-	for (Move* move = list.moves; move != list.moves + list.count; ++move) {
+	for (Move* move = moves; move != moves + moveCount; ++move) {
 		if (!moveMaker.makeMove(bitBoard, *move))
 			continue;
 
