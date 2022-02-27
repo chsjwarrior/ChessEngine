@@ -6,13 +6,13 @@ void perft(BitBoard& bitBoard, const short depth, uLong& leafNodes) {
 		return;
 	}
 
-	std::vector<Move> moves;
+	MoveList list;
 	MoveGenerator& moveGenerator = MoveGenerator::getInstance();
-	moveGenerator.generateMoves(bitBoard, moves);
+	moveGenerator.generateMoves(bitBoard, list);
 	MoveMaker& moveMaker = MoveMaker::getInstance();
 
-	for (Move move : moves) {
-		if (!moveMaker.makeMove(bitBoard, move))
+	for (Move* move = list.moves; move != list.moves + list.count; ++move) {
+		if (!moveMaker.makeMove(bitBoard, *move))
 			continue;
 
 		perft(bitBoard, depth - 1, leafNodes);
@@ -26,19 +26,19 @@ void perftTest(BitBoard& bitBoard, const short depth) {
 	uLong leafNodes = 0UL;
 	uLong cumnodes;
 
-	std::vector<Move> moves;
+	MoveList list;
 	MoveGenerator& moveGenerator = MoveGenerator::getInstance();
-	moveGenerator.generateMoves(bitBoard, moves);
+	moveGenerator.generateMoves(bitBoard, list);
 	MoveMaker& moveMaker = MoveMaker::getInstance();
 
-	for (Move move : moves) {
-		if (!moveMaker.makeMove(bitBoard, move))
+	for (Move* move = list.moves; move != list.moves + list.count; ++move) {
+		if (!moveMaker.makeMove(bitBoard, *move))
 			continue;
 
 		cumnodes = leafNodes;
 		perft(bitBoard, depth - 1, leafNodes);
 		moveMaker.makeUndo(bitBoard);
-		std::cout << move << ": " << leafNodes - cumnodes << std::endl;
+		std::cout << *move << ": " << leafNodes - cumnodes << std::endl;
 	}
 
 	std::cout << "Test complete: " << std::endl;

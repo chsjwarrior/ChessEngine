@@ -67,30 +67,30 @@ Move findMove(BitBoard& bitBoard, const char* entry) {
 	Move target;
 	target.parseEntry(entry);
 
-	std::vector<Move> moves;
+	MoveList list;
 	MoveGenerator& moveGenerator = MoveGenerator::getInstance();
-	moveGenerator.generateMoves(bitBoard, moves);
+	moveGenerator.generateMoves(bitBoard, list);
 	Piece promotion = NONE_PIECE;
 
-	for (Move move : moves) {
-		if (move.getFrom() == target.getFrom() && move.getTo() == target.getTo()) {
-			if (move.isPawnPromotion() && target.isPawnPromotion()) {
-				promotion = move.getPromotionPiece();
+	for (Move* move = list.moves; move != list.moves + list.count; ++move) {
+		if (move->getFrom() == target.getFrom() && move->getTo() == target.getTo()) {
+			if (move->isPawnPromotion() && target.isPawnPromotion()) {
+				promotion = move->getPromotionPiece();
 				if (promotion == QUEEN && target.getPromotionPiece() == promotion)
-					return move;
+					return *move;
 				else if (promotion == ROOK && target.getPromotionPiece() == promotion)
-					return move;
+					return *move;
 				else if (promotion == BISHOP && target.getPromotionPiece() == promotion)
-					return move;
+					return *move;
 				if (promotion == KNIGHT && target.getPromotionPiece() == promotion)
-					return move;
+					return *move;
 				else {
 					target();
 					return target;
 				}
 			}
 			else
-				return move;
+				return *move;
 		}
 	}
 	target();

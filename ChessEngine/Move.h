@@ -22,17 +22,18 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, const Move& move);
 
 	Move();
+	~Move() = default;
 
 	void operator()();
 	const bool isEmpty() noexcept;
 
 	const Square getFrom() const;
 	void setFrom(const Square square);
-	
-	const Square getTo() const ;
+
+	const Square getTo() const;
 	void setTo(const Square square);
 
-	const Piece getCaptured() const ;
+	const Piece getCaptured() const;
 	void setCaptured(const Piece piece);
 
 	const Piece getPromotionPiece() const;
@@ -65,4 +66,9 @@ public:
 	* wich color belongs the  move
 	*/
 	void parseEntry(const char* entry);
+};
+
+struct MoveList {
+	Move moves[MAX_MOVES]; //128
+	uShort count = 0U;
 };

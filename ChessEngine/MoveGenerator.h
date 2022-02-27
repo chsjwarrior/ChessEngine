@@ -1,6 +1,5 @@
 #pragma once
 #include "Attacks.h"
-#include <vector>
 
 class MoveGenerator {
 	Bitmap friendPieces;
@@ -17,7 +16,7 @@ class MoveGenerator {
 
 	const Bitmap generatePiecesMoves(const BitBoard& bitBoard, const Piece piece, const Color color, const Square square) const;
 
-	void catalogMoves(const BitBoard& bitBoard, std::vector<Move>& moveList, const Piece piece, const Color color, const Square from, Bitmap attacks) const;
+	void catalogMoves(const BitBoard& bitBoard, MoveList& list, const Piece piece, const Color color, const Square from, Bitmap attacks) const;
 
 public:
 	MoveGenerator(MoveGenerator&) = delete;
@@ -25,7 +24,7 @@ public:
 	MoveGenerator& operator=(MoveGenerator&) = delete;
 	MoveGenerator& operator=(MoveGenerator&&) = delete;
 
-	void generateMoves(const BitBoard& bitBoard, std::vector<Move>& moveList);
+	void generateMoves(const BitBoard& bitBoard, MoveList& list);
 
 	static MoveGenerator& getInstance();
 };
