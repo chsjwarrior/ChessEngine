@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+/ChessEngine/x64/Release
+/ChessEngine/x64/Debug
+/.vs/ChessEngine/v17
+/x64
