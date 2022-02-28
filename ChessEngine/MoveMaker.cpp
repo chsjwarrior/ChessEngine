@@ -1,7 +1,6 @@
 #include "MoveMaker.h"
 
 MoveMaker& MoveMaker::getInstance() {
-	std::cout << "MoveMaker" << std::endl;
 	static MoveMaker instance;
 	return instance;
 }

@@ -13,7 +13,7 @@ class BitBoard {
 	uShort fiftyMove;
 	/*
 	ply and historyCount musst be separeted counter,
-	because FEN notation can load a value of ply but can not load history
+	because FEN notation can load a value of ply but can not load history count
 	*/
 	uShort ply;
 	uShort historyCount;

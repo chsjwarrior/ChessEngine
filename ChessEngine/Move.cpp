@@ -1,8 +1,8 @@
 #include "Move.h"
 
-Move::Move() : flags(MOVE_EMPTY), score(0) {}
+Move::Move() noexcept : flags(MOVE_EMPTY), score(0) {}
 
-void Move::operator()() {
+void Move::operator()() noexcept {
 	flags = MOVE_EMPTY;
 	score = 0;
 }
@@ -11,94 +11,86 @@ const bool Move::isEmpty() const noexcept {
 	return flags == MOVE_EMPTY;
 }
 
-const Square Move::getFrom() const {
+const Square Move::getFrom() const noexcept {
 	return static_cast<Square>(flags & 0xFFU);
 }
 
-void Move::setFrom(const Square square) {
+void Move::setFrom(const Square square) noexcept {
 	flags = 0xFFFFFF00U & flags | square;
 }
 
-const Square Move::getTo() const {
+const Square Move::getTo() const noexcept {
 	return static_cast<Square>(flags >> 8 & 0xFFU);
 }
 
-void Move::setTo(const Square square) {
+void Move::setTo(const Square square) noexcept {
 	flags = 0xFFFF00FFU & flags | square << 8;
 }
 
-const Piece Move::getCaptured() const {
+const Piece Move::getCaptured() const noexcept {
 	return static_cast<Piece>(flags >> 16 & 0xFU);
 }
 
-void Move::setCaptured(const Piece piece) {
+void Move::setCaptured(const Piece piece) noexcept {
 	flags = 0xFFF0FFFFU & flags | piece << 16;
 }
 
-const Piece Move::getPromotionPiece() const {
+const Piece Move::getPromotionPiece() const noexcept {
 	return static_cast<Piece>(flags >> 20 & 0xFU);
 }
 
-void Move::setPromotionPiece(const Piece piece) {
+void Move::setPromotionPiece(const Piece piece) noexcept {
 	flags = 0xFF0FFFFFU & flags | piece << 20;
 }
 
-const bool Move::isPawnStart() const {
+const bool Move::isPawnStart() const noexcept {
 	return hasIntersection(flags, 0x1000000U);
 }
 
-void Move::setPawnStart() {
+void Move::setPawnStart() noexcept {
 	flags = 0xE0FFFFFFU & flags | 0x1000000U;
 }
 
-const bool Move::isEnPassantCapture() const {
+const bool Move::isEnPassantCapture() const noexcept {
 	return hasIntersection(flags, 0x2000000U);
 }
 
-void Move::setEnPassantCapture() {
+void Move::setEnPassantCapture() noexcept {
 	flags = 0xE0FFFFFFU & flags | 0x2000000U;
 }
 
-const bool Move::isPawnPromotion() const {
+const bool Move::isPawnPromotion() const noexcept {
 	return hasIntersection(flags, 0x4000000U);
 }
 
-void Move::setPawnPromotion() {
+void Move::setPawnPromotion() noexcept {
 	flags = 0xE0FFFFFFU & flags | 0x4000000U;
 }
 
-const bool Move::isKingCastle() const {
+const bool Move::isKingCastle() const noexcept {
 	return hasIntersection(flags, 0x8000000U);
 }
 
-void Move::setKingCastle() {
+void Move::setKingCastle() noexcept {
 	flags = 0xE0FFFFFFU & flags | 0x8000000U;
 }
 
-const bool Move::isQueenCastle() const {
+const bool Move::isQueenCastle() const noexcept {
 	return hasIntersection(flags, 0x10000000U);
 }
 
-void Move::setQueenCastle() {
+void Move::setQueenCastle() noexcept {
 	flags = 0xE0FFFFFFU & flags | 0x10000000U;
 }
 
-const Color Move::getColor() const {
+const Color Move::getColor() const noexcept {
 	return static_cast<Color>(flags >> 29U);
 }
 
-void Move::setColor(const Color color) {
+void Move::setColor(const Color color) noexcept {
 	flags = (0xDFFFFFFFU & flags) | static_cast<uInt>(color) << 29U;
 }
 
-/*This function create incomplet Move without some flags like:
-* if is capture move
-* if is pawn start
-* if is en passant move
-* if is king castle move
-* if is queen castle move
-* wich color belongs the  move
-*/
 void Move::parseEntry(const char* entry) {
 	(*this)();
 	if (entry[0] > 'h' || entry[0] < 'a') {

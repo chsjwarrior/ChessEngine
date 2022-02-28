@@ -22,41 +22,41 @@ public:
 
 	friend std::ostream& operator<<(std::ostream& os, const Move& move);
 
-	Move();
+	Move() noexcept;
 	~Move() = default;
 
-	void operator()();
+	void operator()() noexcept;
 	const bool isEmpty() const noexcept;
 
-	const Square getFrom() const;
-	void setFrom(const Square square);
+	const Square getFrom() const noexcept;
+	void setFrom(const Square square) noexcept;
 
-	const Square getTo() const;
-	void setTo(const Square square);
+	const Square getTo() const noexcept;
+	void setTo(const Square square) noexcept;
 
-	const Piece getCaptured() const;
-	void setCaptured(const Piece piece);
+	const Piece getCaptured() const noexcept;
+	void setCaptured(const Piece piece) noexcept;
 
-	const Piece getPromotionPiece() const;
-	void setPromotionPiece(const Piece piece);
+	const Piece getPromotionPiece() const noexcept;
+	void setPromotionPiece(const Piece piece) noexcept;
 
-	const bool isPawnStart() const;
-	void setPawnStart();
+	const bool isPawnStart() const noexcept;
+	void setPawnStart() noexcept;
 
-	const bool isEnPassantCapture() const;
-	void setEnPassantCapture();
+	const bool isEnPassantCapture() const noexcept;
+	void setEnPassantCapture() noexcept;
 
-	const bool isPawnPromotion() const;
-	void setPawnPromotion();
+	const bool isPawnPromotion() const noexcept;
+	void setPawnPromotion() noexcept;
 
-	const bool isKingCastle() const;
-	void setKingCastle();
+	const bool isKingCastle() const noexcept;
+	void setKingCastle() noexcept;
 
-	const bool isQueenCastle() const;
-	void setQueenCastle();
+	const bool isQueenCastle() const noexcept;
+	void setQueenCastle() noexcept;
 
-	const Color getColor() const;
-	void setColor(const Color color);
+	const Color getColor() const noexcept;
+	void setColor(const Color color) noexcept;
 
 	/*This function create incomplet Move without some flags like:
 	* if is capture move
@@ -64,7 +64,7 @@ public:
 	* if is en passant move
 	* if is king castle move
 	* if is queen castle move
-	* wich color belongs the  move
+	* which color belongs the  move
 	*/
 	void parseEntry(const char* entry);
 };

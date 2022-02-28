@@ -28,7 +28,7 @@ public:
 
 	const uShort generateMoves(const BitBoard& bitBoard, Move moves[]);
 
-	const uShort generateLegalMoves(BitBoard& bitBoard, Move moves[]);
+	const uShort generateCaptureMoves(const BitBoard& bitBoard, Move moves[]);
 
 	static MoveGenerator& getInstance();
 };

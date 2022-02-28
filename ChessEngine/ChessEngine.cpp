@@ -36,7 +36,7 @@ int main() {
 					auto start = std::chrono::high_resolution_clock::now();
 					//perftTest(b, std::stoi(imput));
 					auto stop = std::chrono::high_resolution_clock::now();
-					auto duration = duration_cast<std::chrono::microseconds>(stop - start);
+					auto duration = duration_cast<std::chrono::milliseconds>(stop - start);
 					std::cout << "Time taken by function: "
 						<< duration.count() << " microseconds" << std::endl;
 				}

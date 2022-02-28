@@ -1,7 +1,6 @@
 #include "MoveGenerator.h"
 
 MoveGenerator& MoveGenerator::getInstance() {
-	std::cout << "MoveGenerator" << std::endl;
 	static MoveGenerator instance;
 	return instance;
 }
@@ -166,15 +165,14 @@ const uShort MoveGenerator::generateMoves(const BitBoard& bitBoard, Move moves[]
 	return moveCount;
 }
 
-const uShort MoveGenerator::generateLegalMoves(BitBoard& bitBoard, Move moves[]) {	
+const uShort MoveGenerator::generateCaptureMoves(const BitBoard& bitBoard, Move moves[]) {
 	uShort moveCount = generateMoves(bitBoard, moves);
-	MoveMaker& moveMaker = MoveMaker::getInstance();
 
-	for (Move* move = moves; move != moves + moveCount; ++move) {
-		if (!moveMaker.makeMove(bitBoard, *move))
-			(*move)();
-		moveMaker.makeUndo(bitBoard);
-	}
+	for (short i = 0; i < moveCount; ++i)
+		if (moves[i].getCaptured() == NONE_PIECE && !moves[i].isEnPassantCapture()) {
+			moves[i]();
+			std::swap(moves[i--], moves[--moveCount]);
+		}
 
 	return moveCount;
 }
