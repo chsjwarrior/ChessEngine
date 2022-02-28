@@ -141,7 +141,7 @@ void MoveGenerator::catalogMoves(const BitBoard& bitBoard, Move moves[], const P
 	}
 }
 
-uShort MoveGenerator::generateMoves(const BitBoard& bitBoard, Move moves[]) {
+const uShort MoveGenerator::generateMoves(const BitBoard& bitBoard, Move moves[]) {
 	const Color color = bitBoard.getColorTime();
 	Bitmap attacks = 0UL;
 	Bitmap pieceBitmap;
@@ -163,5 +163,18 @@ uShort MoveGenerator::generateMoves(const BitBoard& bitBoard, Move moves[]) {
 			catalogMoves(bitBoard, moves, p, color, square, attacks);
 		}
 	}
+	return moveCount;
+}
+
+const uShort MoveGenerator::generateLegalMoves(BitBoard& bitBoard, Move moves[]) {	
+	uShort moveCount = generateMoves(bitBoard, moves);
+	MoveMaker& moveMaker = MoveMaker::getInstance();
+
+	for (Move* move = moves; move != moves + moveCount; ++move) {
+		if (!moveMaker.makeMove(bitBoard, *move))
+			(*move)();
+		moveMaker.makeUndo(bitBoard);
+	}
+
 	return moveCount;
 }

@@ -1,43 +1,7 @@
 #pragma once
 #include "Move.h"
 
-const struct Zobrist {
-	uLong pieceKey[NONE_SQUARE][NONE_PIECE][2];
-	uLong enPassantColumn[NONE_FILE];
-	uLong castleKey[4];
-	uLong sideKey;
-
-	Zobrist() noexcept;
-
-	Zobrist(const Zobrist&) = delete;
-	Zobrist(Zobrist&&) = delete;
-	Zobrist& operator=(const Zobrist&) = delete;
-	Zobrist& operator=(Zobrist&&) = delete;
-};
-
 class BitBoard {
-	class Undo {
-		//Move move;
-		uShort flags;
-		uShort fiftyMove;
-		uLong key;
-
-		friend class BitBoard;
-		friend class MoveMaker;
-	public:
-		Undo();
-		~Undo() = default;
-
-		Undo(const Undo&) = delete;
-		Undo(Undo&&) = delete;
-		Undo& operator=(const Undo&) = delete;
-		Undo& operator=(Undo&&) = delete;
-
-		void operator()();
-		const Square getEnPassantSquare() const;
-		const bool hasCastlePermission(const CastleFlags castleFlag, const Color color) const;		
-	};
-
 	Bitmap bitMaps[6][2];
 	uLong key;
 	/*
@@ -55,12 +19,34 @@ class BitBoard {
 	uShort historyCount;
 	bool whiteTime;
 
-	Undo history[MAX_MOVES];//128	
+	struct Zobrist {
+		uLong pieceKey[NONE_SQUARE][NONE_PIECE][2];
+		uLong enPassantColumn[NONE_FILE];
+		uLong castleKey[4];
+		uLong sideKey;
+
+		Zobrist();
+		~Zobrist() = default;
+	} hashKeys;
+
+	struct Undo {
+		Move move;
+		uShort flags;
+		uShort fiftyMove;
+		uLong key;
+
+		Undo();
+		~Undo() = default;
+
+		void operator()();
+		const Square getEnPassantSquare() const;
+		const bool hasCastlePermission(const CastleFlags castleFlag, const Color color) const;
+	} history[MAX_MOVES];//128		
 
 	friend class MoveMaker;
 public:
 	friend std::ostream& operator<<(std::ostream& os, const BitBoard& bitBoard);
-	Zobrist hashKey;
+
 	BitBoard();
 	~BitBoard() = default;
 

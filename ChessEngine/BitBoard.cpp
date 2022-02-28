@@ -1,7 +1,7 @@
 #include "BitBoard.h"
 
-//0==============================HASHKEY===============================0
-Zobrist::Zobrist() noexcept {
+//0===============================HASHKEY==============================0
+BitBoard::Zobrist::Zobrist() {
 	std::cout << "Zobrist()" << std::endl;
 	for (Square s = A1; s < NONE_SQUARE; ++s)
 		for (Piece p = PAWN; p < NONE_PIECE; ++p) {
@@ -16,10 +16,10 @@ Zobrist::Zobrist() noexcept {
 }
 
 //0===========================BITBOARD::UNDO===========================0
-BitBoard::Undo::Undo() : flags(BITBOARD_FLAGS_EMPTY), fiftyMove(0U), key(0UL) { std::cout << "BitBoard()" << std::endl; }
+BitBoard::Undo::Undo() : move(), flags(BITBOARD_FLAGS_EMPTY), fiftyMove(0U), key(0UL) {}
 
 void BitBoard::Undo::operator()() {
-	//move();
+	move();
 	flags = BITBOARD_FLAGS_EMPTY;
 	fiftyMove = 0U;
 	key = 0UL;
@@ -34,14 +34,11 @@ const bool BitBoard::Undo::hasCastlePermission(const CastleFlags castleFlag, con
 }
 
 //0=============================BITBOARD===============================0
-BitBoard::BitBoard() : key(0UL), flags(BITBOARD_FLAGS_EMPTY), fiftyMove(0U), ply(0U), historyCount(0U), whiteTime(false) {
-	std::cout << "BitBoard()" << std::endl;
+BitBoard::BitBoard() : key(0UL), flags(BITBOARD_FLAGS_EMPTY), fiftyMove(0U), ply(0U), historyCount(0U), whiteTime(false), hashKeys() {
 	for (Piece p = PAWN; p != NONE_PIECE; ++p) {
 		bitMaps[p][0] = 0UL;
 		bitMaps[p][1] = 0UL;
 	}
-	for (Undo& h : history)
-		h();
 }
 
 void BitBoard::operator()() {
@@ -63,12 +60,12 @@ void BitBoard::operator()() {
 
 void BitBoard::setPieceOnSquare(const Piece piece, const Color color, const Square square) {
 	bitMaps[piece][color] = getUnion(bitMaps[piece][color], getBitmapOf(square));
-	key ^= hashKey.pieceKey[square][piece][color];
+	key ^= hashKeys.pieceKey[square][piece][color];
 }
 
 void BitBoard::unsetPieceOnSquare(const Piece piece, const Color color, const Square square) {
 	bitMaps[piece][color] = unsetIntersections(bitMaps[piece][color], getBitmapOf(square));
-	key ^= hashKey.pieceKey[square][piece][color];
+	key ^= hashKeys.pieceKey[square][piece][color];
 }
 
 const Piece BitBoard::getPieceFromSquare(const Color color, const Square square) const {
@@ -95,10 +92,10 @@ const Square BitBoard::getEnPassantSquare() const {
 
 void BitBoard::setEnPassantSquare(const Square square) {
 	if (getEnPassantSquare() != NONE_SQUARE)
-		key ^= hashKey.enPassantColumn[getFileOf(getEnPassantSquare())];
+		key ^= hashKeys.enPassantColumn[getFileOf(getEnPassantSquare())];
 	flags = 0xF00U & flags | square;
 	if (square != NONE_SQUARE)
-		key ^= hashKey.enPassantColumn[getFileOf(square)];
+		key ^= hashKeys.enPassantColumn[getFileOf(square)];
 }
 
 const bool BitBoard::hasCastlePermission(const CastleFlags castleFlag, const Color color) const {
@@ -108,11 +105,11 @@ const bool BitBoard::hasCastlePermission(const CastleFlags castleFlag, const Col
 void BitBoard::setCastlePermission(const CastleFlags castleFlag, const Color color, const bool permission) {
 	const int index = castleFlag + color;
 	if (hasCastlePermission(castleFlag, color) && permission == false) {
-		key ^= hashKey.castleKey[index];
+		key ^= hashKeys.castleKey[index];
 		flags = unsetIntersections<uShort>(flags, 1 << (index + 8));
 	}
 	else if (!hasCastlePermission(castleFlag, color) && permission == true) {
-		key ^= hashKey.castleKey[index];
+		key ^= hashKeys.castleKey[index];
 		flags = getUnion<uShort>(flags, 1 << (index + 8));
 	}
 }
@@ -284,7 +281,7 @@ void BitBoard::parseFEN(const char* fen) {
 	//color time
 	whiteTime = *fen == 'w';
 	if (whiteTime)
-		key ^= hashKey.sideKey;
+		key ^= hashKeys.sideKey;
 	fen += 2;
 
 	//castle permission

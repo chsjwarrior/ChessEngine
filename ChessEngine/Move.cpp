@@ -1,13 +1,13 @@
 #include "Move.h"
 
-Move::Move() : flags(MOVE_EMPTY), score(0) { std::cout << "Move()" << std::endl; }
+Move::Move() : flags(MOVE_EMPTY), score(0) {}
 
 void Move::operator()() {
 	flags = MOVE_EMPTY;
 	score = 0;
 }
 
-const bool Move::isEmpty() noexcept {
+const bool Move::isEmpty() const noexcept {
 	return flags == MOVE_EMPTY;
 }
 

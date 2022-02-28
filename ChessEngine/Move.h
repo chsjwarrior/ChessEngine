@@ -26,7 +26,7 @@ public:
 	~Move() = default;
 
 	void operator()();
-	const bool isEmpty() noexcept;
+	const bool isEmpty() const noexcept;
 
 	const Square getFrom() const;
 	void setFrom(const Square square);

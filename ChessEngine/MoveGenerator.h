@@ -1,6 +1,7 @@
 #pragma once
-#include "Attacks.h"
+#include "MoveMaker.h"
 
+/* This is a singleton class that generate moves in bitBoard */
 class MoveGenerator {
 	uShort moveCount;
 	Bitmap friendPieces;
@@ -25,7 +26,9 @@ public:
 	MoveGenerator& operator=(const MoveGenerator&) = delete;
 	MoveGenerator& operator=(MoveGenerator&&) = delete;
 
-	uShort generateMoves(const BitBoard& bitBoard, Move moves[]);
+	const uShort generateMoves(const BitBoard& bitBoard, Move moves[]);
+
+	const uShort generateLegalMoves(BitBoard& bitBoard, Move moves[]);
 
 	static MoveGenerator& getInstance();
 };

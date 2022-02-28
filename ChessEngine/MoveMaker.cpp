@@ -85,10 +85,10 @@ void MoveMaker::makeUndo(BitBoard& bitBoard) const {
 	if (bitBoard.historyCount == 0)
 		return;
 
-	Move move;// = bitBoard.history[--bitBoard.historyCount].move;
+	Move move = bitBoard.history[--bitBoard.historyCount].move;
 
 	bitBoard.whiteTime = !bitBoard.whiteTime;
-	bitBoard.key ^= bitBoard.hashKey.sideKey;
+	bitBoard.key ^= bitBoard.hashKeys.sideKey;
 	const Color color = bitBoard.getColorTime();
 
 	checkPawnPromotion(bitBoard, move, color, false);//this is the first thing to do
@@ -126,6 +126,9 @@ void MoveMaker::makeUndo(BitBoard& bitBoard) const {
 }
 
 const bool MoveMaker::makeMove(BitBoard& bitBoard, const Move& move) const {
+	if (move.isEmpty())
+		return false;
+
 	const Color color = bitBoard.getColorTime();
 
 	if (move.getColor() != color)
@@ -137,7 +140,7 @@ const bool MoveMaker::makeMove(BitBoard& bitBoard, const Move& move) const {
 		return false;
 
 	//0=======================SAVE=PREVIOUS=STATE===========================0
-	//bitBoard.history[bitBoard.historyCount].move = move;
+	bitBoard.history[bitBoard.historyCount].move = move;
 	bitBoard.history[bitBoard.historyCount].flags = bitBoard.flags;
 	bitBoard.history[bitBoard.historyCount].fiftyMove = bitBoard.fiftyMove;
 	bitBoard.history[bitBoard.historyCount].key = bitBoard.key;
@@ -149,7 +152,7 @@ const bool MoveMaker::makeMove(BitBoard& bitBoard, const Move& move) const {
 	bitBoard.unsetPieceOnSquare(piece, color, move.getFrom());
 	bitBoard.setPieceOnSquare(piece, color, move.getTo());
 
-	checkEnPassant(bitBoard, move, color, true);//set or clear en passant square
+	checkEnPassant(bitBoard, move, color, true);
 
 	if (piece == PAWN) {
 		bitBoard.fiftyMove = 0U;
@@ -174,7 +177,7 @@ const bool MoveMaker::makeMove(BitBoard& bitBoard, const Move& move) const {
 		++bitBoard.ply;
 	++bitBoard.historyCount;
 	bitBoard.whiteTime = !bitBoard.whiteTime;
-	bitBoard.key ^= bitBoard.hashKey.sideKey;
+	bitBoard.key ^= bitBoard.hashKeys.sideKey;
 
 	if (attacks::isSquareAttacked(bitBoard, ~color, getFirstSquareOf(bitBoard.bitMaps[KING][color]))) {
 		makeUndo(bitBoard);
