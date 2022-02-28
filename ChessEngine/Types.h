@@ -27,9 +27,9 @@ constexpr Bitmap PATH_QUEEN_CASTLE = 0x0E0000000000000EUL;
 
 constexpr Bitmap SQUARE_MASK = 0x1UL;
 
-constexpr uShort MAX_MOVES = 128U;
+constexpr uChar MAX_MOVES = 128U;
 
-constexpr uShort MAX_DEPTH = 64U;
+constexpr uChar MAX_DEPTH = 64U;
 
 //files Bitmap
 constexpr Bitmap FILES[8] = { 0x0101010101010101UL, 0x0202020202020202UL , 0x0404040404040404UL, 0x0808080808080808UL,
@@ -104,7 +104,7 @@ constexpr int SQUARE_VALUE[6][64] = {
 			 20, 20,  0,  0,  0,  0, 20, 20,
 			 20, 30, 10,  0,  0, 10, 30, 20} };
 
-enum CastleFlags : uShort { KING_CASTLE = 0, QUEEN_CASTLE = 2 };//for black (KING_CASTLE + color) = 1 (QUEEN_CASTLE + color) = 3
+enum CastleFlags : uChar { KING_CASTLE = 0, QUEEN_CASTLE = 2 };//for black (KING_CASTLE + color) = 1 (QUEEN_CASTLE + color) = 3
 
 enum File : uChar { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, NONE_FILE };
 

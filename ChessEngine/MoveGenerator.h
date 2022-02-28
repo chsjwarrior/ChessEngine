@@ -20,9 +20,9 @@ class MoveGenerator {
 	void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece piece, const Color color, const Square from, Bitmap attacks);
 
 public:
-	MoveGenerator(MoveGenerator&) = delete;
+	MoveGenerator(const MoveGenerator&) = delete;
 	MoveGenerator(MoveGenerator&&) = delete;
-	MoveGenerator& operator=(MoveGenerator&) = delete;
+	MoveGenerator& operator=(const MoveGenerator&) = delete;
 	MoveGenerator& operator=(MoveGenerator&&) = delete;
 
 	uShort generateMoves(const BitBoard& bitBoard, Move moves[]);

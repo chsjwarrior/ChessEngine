@@ -1,17 +1,16 @@
 #include <chrono>
-#include "Perft.h"
-
-Move findMove(BitBoard& bitBoard, const char* entry);
+#include <iostream>
+//Move findMove(BitBoard& bitBoard, const char* entry);
 
 int main() {
 	std::string imput;
 	std::cin >> imput;
 
 	if (imput.compare("uci") != 0) {
-		BitBoard b;
-		b.parseFEN(START_FEN);
-		std::cout << b;
-
+		//BitBoard b;
+		//b.parseFEN(START_FEN);
+		//std::cout << b;
+		/*
 		Move move;
 		MoveMaker& moveMaker = MoveMaker::getInstance();
 
@@ -54,7 +53,7 @@ int main() {
 					std::cerr << imput << " is invalid move." << std::endl;
 				std::cout << b;
 			}
-		}
+		}*/
 	}
 	//else {
 		//Uci uci;
@@ -62,11 +61,11 @@ int main() {
 	//}
 	return 0;
 }
-
+/*
 Move findMove(BitBoard& bitBoard, const char* entry) {
 	Move target;
 	target.parseEntry(entry);
-
+	
 	Move moves[MAX_MOVES];
 	MoveGenerator& moveGenerator = MoveGenerator::getInstance();
 	uShort moveCount = moveGenerator.generateMoves(bitBoard, moves);
@@ -93,6 +92,8 @@ Move findMove(BitBoard& bitBoard, const char* entry) {
 				return *move;
 		}
 	}
+	
 	target();
 	return target;
 }
+*/

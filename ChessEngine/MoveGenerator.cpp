@@ -1,6 +1,7 @@
 #include "MoveGenerator.h"
 
 MoveGenerator& MoveGenerator::getInstance() {
+	std::cout << "MoveGenerator" << std::endl;
 	static MoveGenerator instance;
 	return instance;
 }

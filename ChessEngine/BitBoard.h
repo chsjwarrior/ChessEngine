@@ -9,13 +9,35 @@ const struct Zobrist {
 
 	Zobrist() noexcept;
 
-	Zobrist(Zobrist&) = delete;
+	Zobrist(const Zobrist&) = delete;
 	Zobrist(Zobrist&&) = delete;
-	Zobrist& operator=(Zobrist&) = delete;
+	Zobrist& operator=(const Zobrist&) = delete;
 	Zobrist& operator=(Zobrist&&) = delete;
-} hashKey;
+};
 
 class BitBoard {
+	class Undo {
+		//Move move;
+		uShort flags;
+		uShort fiftyMove;
+		uLong key;
+
+		friend class BitBoard;
+		friend class MoveMaker;
+	public:
+		Undo();
+		~Undo() = default;
+
+		Undo(const Undo&) = delete;
+		Undo(Undo&&) = delete;
+		Undo& operator=(const Undo&) = delete;
+		Undo& operator=(Undo&&) = delete;
+
+		void operator()();
+		const Square getEnPassantSquare() const;
+		const bool hasCastlePermission(const CastleFlags castleFlag, const Color color) const;		
+	};
+
 	Bitmap bitMaps[6][2];
 	uLong key;
 	/*
@@ -33,33 +55,18 @@ class BitBoard {
 	uShort historyCount;
 	bool whiteTime;
 
-	struct Undo {
-		Move move;
-		uShort flags;
-		uShort fiftyMove;
-		uLong key;
-
-		Undo();
-
-		Undo(Undo&) = delete;
-		Undo(Undo&&) = delete;
-		Undo& operator=(Undo&) = delete;
-		Undo& operator=(Undo&&) = delete;
-
-		void operator()();
-		const Square getEnPassantSquare() const;
-		const bool hasCastlePermission(const CastleFlags castleFlag, const Color color) const;
-	} history[MAX_MOVES];//128
+	Undo history[MAX_MOVES];//128	
 
 	friend class MoveMaker;
 public:
 	friend std::ostream& operator<<(std::ostream& os, const BitBoard& bitBoard);
-
+	Zobrist hashKey;
 	BitBoard();
+	~BitBoard() = default;
 
-	BitBoard(BitBoard&) = delete;
+	BitBoard(const BitBoard&) = delete;
 	BitBoard(BitBoard&&) = delete;
-	BitBoard& operator=(BitBoard&) = delete;
+	BitBoard& operator=(const BitBoard&) = delete;
 	BitBoard& operator=(BitBoard&&) = delete;
 
 	void operator()();

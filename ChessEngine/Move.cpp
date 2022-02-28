@@ -1,6 +1,6 @@
 #include "Move.h"
 
-Move::Move() : flags(MOVE_EMPTY), score(0) {}
+Move::Move() : flags(MOVE_EMPTY), score(0) { std::cout << "Move()" << std::endl; }
 
 void Move::operator()() {
 	flags = MOVE_EMPTY;

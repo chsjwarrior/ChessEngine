@@ -2,6 +2,7 @@
 
 //0==============================HASHKEY===============================0
 Zobrist::Zobrist() noexcept {
+	std::cout << "Zobrist()" << std::endl;
 	for (Square s = A1; s < NONE_SQUARE; ++s)
 		for (Piece p = PAWN; p < NONE_PIECE; ++p) {
 			pieceKey[s][p][0] = static_cast<uLong>(std::rand()) << 32 | static_cast<uLong>(std::rand()) << 16 | std::rand();
@@ -15,10 +16,10 @@ Zobrist::Zobrist() noexcept {
 }
 
 //0===========================BITBOARD::UNDO===========================0
-BitBoard::Undo::Undo() : move(), flags(BITBOARD_FLAGS_EMPTY), fiftyMove(0U), key(0UL) {}
+BitBoard::Undo::Undo() : flags(BITBOARD_FLAGS_EMPTY), fiftyMove(0U), key(0UL) { std::cout << "BitBoard()" << std::endl; }
 
 void BitBoard::Undo::operator()() {
-	move();
+	//move();
 	flags = BITBOARD_FLAGS_EMPTY;
 	fiftyMove = 0U;
 	key = 0UL;
@@ -34,6 +35,7 @@ const bool BitBoard::Undo::hasCastlePermission(const CastleFlags castleFlag, con
 
 //0=============================BITBOARD===============================0
 BitBoard::BitBoard() : key(0UL), flags(BITBOARD_FLAGS_EMPTY), fiftyMove(0U), ply(0U), historyCount(0U), whiteTime(false) {
+	std::cout << "BitBoard()" << std::endl;
 	for (Piece p = PAWN; p != NONE_PIECE; ++p) {
 		bitMaps[p][0] = 0UL;
 		bitMaps[p][1] = 0UL;

@@ -18,27 +18,25 @@ Piece& operator--(Piece& p) noexcept { return p = p == PAWN ? NONE_PIECE : stati
 Color operator~(const Color& color) noexcept { return static_cast<Color>(color ^ BLACK); }
 
 const File getFileOf(const Square square) noexcept {
-	if (square == NONE_SQUARE)
-		return NONE_FILE;
+	if (square >= NONE_SQUARE) return NONE_FILE;
 	return static_cast<File>(square & 7U);
 	// file = square % 8; or file = square & 7;
 }
 
 const Rank getRankOf(const Square square) noexcept {
-	if (square == NONE_SQUARE)
-		return NONE_RANK;
+	if (square >= NONE_SQUARE) return NONE_RANK;
 	return static_cast<Rank>(square >> 3);
 	// rank = square / 8; or rank = square >> 3;
 }
 
 const Square getSquareOf(const File file, const Rank rank) noexcept {
-	if (file == NONE_FILE || rank == NONE_RANK)
-		return NONE_SQUARE;
+	if (file >= NONE_FILE || rank >= NONE_RANK) return NONE_SQUARE;
 	return static_cast<Square>((rank << 3) + file);
 	// square = 8 * rank + file;
 }
 
 const Bitmap getBitmapOf(const Square square) noexcept {
+	if (square >= NONE_SQUARE) return 0UL;
 	return SQUARE_MASK << square;
 }
 
@@ -87,7 +85,6 @@ std::ostream& operator<<(std::ostream& os, const Rank& rank) {
 		os << "NONE RANK";
 	return os;
 }
-
 
 std::ostream& operator<<(std::ostream& os, const Square& square) {
 	if (square < NONE_SQUARE) {

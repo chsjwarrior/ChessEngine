@@ -17,9 +17,9 @@ class MoveMaker {
 	void checkCastleMove(BitBoard& bitBoard, const Move& move, const Color color, const bool isNotUndo) const;
 
 public:
-	MoveMaker(MoveMaker&) = delete;
+	MoveMaker(const MoveMaker&) = delete;
 	MoveMaker(MoveMaker&&) = delete;
-	MoveMaker& operator=(MoveMaker&) = delete;
+	MoveMaker& operator=(const MoveMaker&) = delete;
 	MoveMaker& operator=(MoveMaker&&) = delete;
 
 	static MoveMaker& getInstance();

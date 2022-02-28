@@ -1,6 +1,7 @@
 #include "MoveMaker.h"
 
 MoveMaker& MoveMaker::getInstance() {
+	std::cout << "MoveMaker" << std::endl;
 	static MoveMaker instance;
 	return instance;
 }
@@ -84,10 +85,10 @@ void MoveMaker::makeUndo(BitBoard& bitBoard) const {
 	if (bitBoard.historyCount == 0)
 		return;
 
-	Move move = bitBoard.history[--bitBoard.historyCount].move;
+	Move move;// = bitBoard.history[--bitBoard.historyCount].move;
 
 	bitBoard.whiteTime = !bitBoard.whiteTime;
-	bitBoard.key ^= hashKey.sideKey;
+	bitBoard.key ^= bitBoard.hashKey.sideKey;
 	const Color color = bitBoard.getColorTime();
 
 	checkPawnPromotion(bitBoard, move, color, false);//this is the first thing to do
@@ -136,7 +137,7 @@ const bool MoveMaker::makeMove(BitBoard& bitBoard, const Move& move) const {
 		return false;
 
 	//0=======================SAVE=PREVIOUS=STATE===========================0
-	bitBoard.history[bitBoard.historyCount].move = move;
+	//bitBoard.history[bitBoard.historyCount].move = move;
 	bitBoard.history[bitBoard.historyCount].flags = bitBoard.flags;
 	bitBoard.history[bitBoard.historyCount].fiftyMove = bitBoard.fiftyMove;
 	bitBoard.history[bitBoard.historyCount].key = bitBoard.key;
@@ -173,7 +174,7 @@ const bool MoveMaker::makeMove(BitBoard& bitBoard, const Move& move) const {
 		++bitBoard.ply;
 	++bitBoard.historyCount;
 	bitBoard.whiteTime = !bitBoard.whiteTime;
-	bitBoard.key ^= hashKey.sideKey;
+	bitBoard.key ^= bitBoard.hashKey.sideKey;
 
 	if (attacks::isSquareAttacked(bitBoard, ~color, getFirstSquareOf(bitBoard.bitMaps[KING][color]))) {
 		makeUndo(bitBoard);
