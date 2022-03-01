@@ -11,8 +11,7 @@ void MoveMaker::checkCapture(BitBoard& bitBoard, const Move& move, const Color c
 		if (isNotUndo) {
 			bitBoard.fiftyMove = 0U;
 			bitBoard.unsetPieceOnSquare(captured, ~color, move.getTo());
-		}
-		else
+		} else
 			bitBoard.setPieceOnSquare(captured, ~color, move.getTo());
 }
 
@@ -24,8 +23,7 @@ void MoveMaker::checkEnPassant(BitBoard& bitBoard, const Move& move, const Color
 				enPassantSquare = move.getTo() - 8U;
 			else if (color == BLACK)
 				enPassantSquare = move.getTo() + 8U;
-	}
-	else
+	} else
 		enPassantSquare = bitBoard.history[bitBoard.historyCount].getEnPassantSquare();
 	bitBoard.setEnPassantSquare(enPassantSquare);
 }
@@ -50,8 +48,7 @@ void MoveMaker::checkPawnPromotion(BitBoard& bitBoard, const Move& move, const C
 		if (isNotUndo) {
 			bitBoard.unsetPieceOnSquare(PAWN, color, move.getTo());
 			bitBoard.setPieceOnSquare(promotion, color, move.getTo());
-		}
-		else {
+		} else {
 			bitBoard.unsetPieceOnSquare(promotion, color, move.getTo());
 			bitBoard.setPieceOnSquare(PAWN, color, move.getTo());
 		}
@@ -60,24 +57,28 @@ void MoveMaker::checkPawnPromotion(BitBoard& bitBoard, const Move& move, const C
 
 void MoveMaker::checkCastleMove(BitBoard& bitBoard, const Move& move, const Color color, const bool isNotUndo) const {
 	if (move.isKingCastle()) {
+		Square from, to;
 		if (isNotUndo) {
-			bitBoard.unsetPieceOnSquare(ROOK, color, move.getFrom() + 3U);
-			bitBoard.setPieceOnSquare(ROOK, color, move.getFrom() + 1U);
+			from = move.getFrom() + 3U;
+			to = move.getFrom() + 1U;
+		} else {
+			from = move.getFrom() + 1U;
+			to = move.getFrom() + 3U;
 		}
-		else {
-			bitBoard.unsetPieceOnSquare(ROOK, color, move.getFrom() + 1U);
-			bitBoard.setPieceOnSquare(ROOK, color, move.getFrom() + 3U);
+		bitBoard.unsetPieceOnSquare(ROOK, color, from);
+		bitBoard.setPieceOnSquare(ROOK, color, to);
+	} else if (move.isQueenCastle()) {
+		Square from, to;
+		if (isNotUndo) {
+			from = move.getFrom() - 4U;
+			to = move.getFrom() - 1U;
+		} else {
+			from = move.getFrom() - 1U;
+			to = move.getFrom() - 4U;
 		}
+		bitBoard.unsetPieceOnSquare(ROOK, color, from);
+		bitBoard.setPieceOnSquare(ROOK, color, to);
 	}
-	else if (move.isQueenCastle())
-		if (isNotUndo) {
-			bitBoard.unsetPieceOnSquare(ROOK, color, move.getFrom() - 4U);
-			bitBoard.setPieceOnSquare(ROOK, color, move.getFrom() - 1U);
-		}
-		else {
-			bitBoard.unsetPieceOnSquare(ROOK, color, move.getFrom() - 1U);
-			bitBoard.setPieceOnSquare(ROOK, color, move.getFrom() - 4U);
-		}
 }
 
 void MoveMaker::makeUndo(BitBoard& bitBoard) const {
@@ -97,13 +98,11 @@ void MoveMaker::makeUndo(BitBoard& bitBoard) const {
 	if (piece == ROOK) {
 		bitBoard.setCastlePermission(KING_CASTLE, color, bitBoard.history[bitBoard.historyCount].hasCastlePermission(KING_CASTLE, color));
 		bitBoard.setCastlePermission(QUEEN_CASTLE, color, bitBoard.history[bitBoard.historyCount].hasCastlePermission(QUEEN_CASTLE, color));
-	}
-	else if (piece == KING) {
+	} else if (piece == KING) {
 		checkCastleMove(bitBoard, move, color, false);
 		bitBoard.setCastlePermission(KING_CASTLE, color, bitBoard.history[bitBoard.historyCount].hasCastlePermission(KING_CASTLE, color));
 		bitBoard.setCastlePermission(QUEEN_CASTLE, color, bitBoard.history[bitBoard.historyCount].hasCastlePermission(QUEEN_CASTLE, color));
-	}
-	else if (piece == PAWN)
+	} else if (piece == PAWN)
 		checkEnPassantCaptured(bitBoard, move, color, false);
 
 	checkEnPassant(bitBoard, move, color, false);
@@ -157,15 +156,13 @@ const bool MoveMaker::makeMove(BitBoard& bitBoard, const Move& move) const {
 		bitBoard.fiftyMove = 0U;
 		checkEnPassantCaptured(bitBoard, move, color, true);
 		checkPawnPromotion(bitBoard, move, color, true);
-	}
-	else if (bitBoard.hasCastlePermission(KING_CASTLE, color) ||
-		bitBoard.hasCastlePermission(QUEEN_CASTLE, color)) {
+	} else if (bitBoard.hasCastlePermission(KING_CASTLE, color) ||
+			   bitBoard.hasCastlePermission(QUEEN_CASTLE, color)) {
 		if (piece == KING) {
 			checkCastleMove(bitBoard, move, color, true);
 			bitBoard.setCastlePermission(KING_CASTLE, color, false);
 			bitBoard.setCastlePermission(QUEEN_CASTLE, color, false);
-		}
-		else if (piece == ROOK) {
+		} else if (piece == ROOK) {
 			const Square from = move.getFrom();
 			bitBoard.setCastlePermission(KING_CASTLE, color, !(from == H1 || from == H8));
 			bitBoard.setCastlePermission(QUEEN_CASTLE, color, !(from == A1 || from == A8));

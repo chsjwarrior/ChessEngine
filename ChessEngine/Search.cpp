@@ -1,21 +1,4 @@
-#include "MoveGenerator.h"
-#include "MoveMaker.h"
-
-struct SearchInfo {
-	int startTime = 0;
-	int stopTime = 0;
-	int moveTime = 0;
-	int time = 0;
-	int inc = 0;
-	int movestogo = 0;
-	short depth = 1;
-	int mate = 0;
-	uLong nodes = 0UL;
-	uLong infinite = 0UL;
-
-	bool ponderMode = false;
-	bool stop = false;
-} info;
+#include "Chess.h"
 
 void checkUp() {
 	//if (info.stopTime > 0 && getTimeMilliseconds() > info.stopTime)
@@ -37,7 +20,7 @@ void swapForBestMove(const uShort index, Move moves[], const uShort size) {
 
 Move bestMove;
 
-int quiescence(BitBoard& bitBoard, int alpha, int beta) {
+const int quiescence(BitBoard& bitBoard, int alpha, int beta) {
 	if (info.nodes >= 2047)
 		checkUp();
 
@@ -59,12 +42,11 @@ int quiescence(BitBoard& bitBoard, int alpha, int beta) {
 
 	Move moves[MAX_MOVES];
 	MoveGenerator& moveGenerator = MoveGenerator::getInstance();
-	uShort moveCount = moveGenerator.generateMoves(bitBoard, moves);
+	uShort movesCount = moveGenerator.generateCaptureMoves(bitBoard, moves);
 	MoveMaker& moveMaker = MoveMaker::getInstance();
 
-	for (uShort i = 0; i < moveCount; ++i) {
-		if (moves[i].getCaptured() == NONE_PIECE)
-			continue;
+	for (uShort i = 0; i < movesCount; ++i) {
+		swapForBestMove(i, moves, movesCount);
 
 		if (!moveMaker.makeMove(bitBoard, moves[i]))
 			continue;
@@ -83,7 +65,7 @@ int quiescence(BitBoard& bitBoard, int alpha, int beta) {
 	return alpha;
 }
 
-int negaMax(BitBoard& bitBoard, short depth, int alpha, int beta) {
+const int negaMax(BitBoard& bitBoard, short depth, int alpha, int beta) {
 	info.nodes++;
 
 	if (depth <= 0)
@@ -146,7 +128,6 @@ int negaMax(BitBoard& bitBoard, short depth, int alpha, int beta) {
 	}
 	return alpha;
 }
-
 
 void searchPosition(BitBoard& bitBoard) {
 	info.nodes = 0UL;

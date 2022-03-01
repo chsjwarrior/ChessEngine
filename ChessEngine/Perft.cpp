@@ -1,4 +1,4 @@
-#include "Perft.h"
+#include "Chess.h"
 
 void perft(BitBoard& bitBoard, const short depth, uLong& leafNodes) {
 	if (depth <= 0) {
@@ -8,10 +8,10 @@ void perft(BitBoard& bitBoard, const short depth, uLong& leafNodes) {
 
 	Move moves[MAX_MOVES];
 	MoveGenerator& moveGenerator = MoveGenerator::getInstance();
-	uShort moveCount = moveGenerator.generateMoves(bitBoard, moves);
+	uShort movesCount = moveGenerator.generateMoves(bitBoard, moves);
 	MoveMaker& moveMaker = MoveMaker::getInstance();
 
-	for (Move* move = moves; move != moves + moveCount; ++move) {
+	for (Move* move = moves; move != moves + movesCount; ++move) {
 		if (!moveMaker.makeMove(bitBoard, *move))
 			continue;
 
@@ -28,10 +28,10 @@ void perftTest(BitBoard& bitBoard, const short depth) {
 
 	Move moves[MAX_MOVES];
 	MoveGenerator& moveGenerator = MoveGenerator::getInstance();
-	uShort moveCount = moveGenerator.generateMoves(bitBoard, moves);
+	uShort movesCount = moveGenerator.generateMoves(bitBoard, moves);
 	MoveMaker& moveMaker = MoveMaker::getInstance();
 
-	for (Move* move = moves; move != moves + moveCount; ++move) {
+	for (Move* move = moves; move != moves + movesCount; ++move) {
 		if (!moveMaker.makeMove(bitBoard, *move))
 			continue;
 

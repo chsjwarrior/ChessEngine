@@ -107,8 +107,7 @@ void BitBoard::setCastlePermission(const CastleFlags castleFlag, const Color col
 	if (hasCastlePermission(castleFlag, color) && permission == false) {
 		key ^= hashKeys.castleKey[index];
 		flags = unsetIntersections<uShort>(flags, 1 << (index + 8));
-	}
-	else if (!hasCastlePermission(castleFlag, color) && permission == true) {
+	} else if (!hasCastlePermission(castleFlag, color) && permission == true) {
 		key ^= hashKeys.castleKey[index];
 		flags = getUnion<uShort>(flags, 1 << (index + 8));
 	}
@@ -175,8 +174,7 @@ const std::string BitBoard::getFEN() const {
 				}
 
 				fen.append(1, PIECE_CHAR[p][c]);
-			}
-			else
+			} else
 				++count;
 		}
 		if (count > 0) {
@@ -214,8 +212,7 @@ const std::string BitBoard::getFEN() const {
 		fen.append(1, getFileOf(s) + 'a');
 		fen.append(1, getRankOf(s) + '1');
 		fen.append(" ");
-	}
-	else
+	} else
 		fen.append(" - ");
 
 	fen.append(1, fiftyMove + '0');
@@ -302,8 +299,7 @@ void BitBoard::parseFEN(const char* fen) {
 			setCastlePermission(QUEEN_CASTLE, BLACK, true);
 			++fen;
 		}
-	}
-	else
+	} else
 		++fen;
 
 	++fen;
@@ -313,8 +309,7 @@ void BitBoard::parseFEN(const char* fen) {
 		++fen;
 		rank = static_cast<Rank>(*fen - '1');
 		setEnPassantSquare(getSquareOf(file, rank));
-	}
-	else if (*fen)
+	} else if (*fen)
 		fen += 2;
 
 	if (*fen) {

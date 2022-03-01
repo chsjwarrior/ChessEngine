@@ -90,6 +90,6 @@ public:
 	const Color getColorTime() const;
 
 	const std::string getFEN() const;
-
+	/* This funcion still needs to be improve on read fifty move and ply*/
 	void parseFEN(const char* fen);
 };

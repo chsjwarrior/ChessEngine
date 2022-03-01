@@ -147,10 +147,13 @@
     <ClCompile Include="Move.cpp" />
     <ClCompile Include="MoveGenerator.cpp" />
     <ClCompile Include="MoveMaker.cpp" />
+    <ClCompile Include="Perft.cpp" />
+    <ClCompile Include="Search.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Attacks.h" />
     <ClInclude Include="BitBoard.h" />
+    <ClInclude Include="Chess.h" />
     <ClInclude Include="Move.h" />
     <ClInclude Include="MoveGenerator.h" />
     <ClInclude Include="MoveMaker.h" />

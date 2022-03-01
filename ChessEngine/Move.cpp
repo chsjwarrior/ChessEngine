@@ -119,16 +119,13 @@ void Move::parseEntry(const char* entry) {
 	if (entry[4] == 'q') {
 		setPawnPromotion();
 		setPromotionPiece(QUEEN);
-	}
-	else if (entry[4] == 'r') {
+	} else if (entry[4] == 'r') {
 		setPawnPromotion();
 		setPromotionPiece(ROOK);
-	}
-	else if (entry[4] == 'b') {
+	} else if (entry[4] == 'b') {
 		setPawnPromotion();
 		setPromotionPiece(BISHOP);
-	}
-	else if (entry[4] == 'n') {
+	} else if (entry[4] == 'n') {
 		setPawnPromotion();
 		setPromotionPiece(KNIGHT);
 	}
@@ -148,8 +145,7 @@ std::ostream& operator<<(std::ostream& os, const Move& move) {
 			os << "0-0";
 		else if (move.isQueenCastle())
 			os << "0-0-0";
-	}
-	else
+	} else
 		os << "MOVE EMPTY";
 	return os;
 }

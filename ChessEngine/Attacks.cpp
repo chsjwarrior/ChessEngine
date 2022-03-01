@@ -71,8 +71,7 @@ namespace attacks {
 			moves |= squareBitmap << 9 & allPieces & ~FILES[FILE_A];
 			moves |= squareBitmap << 7 & enPassantBitmap & RANKS[RANK_6] & ~FILES[FILE_H];
 			moves |= squareBitmap << 9 & enPassantBitmap & RANKS[RANK_6] & ~FILES[FILE_A];
-		}
-		else if (color == BLACK) {
+		} else if (color == BLACK) {
 			//normal move and start move
 			moves |= squareBitmap >> 8 & ~allPieces;
 			moves |= squareBitmap >> 16 & ~allPieces & ~allPieces >> 8 & RANKS[RANK_5];
@@ -87,13 +86,13 @@ namespace attacks {
 
 	const bool isSquareAttacked(const BitBoard& bitBoard, const Color color, const Square square) {
 		const Bitmap squareBitmap = getBitmapOf(square);
-		//Knight
-		Bitmap attacks = getKnightMoves(squareBitmap);
-		if (hasIntersection(attacks, bitBoard.getBitmapPiece(KNIGHT, color)))
-			return true;
 		//King
-		attacks = getKingMoves(squareBitmap);
+		Bitmap attacks = getKingMoves(squareBitmap);
 		if (hasIntersection(attacks, bitBoard.getBitmapPiece(KING, color)))
+			return true;
+		//Knight
+		attacks = getKnightMoves(squareBitmap);
+		if (hasIntersection(attacks, bitBoard.getBitmapPiece(KNIGHT, color)))
 			return true;
 		//Pawn
 		if (color == WHITE)

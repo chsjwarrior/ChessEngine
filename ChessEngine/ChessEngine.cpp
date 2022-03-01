@@ -1,7 +1,7 @@
 #include <chrono>
-#include "MoveGenerator.h"
+#include "Chess.h"
 
-Move findMove(BitBoard& bitBoard, const char* entry);
+const Move findMove(BitBoard& bitBoard, const char* entry);
 
 int main() {
 	std::string imput;
@@ -23,34 +23,29 @@ int main() {
 				if (imput.compare("t") == 0) {
 					moveMaker.makeUndo(b);
 					std::cout << b;
-				}
-				else if (imput.compare("s") == 0) {
-					//info.depth = 5;
-					//searchPosition(b);
-				}
-				else if (imput.compare("p") == 0) {
+				} else if (imput.compare("s") == 0) {
+					info.depth = 5;
+					searchPosition(b);
+				} else if (imput.compare("p") == 0) {
 					do {
 						std::cout << "entry with the depth >";
 						std::cin >> imput;
 					} while (std::ranges::any_of(imput.begin(), imput.end(), [](char c) {return isdigit(c) == 0; }));
 					auto start = std::chrono::high_resolution_clock::now();
-					//perftTest(b, std::stoi(imput));
+					perftTest(b, std::stoi(imput));
 					auto stop = std::chrono::high_resolution_clock::now();
 					auto duration = duration_cast<std::chrono::milliseconds>(stop - start);
 					std::cout << "Time taken by function: "
-						<< duration.count() << " microseconds" << std::endl;
-				}
-				else if (imput.compare("q") == 0)
+						<< duration.count() << " milliseconds" << std::endl;
+				} else if (imput.compare("q") == 0)
 					std::cout << "Bye" << std::endl;
-			}
-			else if (imput.size() >= 4) {
+			} else if (imput.size() >= 4) {
 				move = findMove(b, imput.c_str());
 				if (!move.isEmpty()) {
 					moveMaker.makeMove(b, move);
 					if (b.isRepetition())
 						std::cout << "is repeating..." << std::endl;
-				}
-				else
+				} else
 					std::cerr << imput << " is invalid move." << std::endl;
 				std::cout << b;
 			}
@@ -63,7 +58,7 @@ int main() {
 	return 0;
 }
 
-Move findMove(BitBoard& bitBoard, const char* entry) {
+const Move findMove(BitBoard& bitBoard, const char* entry) {
 	Move target;
 	target.parseEntry(entry);
 
@@ -88,8 +83,7 @@ Move findMove(BitBoard& bitBoard, const char* entry) {
 					target();
 					return target;
 				}
-			}
-			else
+			} else
 				return *move;
 		}
 	}
