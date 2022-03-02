@@ -20,7 +20,7 @@ int main() {
 
 	if (imput.compare("uci") != 0) {
 		BitBoard b;
-		b.parseFEN("rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8");
+		b.parseFEN(START_FEN);
 		std::cout << b;
 
 		Move move;
@@ -77,9 +77,8 @@ const Move findMove(BitBoard& bitBoard, const char* entry) {
 	Move target;
 	target.parseEntry(entry);
 
-	Move moves[MAX_MOVES];
-	MoveGenerator& moveGenerator = MoveGenerator::getInstance();
-	uShort moveCount = moveGenerator.generateMoves(bitBoard, moves);
+	Move moves[MAX_MOVES];	
+	uShort moveCount = moveGenerator::generateMoves(bitBoard, moves);
 	Piece promotion = NONE_PIECE;
 
 	for (Move* move = moves; move != moves + moveCount; ++move) {

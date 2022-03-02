@@ -1,17 +1,17 @@
 #include "MoveGenerator.h"
 
-MoveGenerator& MoveGenerator::getInstance() {
-	static MoveGenerator instance;
-	return instance;
-}
+Bitmap friendPieces;
+Bitmap enemyPieces;
+uShort movesCount;
 
-void MoveGenerator::setCapture(const BitBoard& bitBoard, Move& move, const Color color, const Square to) const {
+/* This function sets the captured piece in the Move if any */
+void setCapture(const BitBoard& bitBoard, Move& move, const Color color, const Square to) {
 	const Piece capture = bitBoard.getPieceFromSquare(~color, to);
 	move.setCaptured(capture);
 	move.score += PIECE_VALUE[capture];
 }
-
-bool MoveGenerator::canMakeKingCastle(const BitBoard& bitBoard, const Color color) const {
+/* This function tests if is possible to make King castle */
+bool canMakeKingCastle(const BitBoard& bitBoard, const Color color) {
 	if (bitBoard.hasCastlePermission(KING_CASTLE, color)) {
 		const Rank relativeRank = color == WHITE ? RANK_1 : RANK_8;
 		if (!hasIntersection((FILES[FILE_F] | FILES[FILE_G]) & RANKS[relativeRank], friendPieces | enemyPieces)) //isCastlePathClear
@@ -20,8 +20,8 @@ bool MoveGenerator::canMakeKingCastle(const BitBoard& bitBoard, const Color colo
 	}
 	return false;
 }
-
-bool MoveGenerator::canMakeQueenCastle(const BitBoard& bitBoard, const Color color) const {
+/* This function tests if is possible to make Queen castle */
+bool canMakeQueenCastle(const BitBoard& bitBoard, const Color color) {
 	if (bitBoard.hasCastlePermission(QUEEN_CASTLE, color)) {
 		const Rank relativeRank = color == WHITE ? RANK_1 : RANK_8;
 		if (!hasIntersection((FILES[FILE_B] | FILES[FILE_C] | FILES[FILE_D]) & RANKS[relativeRank], friendPieces | enemyPieces))//isCastlePathClear
@@ -30,8 +30,8 @@ bool MoveGenerator::canMakeQueenCastle(const BitBoard& bitBoard, const Color col
 	}
 	return false;
 }
-
-Bitmap MoveGenerator::getPiecesMoves(const BitBoard& bitBoard, const Piece piece, const Color color, const Square square) const {
+/* This function returns a bitmap with the attack squares */
+Bitmap getPiecesMoves(const BitBoard& bitBoard, const Piece piece, const Color color, const Square square) {
 	const Bitmap squareBitmap = getBitmapOf(square);//1UL << square;
 	Bitmap attacks = 0UL;
 
@@ -58,8 +58,8 @@ Bitmap MoveGenerator::getPiecesMoves(const BitBoard& bitBoard, const Piece piece
 	}
 	return unsetIntersections(attacks, bitBoard.getBitmapAllPieces(color));//remove friend pieces square
 }
-
-void MoveGenerator::catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece piece, const Color color, const Square from, Bitmap attacks) {
+/* This function populates an array with the moves and returns the size */
+void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece piece, const Color color, const Square from, Bitmap attacks) {
 	Square to = NONE_SQUARE;
 	Move move;
 	const Square(*popSquareOf)(Bitmap&) = nullptr;
@@ -132,7 +132,7 @@ void MoveGenerator::catalogMoves(const BitBoard& bitBoard, Move moves[], const P
 	}
 }
 
-uShort MoveGenerator::generateMoves(const BitBoard& bitBoard, Move moves[]) {
+uShort moveGenerator::generateMoves(const BitBoard& bitBoard, Move moves[]) {
 	const Color color = bitBoard.getColorTime();
 	Bitmap attacks = 0UL;
 	Bitmap pieceBitmap;
@@ -159,7 +159,7 @@ uShort MoveGenerator::generateMoves(const BitBoard& bitBoard, Move moves[]) {
 	return movesCount;
 }
 
-uShort MoveGenerator::generateCaptureMoves(const BitBoard& bitBoard, Move moves[]) {
+uShort moveGenerator::generateCaptureMoves(const BitBoard& bitBoard, Move moves[]) {
 	generateMoves(bitBoard, moves);
 
 	for (short i = 0; i < movesCount; ++i)

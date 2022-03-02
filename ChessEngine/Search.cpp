@@ -72,9 +72,8 @@ int quiescence(BitBoard& bitBoard, int alpha, int beta) {
 	if (score > alpha)
 		alpha = score;
 
-	Move moves[MAX_MOVES];
-	MoveGenerator& moveGenerator = MoveGenerator::getInstance();
-	uShort movesCount = moveGenerator.generateCaptureMoves(bitBoard, moves);
+	Move moves[MAX_MOVES];	
+	uShort movesCount = moveGenerator::generateCaptureMoves(bitBoard, moves);
 	MoveMaker& moveMaker = MoveMaker::getInstance();
 
 	for (uShort i = 0; i < movesCount; ++i) {
@@ -123,8 +122,7 @@ int negaMax(BitBoard& bitBoard, short depth, int alpha, int beta, Line& pLine) {
 	int score = -30000;
 
 	Move moves[MAX_MOVES];
-	MoveGenerator& moveGenerator = MoveGenerator::getInstance();
-	uShort moveCount = moveGenerator.generateMoves(bitBoard, moves);
+	uShort moveCount = moveGenerator::generateMoves(bitBoard, moves);
 	MoveMaker& moveMaker = MoveMaker::getInstance();
 
 	for (uShort i = 0; i < moveCount; ++i) {
