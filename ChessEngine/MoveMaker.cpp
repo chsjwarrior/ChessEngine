@@ -30,15 +30,15 @@ void MoveMaker::checkEnPassant(BitBoard& bitBoard, const Move& move, const Color
 
 void MoveMaker::checkEnPassantCaptured(BitBoard& bitBoard, const Move& move, const Color color, const bool isNotUndo) const {
 	if (move.isEnPassantCapture()) {
-		Bitmap captured = getBitmapOf(move.getTo());
+		Square captured = NONE_SQUARE;
 		if (color == WHITE)
-			captured = captured >> 8;
+			captured = move.getTo() - 8U;
 		else if (color == BLACK)
-			captured = captured << 8;
+			captured = move.getTo() + 8U;
 		if (isNotUndo)
-			bitBoard.unsetPieceOnSquare(PAWN, ~color, getFirstSquareOf(captured));
+			bitBoard.unsetPieceOnSquare(PAWN, ~color, captured);
 		else
-			bitBoard.setPieceOnSquare(PAWN, ~color, getFirstSquareOf(captured));
+			bitBoard.setPieceOnSquare(PAWN, ~color, captured);
 	}
 }
 

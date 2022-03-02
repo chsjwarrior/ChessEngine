@@ -7,44 +7,44 @@ typedef unsigned int uInt;
 typedef unsigned short int uShort;
 typedef unsigned char uChar;
 
-constexpr char NAME[] = "ChessEngine 1.0";
+inline constexpr char NAME[] = "ChessEngine 1.0";
 
-constexpr char AUTHOR[] = "Carlos Henrique Stapait Junior";
+inline constexpr char AUTHOR[] = "Carlos Henrique Stapait Junior";
 
-constexpr char START_FEN[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+inline constexpr char START_FEN[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-constexpr char PIECE_CHAR[6][2] = { {'P','p'}, {'N','n'}, {'B','b'}, {'R','r'}, {'Q','q'}, {'K','k'} };
+inline constexpr char PIECE_CHAR[6][2] = { {'P','p'}, {'N','n'}, {'B','b'}, {'R','r'}, {'Q','q'}, {'K','k'} };
 
-constexpr int PIECE_VALUE[7] = { 10,30,30,50,90,900,0 };
+inline constexpr int PIECE_VALUE[7] = { 10,30,30,50,90,900,0 };
 
-constexpr uInt MOVE_EMPTY = 0x00664040U;
+inline constexpr uInt MOVE_EMPTY = 0x00664040U;
 
-constexpr uShort BITBOARD_FLAGS_EMPTY = 0X0040U;
+inline constexpr uShort BITBOARD_FLAGS_EMPTY = 0X0040U;
 
-constexpr Bitmap SQUARE_MASK = 0x1UL;
+inline constexpr Bitmap SQUARE_MASK = 0x1UL;
 
-constexpr uChar MAX_MOVES = 128U;
+inline constexpr uChar MAX_MOVES = 128U;
 
-constexpr uChar MAX_DEPTH = 64U;
+inline constexpr uChar MAX_DEPTH = 64U;
 
 //files Bitmap
-constexpr Bitmap FILES[8] = { 0x0101010101010101UL, 0x0202020202020202UL , 0x0404040404040404UL, 0x0808080808080808UL,
+inline constexpr Bitmap FILES[8] = { 0x0101010101010101UL, 0x0202020202020202UL , 0x0404040404040404UL, 0x0808080808080808UL,
 								0x1010101010101010UL, 0x2020202020202020UL, 0x4040404040404040UL, 0x8080808080808080UL };
 //ranks Bitmap
-constexpr Bitmap RANKS[8] = { 0x00000000000000FFUL, 0x000000000000FF00UL, 0x0000000000FF0000UL, 0x00000000FF000000UL,
+inline constexpr Bitmap RANKS[8] = { 0x00000000000000FFUL, 0x000000000000FF00UL, 0x0000000000FF0000UL, 0x00000000FF000000UL,
 								0x000000FF00000000UL, 0x0000FF0000000000UL, 0x00FF000000000000UL, 0xFF00000000000000UL };
 //diagonal Bitmap from botton left to up right
-constexpr Bitmap DIAGONAL_R[15] = { 0x0100000000000000UL, 0x0201000000000000UL, 0x0402010000000000UL, 0x0804020100000000UL,
+inline constexpr Bitmap DIAGONAL_R[15] = { 0x0100000000000000UL, 0x0201000000000000UL, 0x0402010000000000UL, 0x0804020100000000UL,
 									0x1008040201000000UL, 0x2010080402010000UL, 0x4020100804020100UL, 0x8040201008040201UL,
 									0x0080402010080402UL, 0x0000804020100804UL, 0x0000008040201008UL, 0x0000000080402010UL,
 									0x0000000000804020UL, 0x0000000000008040UL, 0x0000000000000080UL };
 //diagonal Bitmap from botton right to up left
-constexpr Bitmap DIAGONAL_L[15] = { 0x0000000000000001UL, 0x0000000000000102UL, 0x0000000000010204UL, 0x0000000001020408UL,
+inline constexpr Bitmap DIAGONAL_L[15] = { 0x0000000000000001UL, 0x0000000000000102UL, 0x0000000000010204UL, 0x0000000001020408UL,
 									0x0000000102040810UL, 0x0000010204081020UL, 0x0001020408102040UL, 0x0102040810204080UL,
 									0x0204081020408000UL, 0x0408102040800000UL, 0x0810204080000000UL, 0x1020408000000000UL,
 									0x2040800000000000UL, 0x4080000000000000UL, 0x8000000000000000UL };
 
-constexpr int SQUARE_VALUE[6][64] = {
+inline constexpr int SQUARE_VALUE[6][64] = {
 		{//PAWN
 			0,  0,  0,  0,  0,  0,  0,  0,
 			50, 50, 50, 50, 50, 50, 50, 50,

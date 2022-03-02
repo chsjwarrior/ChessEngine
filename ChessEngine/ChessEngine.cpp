@@ -24,7 +24,11 @@ int main() {
 					moveMaker.makeUndo(b);
 					std::cout << b;
 				} else if (imput.compare("s") == 0) {
-					info.depth = 5;
+					do {
+						std::cout << "entry with the depth >";
+						std::cin >> imput;
+					} while (std::ranges::any_of(imput.begin(), imput.end(), [](char c) {return isdigit(c) == 0; }));
+					info.depth = std::stoi(imput);
 					searchPosition(b);
 				} else if (imput.compare("p") == 0) {
 					do {

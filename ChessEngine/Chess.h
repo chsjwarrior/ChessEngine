@@ -15,7 +15,9 @@ struct SearchInfo {
 
 	bool ponderMode = false;
 	bool stop = false;
-} static info;
+};
+
+inline SearchInfo info;
 
 void searchPosition(BitBoard& bitBoard);
 
