@@ -21,10 +21,6 @@ constexpr uInt MOVE_EMPTY = 0x00664040U;
 
 constexpr uShort BITBOARD_FLAGS_EMPTY = 0X0040U;
 
-constexpr Bitmap PATH_KING_CASTLE = 0x6000000000000060UL;
-
-constexpr Bitmap PATH_QUEEN_CASTLE = 0x0E0000000000000EUL;
-
 constexpr Bitmap SQUARE_MASK = 0x1UL;
 
 constexpr uChar MAX_MOVES = 128U;

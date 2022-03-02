@@ -13,27 +13,20 @@ void MoveGenerator::setCapture(const BitBoard& bitBoard, Move& move, const Color
 
 const bool MoveGenerator::canMakeKingCastle(const BitBoard& bitBoard, const Color color) const {
 	if (bitBoard.hasCastlePermission(KING_CASTLE, color)) {
-		Bitmap pathKingCastle = getIntersections(PATH_KING_CASTLE, color == WHITE ? RANKS[RANK_1] : RANKS[RANK_8]);
-		if (!hasIntersection(pathKingCastle, getUnion(friendPieces, enemyPieces))) {//isPathKingCastleClear
-			while (pathKingCastle)//isPathKingCastleSecury
-				if (attacks::isSquareAttacked(bitBoard, ~color, popLastSquareOf(pathKingCastle)))
-					return false;
-			return true;
-		}
+		const Rank relativeRank = color == WHITE ? RANK_1 : RANK_8;
+		if (!hasIntersection((FILES[FILE_F] | FILES[FILE_G]) & RANKS[relativeRank], friendPieces | enemyPieces)) //isCastlePathClear
+			if (!attacks::isSquareAttacked(bitBoard, ~color, getSquareOf(FILE_F, relativeRank)))//isCastlePathSecury
+				return !attacks::isSquareAttacked(bitBoard, ~color, getSquareOf(FILE_G, relativeRank));
 	}
 	return false;
 }
 
 const bool MoveGenerator::canMakeQueenCastle(const BitBoard& bitBoard, const Color color) const {
 	if (bitBoard.hasCastlePermission(QUEEN_CASTLE, color)) {
-		const Bitmap relativeRank = color == WHITE ? RANKS[RANK_1] : RANKS[RANK_8];
-		if (!hasIntersection(getIntersections(PATH_QUEEN_CASTLE, relativeRank), getUnion(friendPieces, enemyPieces))) {//isPathQueenCastleClear
-			Bitmap pathKingCastle = getIntersections(PATH_KING_CASTLE >> 3, relativeRank);
-			while (pathKingCastle)//isPathSecury
-				if (attacks::isSquareAttacked(bitBoard, ~color, popFirstSquareOf(pathKingCastle)))
-					return false;
-			return true;
-		}
+		const Rank relativeRank = color == WHITE ? RANK_1 : RANK_8;
+		if (!hasIntersection((FILES[FILE_B] | FILES[FILE_C] | FILES[FILE_D]) & RANKS[relativeRank], friendPieces | enemyPieces))//isCastlePathClear
+			if (!attacks::isSquareAttacked(bitBoard, ~color, getSquareOf(FILE_C, relativeRank)))//isCastlePathSecury
+				return !attacks::isSquareAttacked(bitBoard, ~color, getSquareOf(FILE_D, relativeRank));//isCastlePathSecury					
 	}
 	return false;
 }
