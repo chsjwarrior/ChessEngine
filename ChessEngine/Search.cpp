@@ -18,13 +18,41 @@ void swapForBestMove(const uShort index, Move moves[], const uShort size) {
 	std::swap(moves[index], moves[bestIndex]);
 }
 
-Move bestMove;
 struct Line {
 	uInt count = 0U;
 	Move moves[MAX_MOVES];
 };
 
-const int quiescence(BitBoard& bitBoard, int alpha, int beta) {
+int evaluatePosition(const BitBoard& bitBoard) {
+	Bitmap pieceBitmap;
+	int score = 0;
+	Square s = NONE_SQUARE;
+	const Square(*popSquareOf)(Bitmap&) = nullptr;
+
+	for (uChar c = WHITE; c <= BLACK; ++c) {
+		if (c == WHITE)
+			popSquareOf = popFirstSquareOf;
+		else if (c == BLACK)
+			popSquareOf = popLastSquareOf;
+		for (Piece p = PAWN; p != NONE_PIECE; ++p) {
+			pieceBitmap = bitBoard.getBitmapPiece(p, static_cast<Color>(c));
+			while (pieceBitmap) {
+				s = popSquareOf(pieceBitmap);
+
+				if (bitBoard.isBlackTime()) {
+					score += PIECE_VALUE[p];
+					s = ~s;
+				} else
+					score += -PIECE_VALUE[p];
+
+				score += SQUARE_VALUE[p][s];
+			}
+		}
+	}
+	return score;
+}
+
+int quiescence(BitBoard& bitBoard, int alpha, int beta) {
 	info.nodes++;
 
 	//if (info.nodes >= 2047)
@@ -34,9 +62,9 @@ const int quiescence(BitBoard& bitBoard, int alpha, int beta) {
 		return 0;
 
 	if (bitBoard.getPly() > MAX_DEPTH - 1)
-		return 0; //evaluatePosition(bitBoard);
+		return evaluatePosition(bitBoard);
 
-	int score = 0;//evaluate::evaluatePosition(bitBoard);
+	int score = evaluatePosition(bitBoard);
 
 	if (score >= beta)
 		return beta;
@@ -69,7 +97,7 @@ const int quiescence(BitBoard& bitBoard, int alpha, int beta) {
 	return alpha;
 }
 
-const int negaMax(BitBoard& bitBoard, short depth, int alpha, int beta, Line& pLine) {
+int negaMax(BitBoard& bitBoard, short depth, int alpha, int beta, Line& pLine) {
 	if (depth <= 0)
 		return quiescence(bitBoard, alpha, beta);
 
@@ -81,8 +109,8 @@ const int negaMax(BitBoard& bitBoard, short depth, int alpha, int beta, Line& pL
 	//if (bitBoard.isRepetition() || bitBoard.getFiftyMove() >= 100 && bitBoard.getPly())
 		//return 0;
 
-	//if (bitBoard.getPly() > MAX_DEPTH - 1)
-		//return 0;// evaluate::evaluatePosition(bitBoard);
+	if (bitBoard.getPly() > MAX_DEPTH - 1)
+		return evaluatePosition(bitBoard);
 
 	const Color color = bitBoard.getColorTime();
 	const bool inCheck = attacks::isSquareAttacked(bitBoard, ~color, getFirstSquareOf(bitBoard.getBitmapPiece(KING, color)));
@@ -93,8 +121,6 @@ const int negaMax(BitBoard& bitBoard, short depth, int alpha, int beta, Line& pL
 	Line line;
 	uInt legal = 0U;
 	int score = -30000;
-	int bestScore = score;
-	//Move bestMove;
 
 	Move moves[MAX_MOVES];
 	MoveGenerator& moveGenerator = MoveGenerator::getInstance();
@@ -114,24 +140,20 @@ const int negaMax(BitBoard& bitBoard, short depth, int alpha, int beta, Line& pL
 		//if (info.stop == true)
 			//return 0;
 
-		if (score > bestScore) {
-			bestScore = score;
-			//bestMove = moves[i];
-			if (score > alpha) {
-				alpha = score;
-				if (score >= beta) {
-					return beta;
-				}
-				pLine.moves[0] = moves[i];
-				memcpy(pLine.moves + 1, line.moves, line.count * sizeof(Move));
-				pLine.count = line.count + 1;
-			}
+		if (score >= beta)
+			return beta;
+
+		if (score > alpha) {
+			alpha = score;
+			pLine.moves[0] = moves[i];
+			memcpy(pLine.moves + 1, line.moves, line.count * sizeof(Move));
+			pLine.count = line.count + 1;
 		}
 	}
 
 	if (legal == 0) {
 		if (inCheck)
-			return -29000 + bitBoard.getPly();
+			return -30000 + bitBoard.getPly();
 		return 0;
 	}
 	return alpha;
@@ -140,7 +162,7 @@ const int negaMax(BitBoard& bitBoard, short depth, int alpha, int beta, Line& pL
 void searchPosition(BitBoard& bitBoard) {
 	info.nodes = 0UL;
 	info.stop = false;
-	
+
 	Line line;
 	int score = -30000;
 

@@ -26,36 +26,36 @@ public:
 	~Move() = default;
 
 	void operator()() noexcept;
-	const bool isEmpty() const noexcept;
+	bool isEmpty() const noexcept;
 
-	const Square getFrom() const noexcept;
+	Square getFrom() const noexcept;
 	void setFrom(const Square square) noexcept;
 
-	const Square getTo() const noexcept;
+	Square getTo() const noexcept;
 	void setTo(const Square square) noexcept;
 
-	const Piece getCaptured() const noexcept;
+	Piece getCaptured() const noexcept;
 	void setCaptured(const Piece piece) noexcept;
 
-	const Piece getPromotionPiece() const noexcept;
+	Piece getPromotionPiece() const noexcept;
 	void setPromotionPiece(const Piece piece) noexcept;
 
-	const bool isPawnStart() const noexcept;
+	bool isPawnStart() const noexcept;
 	void setPawnStart() noexcept;
 
-	const bool isEnPassantCapture() const noexcept;
+	bool isEnPassantCapture() const noexcept;
 	void setEnPassantCapture() noexcept;
 
-	const bool isPawnPromotion() const noexcept;
+	bool isPawnPromotion() const noexcept;
 	void setPawnPromotion() noexcept;
 
-	const bool isKingCastle() const noexcept;
+	bool isKingCastle() const noexcept;
 	void setKingCastle() noexcept;
 
-	const bool isQueenCastle() const noexcept;
+	bool isQueenCastle() const noexcept;
 	void setQueenCastle() noexcept;
 
-	const Color getColor() const noexcept;
+	Color getColor() const noexcept;
 	void setColor(const Color color) noexcept;
 
 	/*This function create incomplet Move without some flags like:

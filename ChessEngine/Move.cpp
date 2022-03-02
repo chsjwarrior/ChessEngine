@@ -7,11 +7,11 @@ void Move::operator()() noexcept {
 	score = 0;
 }
 
-const bool Move::isEmpty() const noexcept {
+bool Move::isEmpty() const noexcept {
 	return flags == MOVE_EMPTY;
 }
 
-const Square Move::getFrom() const noexcept {
+Square Move::getFrom() const noexcept {
 	return static_cast<Square>(flags & 0xFFU);
 }
 
@@ -19,7 +19,7 @@ void Move::setFrom(const Square square) noexcept {
 	flags = 0xFFFFFF00U & flags | square;
 }
 
-const Square Move::getTo() const noexcept {
+Square Move::getTo() const noexcept {
 	return static_cast<Square>(flags >> 8 & 0xFFU);
 }
 
@@ -27,7 +27,7 @@ void Move::setTo(const Square square) noexcept {
 	flags = 0xFFFF00FFU & flags | square << 8;
 }
 
-const Piece Move::getCaptured() const noexcept {
+Piece Move::getCaptured() const noexcept {
 	return static_cast<Piece>(flags >> 16 & 0xFU);
 }
 
@@ -35,7 +35,7 @@ void Move::setCaptured(const Piece piece) noexcept {
 	flags = 0xFFF0FFFFU & flags | piece << 16;
 }
 
-const Piece Move::getPromotionPiece() const noexcept {
+Piece Move::getPromotionPiece() const noexcept {
 	return static_cast<Piece>(flags >> 20 & 0xFU);
 }
 
@@ -43,7 +43,7 @@ void Move::setPromotionPiece(const Piece piece) noexcept {
 	flags = 0xFF0FFFFFU & flags | piece << 20;
 }
 
-const bool Move::isPawnStart() const noexcept {
+bool Move::isPawnStart() const noexcept {
 	return hasIntersection(flags, 0x1000000U);
 }
 
@@ -51,7 +51,7 @@ void Move::setPawnStart() noexcept {
 	flags = 0xE0FFFFFFU & flags | 0x1000000U;
 }
 
-const bool Move::isEnPassantCapture() const noexcept {
+bool Move::isEnPassantCapture() const noexcept {
 	return hasIntersection(flags, 0x2000000U);
 }
 
@@ -59,7 +59,7 @@ void Move::setEnPassantCapture() noexcept {
 	flags = 0xE0FFFFFFU & flags | 0x2000000U;
 }
 
-const bool Move::isPawnPromotion() const noexcept {
+bool Move::isPawnPromotion() const noexcept {
 	return hasIntersection(flags, 0x4000000U);
 }
 
@@ -67,7 +67,7 @@ void Move::setPawnPromotion() noexcept {
 	flags = 0xE0FFFFFFU & flags | 0x4000000U;
 }
 
-const bool Move::isKingCastle() const noexcept {
+bool Move::isKingCastle() const noexcept {
 	return hasIntersection(flags, 0x8000000U);
 }
 
@@ -75,7 +75,7 @@ void Move::setKingCastle() noexcept {
 	flags = 0xE0FFFFFFU & flags | 0x8000000U;
 }
 
-const bool Move::isQueenCastle() const noexcept {
+bool Move::isQueenCastle() const noexcept {
 	return hasIntersection(flags, 0x10000000U);
 }
 
@@ -83,7 +83,7 @@ void Move::setQueenCastle() noexcept {
 	flags = 0xE0FFFFFFU & flags | 0x10000000U;
 }
 
-const Color Move::getColor() const noexcept {
+Color Move::getColor() const noexcept {
 	return static_cast<Color>(flags >> 29U);
 }
 

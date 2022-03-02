@@ -123,7 +123,7 @@ void MoveMaker::makeUndo(BitBoard& bitBoard) const {
 	}
 }
 
-const bool MoveMaker::makeMove(BitBoard& bitBoard, const Move& move) const {
+bool MoveMaker::makeMove(BitBoard& bitBoard, const Move& move) const {
 	if (move.isEmpty())
 		return false;
 

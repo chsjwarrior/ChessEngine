@@ -1,6 +1,17 @@
 #include <chrono>
 #include "Chess.h"
 
+constexpr char TEST_FEN1[] = "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8";
+/*
+TEST_FEN1 do problem in depth 3
+D	N
+1	44
+2	1,486
+3	62,379
+4	2,103,487
+5	89,941,194
+*/
+
 const Move findMove(BitBoard& bitBoard, const char* entry);
 
 int main() {
@@ -9,7 +20,7 @@ int main() {
 
 	if (imput.compare("uci") != 0) {
 		BitBoard b;
-		b.parseFEN(START_FEN);
+		b.parseFEN("rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8");
 		std::cout << b;
 
 		Move move;

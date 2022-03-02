@@ -13,11 +13,11 @@ class MoveGenerator {
 	/* This function sets the captured piece in the Move if any */
 	void setCapture(const BitBoard& bitBoard, Move& move, const Color color, const Square to) const;
 	/* This function tests if is possible to make King castle */
-	const bool canMakeKingCastle(const BitBoard& bitBoard, const Color color) const;
+	bool canMakeKingCastle(const BitBoard& bitBoard, const Color color) const;
 	/* This function tests if is possible to make Queen castle */
-	const bool canMakeQueenCastle(const BitBoard& bitBoard, const Color color) const;
+	bool canMakeQueenCastle(const BitBoard& bitBoard, const Color color) const;
 	/* This function returns a bitmap with the attack squares */
-	const Bitmap getPiecesMoves(const BitBoard& bitBoard, const Piece piece, const Color color, const Square square) const;
+	Bitmap getPiecesMoves(const BitBoard& bitBoard, const Piece piece, const Color color, const Square square) const;
 	/* This function populates an array with the moves and returns the size */
 	void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece piece, const Color color, const Square from, Bitmap attacks);
 
@@ -28,9 +28,9 @@ public:
 	MoveGenerator& operator=(MoveGenerator&&) = delete;
 
 	/* This function generate all moves, illegals included */
-	const uShort generateMoves(const BitBoard& bitBoard, Move moves[]);
+	uShort generateMoves(const BitBoard& bitBoard, Move moves[]);
 	/* This function generate all capture moves, illegals included */
-	const uShort generateCaptureMoves(const BitBoard& bitBoard, Move moves[]);
+	uShort generateCaptureMoves(const BitBoard& bitBoard, Move moves[]);
 
 	static MoveGenerator& getInstance();
 };

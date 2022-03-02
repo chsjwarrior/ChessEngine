@@ -25,11 +25,11 @@ void BitBoard::Undo::operator()() {
 	key = 0UL;
 }
 
-const Square BitBoard::Undo::getEnPassantSquare() const {
+Square BitBoard::Undo::getEnPassantSquare() const {
 	return static_cast<Square>(flags & 0x00FFU);
 }
 
-const bool BitBoard::Undo::hasCastlePermission(const CastleFlags castleFlag, const Color color) const {
+bool BitBoard::Undo::hasCastlePermission(const CastleFlags castleFlag, const Color color) const {
 	return hasIntersection(flags >> 8, 1 << (castleFlag + color));
 }
 
@@ -68,7 +68,7 @@ void BitBoard::unsetPieceOnSquare(const Piece piece, const Color color, const Sq
 	key ^= hashKeys.pieceKey[square][piece][color];
 }
 
-const Piece BitBoard::getPieceFromSquare(const Color color, const Square square) const {
+Piece BitBoard::getPieceFromSquare(const Color color, const Square square) const {
 	const Bitmap bitmap = getBitmapOf(square);
 	Piece piece = NONE_PIECE;
 
@@ -79,14 +79,14 @@ const Piece BitBoard::getPieceFromSquare(const Color color, const Square square)
 	return piece;
 }
 
-const Bitmap BitBoard::getBitmapAllPieces(const Color color) const {
+Bitmap BitBoard::getBitmapAllPieces(const Color color) const {
 	const Bitmap bitmap = bitMaps[PAWN][color] | bitMaps[KNIGHT][color] |
 		bitMaps[BISHOP][color] | bitMaps[ROOK][color] |
 		bitMaps[QUEEN][color] | bitMaps[KING][color];
 	return bitmap;
 }
 
-const Square BitBoard::getEnPassantSquare() const {
+Square BitBoard::getEnPassantSquare() const {
 	return static_cast<Square>(flags & 0x00FFU);
 }
 
@@ -98,7 +98,7 @@ void BitBoard::setEnPassantSquare(const Square square) {
 		key ^= hashKeys.enPassantColumn[getFileOf(square)];
 }
 
-const bool BitBoard::hasCastlePermission(const CastleFlags castleFlag, const Color color) const {
+bool BitBoard::hasCastlePermission(const CastleFlags castleFlag, const Color color) const {
 	return hasIntersection(flags >> 8, 1 << (castleFlag + color));
 }
 
@@ -113,38 +113,38 @@ void BitBoard::setCastlePermission(const CastleFlags castleFlag, const Color col
 	}
 }
 
-const bool BitBoard::isRepetition() const {
+bool BitBoard::isRepetition() const {
 	for (uShort i = historyCount - fiftyMove; i < historyCount; ++i)
 		if (key == history[i].key)
 			return true;
 	return false;
 }
 
-const Bitmap BitBoard::getBitmapPiece(const Piece piece, const Color color) const {
+Bitmap BitBoard::getBitmapPiece(const Piece piece, const Color color) const {
 	return bitMaps[piece][color];
 }
 
-const uLong BitBoard::getHashkey() const {
+uLong BitBoard::getHashkey() const {
 	return key;
 }
 
-const uShort BitBoard::getFiftyMove() const {
+uShort BitBoard::getFiftyMove() const {
 	return fiftyMove;
 }
 
-const uShort BitBoard::getPly() const {
+uShort BitBoard::getPly() const {
 	return ply;
 }
 
-const bool BitBoard::isWhiteTime() const {
+bool BitBoard::isWhiteTime() const {
 	return whiteTime;
 }
 
-const bool BitBoard::isBlackTime() const {
+bool BitBoard::isBlackTime() const {
 	return !whiteTime;
 }
 
-const Color BitBoard::getColorTime() const {
+Color BitBoard::getColorTime() const {
 	return whiteTime ? WHITE : BLACK;
 }
 

@@ -26,5 +26,5 @@ public:
 	/* This function undo the last move */
 	void makeUndo(BitBoard& bitBoard) const;
 	/* This function make a move */
-	const bool makeMove(BitBoard& bitBoard, const Move& move) const;
+	bool makeMove(BitBoard& bitBoard, const Move& move) const;
 };

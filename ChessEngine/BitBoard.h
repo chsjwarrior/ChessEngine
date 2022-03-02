@@ -39,8 +39,8 @@ class BitBoard {
 		~Undo() = default;
 
 		void operator()();
-		const Square getEnPassantSquare() const;
-		const bool hasCastlePermission(const CastleFlags castleFlag, const Color color) const;
+		Square getEnPassantSquare() const;
+		bool hasCastlePermission(const CastleFlags castleFlag, const Color color) const;
 	} history[MAX_MOVES];//128		
 
 	friend class MoveMaker;
@@ -61,33 +61,33 @@ public:
 
 	void unsetPieceOnSquare(const Piece piece, const Color color, const Square square);
 
-	const Piece getPieceFromSquare(const Color color, const Square square) const;
+	Piece getPieceFromSquare(const Color color, const Square square) const;
 
-	const Bitmap getBitmapAllPieces(const Color color) const;
+	Bitmap getBitmapAllPieces(const Color color) const;
 
-	const Square getEnPassantSquare() const;
+	Square getEnPassantSquare() const;
 
 	void setEnPassantSquare(const Square square);
 
-	const bool hasCastlePermission(const CastleFlags castleFlag, const Color color) const;
+	bool hasCastlePermission(const CastleFlags castleFlag, const Color color) const;
 
 	void setCastlePermission(const CastleFlags castleFlag, const Color color, const bool permission);
 
-	const bool isRepetition() const;
+	bool isRepetition() const;
 
-	const Bitmap getBitmapPiece(const Piece piece, const Color color) const;
+	Bitmap getBitmapPiece(const Piece piece, const Color color) const;
 
-	const uLong getHashkey() const;
+	uLong getHashkey() const;
 
-	const uShort getFiftyMove() const;
+	uShort getFiftyMove() const;
 
-	const uShort getPly() const;
+	uShort getPly() const;
 
-	const bool isWhiteTime() const;
+	bool isWhiteTime() const;
 
-	const bool isBlackTime() const;
+	bool isBlackTime() const;
 
-	const Color getColorTime() const;
+	Color getColorTime() const;
 
 	const std::string getFEN() const;
 	/* This funcion still needs to be improve on read fifty move and ply*/

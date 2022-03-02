@@ -1,7 +1,7 @@
 #include "Attacks.h"
 
 namespace attacks {
-	const Bitmap getBishopMoves(const Bitmap allPieces, const File file, const Rank rank, const Bitmap squareBitmap) {
+	Bitmap getBishopMoves(const Bitmap allPieces, const File file, const Rank rank, const Bitmap squareBitmap) {
 		const Bitmap reverseSquareBitmap = reverse(squareBitmap);
 
 		uShort index = file + rank;
@@ -19,7 +19,7 @@ namespace attacks {
 		return ldMoves | dlMoves;
 	}
 
-	const Bitmap getRookMoves(const Bitmap allPieces, const File file, const Rank rank, const Bitmap squareBitmap) {
+	Bitmap getRookMoves(const Bitmap allPieces, const File file, const Rank rank, const Bitmap squareBitmap) {
 		const Bitmap reverseSquareBitmap = reverse(squareBitmap);
 
 		Bitmap aux1 = allPieces - 2 * squareBitmap;
@@ -33,7 +33,7 @@ namespace attacks {
 		return hMoves | vMoves;
 	}
 
-	const Bitmap getKnightMoves(const Bitmap squareBitmap) {
+	Bitmap getKnightMoves(const Bitmap squareBitmap) {
 		Bitmap moves = squareBitmap << 10 & ~(FILES[FILE_A] | FILES[FILE_B]);
 		moves |= squareBitmap << 17 & ~FILES[FILE_A];
 		moves |= squareBitmap << 6 & ~(FILES[FILE_G] | FILES[FILE_H]);
@@ -47,7 +47,7 @@ namespace attacks {
 		return moves;
 	}
 
-	const Bitmap getKingMoves(const Bitmap squareBitmap) {
+	Bitmap getKingMoves(const Bitmap squareBitmap) {
 		Bitmap moves = squareBitmap << 8 | squareBitmap >> 8;
 		moves |= squareBitmap << 1 & ~FILES[FILE_A];
 		moves |= squareBitmap << 9 & ~FILES[FILE_A];
@@ -60,7 +60,7 @@ namespace attacks {
 		return moves;
 	}
 
-	const Bitmap getPawnMoves(const Bitmap allPieces, const Color color, const Bitmap enPassantBitmap, const Bitmap squareBitmap) {
+	Bitmap getPawnMoves(const Bitmap allPieces, const Color color, const Bitmap enPassantBitmap, const Bitmap squareBitmap) {
 		Bitmap moves = 0;
 		if (color == WHITE) {
 			//normal move and start move
@@ -84,7 +84,7 @@ namespace attacks {
 		return moves;
 	}
 
-	const bool isSquareAttacked(const BitBoard& bitBoard, const Color color, const Square square) {
+	bool isSquareAttacked(const BitBoard& bitBoard, const Color color, const Square square) {
 		const Bitmap squareBitmap = getBitmapOf(square);
 		//King
 		Bitmap attacks = getKingMoves(squareBitmap);
