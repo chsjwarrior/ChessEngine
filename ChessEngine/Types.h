@@ -1,11 +1,11 @@
 #pragma once
 #include <iostream>
 
-typedef unsigned long long int Bitmap;
-typedef unsigned long long int uLong;
-typedef unsigned int uInt;
-typedef unsigned short int uShort;
-typedef unsigned char uChar;
+using Bitmap = unsigned long long;
+using uLong = unsigned long long;
+using uInt = unsigned int;
+using uShort = unsigned short;
+using uChar = unsigned char;
 
 inline constexpr char NAME[] = "ChessEngine 1.0";
 
@@ -220,8 +220,7 @@ constexpr std::ostream& operator<<(std::ostream& os, const Square& square) {
 		const File file = getFileOf(square);
 		const Rank rank = getRankOf(square);
 		os << file << rank;
-	}
-	else
+	} else
 		os << "NONE SQUARE";
 	return os;
 }

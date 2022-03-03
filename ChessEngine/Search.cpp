@@ -53,16 +53,15 @@ int evaluatePosition(const BitBoard& bitBoard) {
 }
 
 int quiescence(BitBoard& bitBoard, int alpha, int beta) {
-	info.nodes++;
-
+	++info.nodes;
 	//if (info.nodes >= 2047)
 		//checkUp();
 
-	if (bitBoard.isRepetition() || bitBoard.getFiftyMove() >= 100)
-		return 0;
+	//if (bitBoard.isRepetition() || bitBoard.getFiftyMove() >= 100)
+		//return 0;
 
-	if (bitBoard.getPly() > MAX_DEPTH - 1)
-		return evaluatePosition(bitBoard);
+	//if (bitBoard.getPly() > MAX_DEPTH - 1)
+		//return evaluatePosition(bitBoard);
 
 	int score = evaluatePosition(bitBoard);
 
@@ -119,7 +118,7 @@ int negaMax(BitBoard& bitBoard, short depth, int alpha, int beta, Line& pLine) {
 
 	Line line;
 	uInt legal = 0U;
-	int score = -30000;
+	int score = -30000;	
 
 	Move moves[MAX_MOVES];
 	uShort moveCount = moveGenerator::generateMoves(bitBoard, moves);
@@ -142,7 +141,7 @@ int negaMax(BitBoard& bitBoard, short depth, int alpha, int beta, Line& pLine) {
 			return beta;
 
 		if (score > alpha) {
-			alpha = score;
+				alpha = score;
 			pLine.moves[0] = moves[i];
 			memcpy(pLine.moves + 1, line.moves, line.count * sizeof(Move));
 			pLine.count = line.count + 1;

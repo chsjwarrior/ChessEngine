@@ -17,14 +17,11 @@ const Move findMove(BitBoard& bitBoard, const char* entry);
 int main() {
 	std::string imput;
 	std::cin >> imput;
-
+	
 	if (imput.compare("uci") != 0) {
 		BitBoard b;
 		b.parseFEN(START_FEN);
 		std::cout << b;
-
-		Move move;
-		MoveMaker& moveMaker = MoveMaker::getInstance();
 
 		while (imput.compare("q") != 0) {
 			std::cout << "please enter the move >";
@@ -32,7 +29,7 @@ int main() {
 
 			if (imput.size() == 1) {
 				if (imput.compare("t") == 0) {
-					moveMaker.makeUndo(b);
+					MoveMaker::getInstance().makeUndo(b);
 					std::cout << b;
 				} else if (imput.compare("s") == 0) {
 					do {
@@ -55,9 +52,9 @@ int main() {
 				} else if (imput.compare("q") == 0)
 					std::cout << "Bye" << std::endl;
 			} else if (imput.size() >= 4) {
-				move = findMove(b, imput.c_str());
+				Move move = findMove(b, imput.c_str());
 				if (!move.isEmpty()) {
-					moveMaker.makeMove(b, move);
+					MoveMaker::getInstance().makeMove(b, move);
 					if (b.isRepetition())
 						std::cout << "is repeating..." << std::endl;
 				} else
@@ -77,7 +74,7 @@ const Move findMove(BitBoard& bitBoard, const char* entry) {
 	Move target;
 	target.parseEntry(entry);
 
-	Move moves[MAX_MOVES];	
+	Move moves[MAX_MOVES];
 	uShort moveCount = moveGenerator::generateMoves(bitBoard, moves);
 	Piece promotion = NONE_PIECE;
 
