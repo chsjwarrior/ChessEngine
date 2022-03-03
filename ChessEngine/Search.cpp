@@ -111,7 +111,7 @@ int negaMax(BitBoard& bitBoard, short depth, int alpha, int beta, Line& pLine) {
 		return evaluatePosition(bitBoard);
 
 	const Color color = bitBoard.getColorTime();
-	const bool inCheck = attacks::isSquareAttacked(bitBoard, ~color, getFirstSquareOf(bitBoard.getBitmapPiece(KING, color)));
+	const bool inCheck = isSquareAttacked(bitBoard, ~color, getFirstSquareOf(bitBoard.getBitmapPiece(KING, color)));
 
 	if (inCheck)
 		++depth;

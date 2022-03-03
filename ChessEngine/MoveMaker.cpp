@@ -175,7 +175,7 @@ bool MoveMaker::makeMove(BitBoard& bitBoard, const Move& move) const {
 	bitBoard.whiteTime = !bitBoard.whiteTime;
 	bitBoard.key ^= bitBoard.hashKeys.sideKey;
 
-	if (attacks::isSquareAttacked(bitBoard, ~color, getFirstSquareOf(bitBoard.bitMaps[KING][color]))) {
+	if (isSquareAttacked(bitBoard, ~color, getFirstSquareOf(bitBoard.bitMaps[KING][color]))) {
 		makeUndo(bitBoard);
 		return false;
 	}

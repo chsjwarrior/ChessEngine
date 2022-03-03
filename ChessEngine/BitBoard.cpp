@@ -2,7 +2,6 @@
 
 //0===============================HASHKEY==============================0
 BitBoard::Zobrist::Zobrist() {
-	std::cout << "Zobrist()" << std::endl;
 	for (Square s = A1; s < NONE_SQUARE; ++s)
 		for (Piece p = PAWN; p < NONE_PIECE; ++p) {
 			pieceKey[s][p][0] = static_cast<uLong>(std::rand()) << 32 | static_cast<uLong>(std::rand()) << 16 | std::rand();
