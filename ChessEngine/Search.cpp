@@ -1,11 +1,11 @@
 #include "Chess.h"
 
-void checkUp() {
+static void checkUp() {
 	//if (info.stopTime > 0 && getTimeMilliseconds() > info.stopTime)
 		//info.stop = true;
 }
 
-void swapForBestMove(const uShort index, Move moves[], const uShort size) {
+static void swapForBestMove(const uShort index, Move moves[], const uShort size) {
 	int bestScore = -30000;
 	int bestIndex = 0;
 
@@ -23,7 +23,7 @@ struct Line {
 	Move moves[MAX_MOVES];
 };
 
-int evaluatePosition(const BitBoard& bitBoard) {
+static int evaluatePosition(const BitBoard& bitBoard) {
 	Bitmap pieceBitmap;
 	int score = 0;
 	Square s = NONE_SQUARE;
@@ -52,7 +52,7 @@ int evaluatePosition(const BitBoard& bitBoard) {
 	return score;
 }
 
-int quiescence(BitBoard& bitBoard, int alpha, int beta) {
+static int quiescence(BitBoard& bitBoard, int alpha, int beta) {
 	++info.nodes;
 	//if (info.nodes >= 2047)
 		//checkUp();
@@ -95,7 +95,7 @@ int quiescence(BitBoard& bitBoard, int alpha, int beta) {
 	return alpha;
 }
 
-int negaMax(BitBoard& bitBoard, short depth, int alpha, int beta, Line& pLine) {
+static int negaMax(BitBoard& bitBoard, short depth, int alpha, int beta, Line& pLine) {
 	if (depth <= 0)
 		return quiescence(bitBoard, alpha, beta);
 

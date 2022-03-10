@@ -1,6 +1,6 @@
 #include "Chess.h"
 
-void perft(BitBoard& bitBoard, const short depth, uLong& leafNodes) {
+static void perft(BitBoard& bitBoard, const short depth, uLong& leafNodes) {
 	if (depth <= 0) {
 		++leafNodes;
 		return;
