@@ -3,7 +3,7 @@
 
 constexpr char TEST_FEN1[] = "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8";
 /*
-TEST_FEN1 do problem in depth 3
+TEST_FEN1 does problem in depth 3
 D	N
 1	44
 2	1,486

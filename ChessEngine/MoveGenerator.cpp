@@ -1,8 +1,8 @@
 #include "MoveGenerator.h"
 
-Bitmap friendPieces;
-Bitmap enemyPieces;
-uShort movesCount;
+static Bitmap friendPieces;
+static Bitmap enemyPieces;
+static uShort movesCount;
 
 /* This function sets the captured piece in the Move if any */
 static void setCapture(const BitBoard& bitBoard, Move& move, const Color color, const Square to) {

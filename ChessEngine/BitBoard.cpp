@@ -69,11 +69,10 @@ void BitBoard::unsetPieceOnSquare(const Piece piece, const Color color, const Sq
 
 Piece BitBoard::getPieceFromSquare(const Color color, const Square square) const {
 	const Bitmap bitmap = getBitmapOf(square);
-	Piece piece = NONE_PIECE;
 
-	for (Piece p = PAWN; p != NONE_PIECE && piece == NONE_PIECE; ++p)
-		if ((bitMaps[p][color] & bitmap) != 0)
-			piece = p;
+	Piece piece = PAWN;
+	while (piece != NONE_PIECE && (bitMaps[piece][color] & bitmap) == 0)
+		++piece;
 
 	return piece;
 }
