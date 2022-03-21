@@ -1,5 +1,4 @@
-#include <chrono>
-#include "Chess.h"
+#include "Uci.h"
 
 constexpr char TEST_FEN1[] = "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8";
 /*
@@ -17,7 +16,7 @@ const Move findMove(BitBoard& bitBoard, const char* entry);
 int main() {
 	std::string imput;
 	std::cin >> imput;
-	
+
 	if (imput.compare("uci") != 0) {
 		BitBoard b;
 		b.parseFEN(START_FEN);
@@ -42,13 +41,12 @@ int main() {
 					do {
 						std::cout << "entry with the depth >";
 						std::cin >> imput;
-					} while (std::ranges::any_of(imput.begin(), imput.end(), [](char c) {return isdigit(c) == 0; }));
+					} while (std::ranges::any_of(imput.begin(), imput.end(), [](char c) {return isdigit(c) != 0; }));
 					auto start = std::chrono::high_resolution_clock::now();
 					perftTest(b, std::stoi(imput));
 					auto stop = std::chrono::high_resolution_clock::now();
 					auto duration = duration_cast<std::chrono::milliseconds>(stop - start);
-					std::cout << "Time taken by function: "
-						<< duration.count() << " milliseconds" << std::endl;
+					std::cout << "Time taken by function: " << duration.count() << " milliseconds" << std::endl;
 				} else if (imput.compare("q") == 0)
 					std::cout << "Bye" << std::endl;
 			} else if (imput.size() >= 4) {
@@ -63,10 +61,10 @@ int main() {
 			}
 		}
 	}
-	//else {
-		//Uci uci;
-		//uci.loop();
-	//}
+	else {
+		Uci uci;
+		uci.loop();
+	}
 	return 0;
 }
 

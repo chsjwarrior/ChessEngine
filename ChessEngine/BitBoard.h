@@ -19,7 +19,7 @@ class BitBoard {
 	uShort historyCount;
 	bool whiteTime;
 
-	struct Zobrist {
+	const struct Zobrist {
 		uLong pieceKey[NONE_SQUARE][NONE_PIECE][2];
 		uLong enPassantColumn[NONE_FILE];
 		uLong castleKey[4];
@@ -27,6 +27,11 @@ class BitBoard {
 
 		Zobrist();
 		~Zobrist() = default;
+
+		Zobrist(Zobrist&) = delete;
+		Zobrist(Zobrist&&) = delete;
+		Zobrist& operator=(Zobrist&) = delete;
+		Zobrist& operator=(Zobrist&&) = delete;
 	} hashKeys;
 
 	struct Undo {
@@ -37,6 +42,11 @@ class BitBoard {
 
 		Undo();
 		~Undo() = default;
+
+		Undo(Undo&) = delete;
+		Undo(Undo&&) = delete;
+		Undo& operator=(Undo&) = delete;
+		Undo& operator=(Undo&&) = delete;
 
 		void operator()();
 		Square getEnPassantSquare() const;

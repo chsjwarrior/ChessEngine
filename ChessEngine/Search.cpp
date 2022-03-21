@@ -71,7 +71,7 @@ static int quiescence(BitBoard& bitBoard, int alpha, int beta) {
 	if (score > alpha)
 		alpha = score;
 
-	Move moves[MAX_MOVES];	
+	Move moves[MAX_MOVES];
 	uShort movesCount = moveGenerator::generateCaptureMoves(bitBoard, moves);
 	MoveMaker& moveMaker = MoveMaker::getInstance();
 
@@ -111,14 +111,14 @@ static int negaMax(BitBoard& bitBoard, short depth, int alpha, int beta, Line& p
 		return evaluatePosition(bitBoard);
 
 	const Color color = bitBoard.getColorTime();
-	const bool inCheck = isSquareAttacked(bitBoard, ~color, getFirstSquareOf(bitBoard.getBitmapPiece(KING, color)));
+	const bool inCheck = attacks::isSquareAttacked(bitBoard, ~color, getFirstSquareOf(bitBoard.getBitmapPiece(KING, color)));
 
 	if (inCheck)
 		++depth;
 
 	Line line;
 	uInt legal = 0U;
-	int score = -30000;	
+	int score = -30000;
 
 	Move moves[MAX_MOVES];
 	uShort moveCount = moveGenerator::generateMoves(bitBoard, moves);
@@ -141,7 +141,7 @@ static int negaMax(BitBoard& bitBoard, short depth, int alpha, int beta, Line& p
 			return beta;
 
 		if (score > alpha) {
-				alpha = score;
+			alpha = score;
 			pLine.moves[0] = moves[i];
 			memcpy(pLine.moves + 1, line.moves, line.count * sizeof(Move));
 			pLine.count = line.count + 1;

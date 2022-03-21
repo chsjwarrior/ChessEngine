@@ -93,6 +93,11 @@ void Move::setColor(const Color color) noexcept {
 
 void Move::parseEntry(const char* entry) {
 	(*this)();
+
+	const size_t length = strlen(entry);
+	if (length < 4)
+		return;
+
 	if (entry[0] > 'h' || entry[0] < 'a') {
 		std::cerr << "Entry error at index 0" << std::endl;
 		return;
@@ -116,19 +121,20 @@ void Move::parseEntry(const char* entry) {
 	setFrom(from);
 	setTo(to);
 
-	if (entry[4] == 'q') {
-		setPawnPromotion();
-		setPromotionPiece(QUEEN);
-	} else if (entry[4] == 'r') {
-		setPawnPromotion();
-		setPromotionPiece(ROOK);
-	} else if (entry[4] == 'b') {
-		setPawnPromotion();
-		setPromotionPiece(BISHOP);
-	} else if (entry[4] == 'n') {
-		setPawnPromotion();
-		setPromotionPiece(KNIGHT);
-	}
+	if (length >= 5) //if (entry[4] != '\0')
+		if (entry[4] == 'q') {
+			setPawnPromotion();
+			setPromotionPiece(QUEEN);
+		} else if (entry[4] == 'r') {
+			setPawnPromotion();
+			setPromotionPiece(ROOK);
+		} else if (entry[4] == 'b') {
+			setPawnPromotion();
+			setPromotionPiece(BISHOP);
+		} else if (entry[4] == 'n') {
+			setPawnPromotion();
+			setPromotionPiece(KNIGHT);
+		}
 }
 
 std::ostream& operator<<(std::ostream& os, const Move& move) {

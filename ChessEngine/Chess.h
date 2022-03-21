@@ -1,4 +1,5 @@
 #pragma once
+#include <chrono>
 #include "MoveGenerator.h"
 
 struct SearchInfo {

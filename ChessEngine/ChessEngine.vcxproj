@@ -149,6 +149,7 @@
     <ClCompile Include="MoveMaker.cpp" />
     <ClCompile Include="Perft.cpp" />
     <ClCompile Include="Search.cpp" />
+    <ClCompile Include="Uci.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Attacks.h" />
@@ -158,6 +159,7 @@
     <ClInclude Include="MoveGenerator.h" />
     <ClInclude Include="MoveMaker.h" />
     <ClInclude Include="Types.h" />
+    <ClInclude Include="Uci.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
