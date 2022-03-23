@@ -3,10 +3,10 @@
 #include "MoveGenerator.h"
 
 struct SearchInfo {
-	int startTime = 0;
-	int stopTime = 0;
-	int moveTime = 0;
-	int time = 0;
+	long long startTime = 0L;
+	long long stopTime = 0L;
+	long long moveTime = 0L;
+	long long time = 0L;
 	int inc = 0;
 	int movestogo = 0;
 	short depth = 1;

@@ -15,7 +15,7 @@ inline constexpr char START_FEN[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR
 
 inline constexpr char PIECE_CHAR[6][2] = { {'P','p'}, {'N','n'}, {'B','b'}, {'R','r'}, {'Q','q'}, {'K','k'} };
 
-inline constexpr int PIECE_VALUE[7] = { 10,30,30,50,90,900,0 };
+inline constexpr int PIECE_VALUE[] = { 10,30,30,50,90,900,0 };
 
 inline constexpr uInt MOVE_EMPTY = 0x00664040U;
 
