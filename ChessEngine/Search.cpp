@@ -46,6 +46,9 @@ static int evaluatePosition(const BitBoard& bitBoard) {
 					score += -PIECE_VALUE[p];
 
 				score += SQUARE_VALUE[p][s];
+
+
+				score += moveGenerator::generateMoves(bitBoard, nullptr);
 			}
 		}
 	}

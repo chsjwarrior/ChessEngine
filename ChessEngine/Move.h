@@ -10,14 +10,14 @@ class Move {
 	00000000 11110000 00000000 00000000 promotion piece 0x00F00000U;
 	00000001 00000000 00000000 00000000 is pawn start 0x01000000U;
 	00000010 00000000 00000000 00000000 is pawn en passant capture 0x02000000U;
-	00000100 00000000 00000000 00000000 is pawn promotion 0x04000000U;
-	00001000 00000000 00000000 00000000 is king castle move 0x08000000U;
-	00010000 00000000 00000000 00000000 is queen castle move 0x10000000U;
-	00100000 00000000 00000000 00000000 color move 0x20000000U;
+	00000100 00000000 00000000 00000000 is king castle move 0x04000000U;
+	00001000 00000000 00000000 00000000 is queen castle move 0x08000000U;
+	00010000 00000000 00000000 00000000 color move 0x10000000U;
 	*/
+public:
 	uInt flags;
 
-public:
+
 	int score;
 
 	friend std::ostream& operator<<(std::ostream& os, const Move& move);
@@ -37,6 +37,8 @@ public:
 	Piece getCaptured() const noexcept;
 	void setCaptured(const Piece piece) noexcept;
 
+	bool isCapture() const noexcept;
+
 	Piece getPromotionPiece() const noexcept;
 	void setPromotionPiece(const Piece piece) noexcept;
 
@@ -47,7 +49,6 @@ public:
 	void setEnPassantCapture() noexcept;
 
 	bool isPawnPromotion() const noexcept;
-	void setPawnPromotion() noexcept;
 
 	bool isKingCastle() const noexcept;
 	void setKingCastle() noexcept;

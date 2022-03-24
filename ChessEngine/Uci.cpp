@@ -6,6 +6,34 @@ static long long getMilliseconds() {
 	return duration.count();
 }
 
+const Move Uci::findMove(BitBoard& bitBoard, const char* entry) {
+	Move target;
+	target.parseEntry(entry);
+
+	Move moves[MAX_MOVES];
+	uShort moveCount = moveGenerator::generateMoves(bitBoard, moves);
+	Piece promotion = NONE_PIECE;
+
+	for (Move* move = moves; move != moves + moveCount; ++move) {
+		if (move->getFrom() == target.getFrom() && move->getTo() == target.getTo()) {
+			if (move->isPawnPromotion() && target.isPawnPromotion()) {
+				promotion = move->getPromotionPiece();
+				if (promotion == QUEEN && target.getPromotionPiece() == promotion)
+					return *move;
+				else if (promotion == ROOK && target.getPromotionPiece() == promotion)
+					return *move;
+				else if (promotion == BISHOP && target.getPromotionPiece() == promotion)
+					return *move;
+				else if (promotion == KNIGHT && target.getPromotionPiece() == promotion)
+					return *move;
+			} else
+				return *move;
+		}
+	}
+	target();
+	return target;
+}
+
 void Uci::inputPosition(BitBoard& bitBoard, std::istringstream& iss) {
 	std::string input;
 	iss >> input;
@@ -17,15 +45,14 @@ void Uci::inputPosition(BitBoard& bitBoard, std::istringstream& iss) {
 		bitBoard.parseFEN(fen.c_str());
 	} else if (input == START_POS) {
 		bitBoard.parseFEN(START_FEN);
-		iss >> input;
+		iss >> input;//consume 'moves' token
 	} else
 		return;
 
 	MoveMaker& moveMaker = MoveMaker::getInstance();
 	Move move;
-	while (true) {
-		iss >> input;
-		move.parseEntry(input.c_str());
+	while (iss >> input) {
+		move = findMove(bitBoard, input.c_str());
 		if (move.isEmpty())
 			break;
 		moveMaker.makeMove(bitBoard, move);
@@ -146,13 +173,11 @@ void Uci::loop() {
 
 		if (input == POSITION) {
 			inputPosition(bitBoard, iss);
-			std::cout << bitBoard;
 		} else if (input == GO) {
 			std::cout << "Seen go.." << std::endl;
 			inputGo(bitBoard, iss);
 		} else if (input == UCI_NEW_GAME) {
-			iss.str("position startpos\n");
-			inputPosition(bitBoard, iss);
+
 		} else if (input == UCI)
 			inputUCI();
 		else if (input == SET_OPTION)

@@ -11,91 +11,56 @@ D	N
 5	89,941,194
 */
 
-const Move findMove(BitBoard& bitBoard, const char* entry);
-
 int main() {
-	std::string imput;
-	std::cin >> imput;
+	std::string input;
+	std::cin >> input;
 
-	if (imput.compare("uci") != 0) {
+	if (input.compare("uci") == 0) {
+		Uci uci;
+		//uci.loop();
+
 		BitBoard b;
 		b.parseFEN(START_FEN);
 		std::cout << b;
 
-		while (imput.compare("q") != 0) {
+		while (input.compare("q") != 0) {
 			std::cout << "please enter the move >";
-			std::cin >> imput;
+			std::cin >> input;
 
-			if (imput.size() == 1) {
-				if (imput.compare("t") == 0) {
+			if (input.size() == 1) {
+				if (input.compare("t") == 0) {
 					MoveMaker::getInstance().makeUndo(b);
 					std::cout << b;
-				} else if (imput.compare("s") == 0) {
+				} else if (input.compare("s") == 0) {
 					do {
 						std::cout << "entry with the depth >";
-						std::cin >> imput;
-					} while (std::ranges::any_of(imput.begin(), imput.end(), [](char c) {return isdigit(c) == 0; }));
-					info.depth = std::stoi(imput);
+						std::cin >> input;
+					} while (std::ranges::any_of(input.begin(), input.end(), [](char c) {return isdigit(c) == 0; }));
+					info.depth = std::stoi(input);
 					searchPosition(b);
-				} else if (imput.compare("p") == 0) {
+				} else if (input.compare("p") == 0) {
 					do {
 						std::cout << "entry with the depth >";
-						std::cin >> imput;
-					} while (std::ranges::any_of(imput.begin(), imput.end(), [](char c) {return isdigit(c) != 0; }));
+						std::cin >> input;
+					} while (std::ranges::any_of(input.begin(), input.end(), [](char c) {return isdigit(c) == 0; }));
 					auto start = std::chrono::high_resolution_clock::now();
-					perftTest(b, std::stoi(imput));
+					perftTest(b, std::stoi(input));
 					auto stop = std::chrono::high_resolution_clock::now();
 					auto duration = duration_cast<std::chrono::milliseconds>(stop - start);
 					std::cout << "Time taken by function: " << duration.count() << " milliseconds" << std::endl;
-				} else if (imput.compare("q") == 0)
+				} else if (input.compare("q") == 0)
 					std::cout << "Bye" << std::endl;
-			} else if (imput.size() >= 4) {
-				Move move = findMove(b, imput.c_str());
+			} else if (input.size() >= 4) {
+				Move move = uci.findMove(b, input.c_str());
 				if (!move.isEmpty()) {
 					MoveMaker::getInstance().makeMove(b, move);
 					if (b.isRepetition())
 						std::cout << "is repeating..." << std::endl;
 				} else
-					std::cerr << imput << " is invalid move." << std::endl;
+					std::cerr << input << " is invalid move." << std::endl;
 				std::cout << b;
 			}
 		}
 	}
-	else {
-		Uci uci;
-		uci.loop();
-	}
 	return 0;
-}
-
-const Move findMove(BitBoard& bitBoard, const char* entry) {
-	Move target;
-	target.parseEntry(entry);
-
-	Move moves[MAX_MOVES];
-	uShort moveCount = moveGenerator::generateMoves(bitBoard, moves);
-	Piece promotion = NONE_PIECE;
-
-	for (Move* move = moves; move != moves + moveCount; ++move) {
-		if (move->getFrom() == target.getFrom() && move->getTo() == target.getTo()) {
-			if (move->isPawnPromotion() && target.isPawnPromotion()) {
-				promotion = move->getPromotionPiece();
-				if (promotion == QUEEN && target.getPromotionPiece() == promotion)
-					return *move;
-				else if (promotion == ROOK && target.getPromotionPiece() == promotion)
-					return *move;
-				else if (promotion == BISHOP && target.getPromotionPiece() == promotion)
-					return *move;
-				if (promotion == KNIGHT && target.getPromotionPiece() == promotion)
-					return *move;
-				else {
-					target();
-					return target;
-				}
-			} else
-				return *move;
-		}
-	}
-	target();
-	return target;
 }

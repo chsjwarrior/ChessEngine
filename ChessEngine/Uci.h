@@ -26,6 +26,7 @@ class Uci {
 	const char* UCI_NEW_GAME = "ucinewgame";
 	const char* DEBUG = "debug";
 
+	
 	void inputPosition(BitBoard& bitBoard, std::istringstream& iss);
 	void inputGo(BitBoard& bitBoard, std::istringstream& iss);
 	void inputDebugAnalysisTest(BitBoard& bitBoard, std::istringstream& iss);
@@ -37,6 +38,8 @@ class Uci {
 public:
 	Uci() = default;
 	~Uci() = default;
+
+	const Move findMove(BitBoard& bitBoard, const char* entry);
 
 	void loop();
 };

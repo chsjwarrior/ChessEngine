@@ -6,13 +6,14 @@ MoveMaker& MoveMaker::getInstance() {
 }
 
 void MoveMaker::checkCapture(BitBoard& bitBoard, const Move& move, const Color color, const bool isNotUndo) const {
-	const Piece captured = move.getCaptured();
-	if (captured != NONE_PIECE)
+	if (move.isCapture()) {
+		const Piece captured = move.getCaptured();
 		if (isNotUndo) {
 			bitBoard.fiftyMove = 0U;
 			bitBoard.unsetPieceOnSquare(captured, ~color, move.getTo());
 		} else
 			bitBoard.setPieceOnSquare(captured, ~color, move.getTo());
+	}
 }
 
 void MoveMaker::checkEnPassant(BitBoard& bitBoard, const Move& move, const Color color, const bool isNotUndo) const {

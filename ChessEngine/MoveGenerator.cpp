@@ -80,7 +80,6 @@ static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece pie
 
 			if (color == WHITE && getRankOf(to) == RANK_8 ||
 				color == BLACK && getRankOf(to) == RANK_1) {
-				move.setPawnPromotion();
 				setCapture(bitBoard, move, color, to);
 
 				for (Piece p = QUEEN; p > PAWN; --p) {

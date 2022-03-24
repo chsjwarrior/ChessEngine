@@ -20,27 +20,35 @@ void Move::setFrom(const Square square) noexcept {
 }
 
 Square Move::getTo() const noexcept {
-	return static_cast<Square>(flags >> 8 & 0xFFU);
+	return static_cast<Square>(flags >> 8U & 0xFFU);
 }
 
 void Move::setTo(const Square square) noexcept {
-	flags = 0xFFFF00FFU & flags | square << 8;
+	flags = 0xFFFF00FFU & flags | square << 8U;
 }
 
 Piece Move::getCaptured() const noexcept {
-	return static_cast<Piece>(flags >> 16 & 0xFU);
+	return static_cast<Piece>(flags >> 16U & 0xFU);
 }
 
 void Move::setCaptured(const Piece piece) noexcept {
-	flags = 0xFFF0FFFFU & flags | piece << 16;
+	flags = 0xFFF0FFFFU & flags | piece << 16U;
+}
+
+bool Move::isCapture() const noexcept {
+	return (flags >> 16U & 0xFU) != NONE_PIECE;
 }
 
 Piece Move::getPromotionPiece() const noexcept {
-	return static_cast<Piece>(flags >> 20 & 0xFU);
+	return static_cast<Piece>(flags >> 20U & 0xFU);
 }
 
 void Move::setPromotionPiece(const Piece piece) noexcept {
-	flags = 0xFF0FFFFFU & flags | piece << 20;
+	flags = 0xFF0FFFFFU & flags | piece << 20U;
+}
+
+bool Move::isPawnPromotion() const noexcept {
+	return (flags >> 20U & 0xFU) != NONE_PIECE;
 }
 
 bool Move::isPawnStart() const noexcept {
@@ -48,7 +56,7 @@ bool Move::isPawnStart() const noexcept {
 }
 
 void Move::setPawnStart() noexcept {
-	flags = 0xE0FFFFFFU & flags | 0x1000000U;
+	flags = 0xF0FFFFFFU & flags | 0x1000000U;
 }
 
 bool Move::isEnPassantCapture() const noexcept {
@@ -56,47 +64,41 @@ bool Move::isEnPassantCapture() const noexcept {
 }
 
 void Move::setEnPassantCapture() noexcept {
-	flags = 0xE0FFFFFFU & flags | 0x2000000U;
-}
-
-bool Move::isPawnPromotion() const noexcept {
-	return hasIntersection(flags, 0x4000000U);
-}
-
-void Move::setPawnPromotion() noexcept {
-	flags = 0xE0FFFFFFU & flags | 0x4000000U;
+	flags = 0xF0FFFFFFU & flags | 0x2000000U;
 }
 
 bool Move::isKingCastle() const noexcept {
-	return hasIntersection(flags, 0x8000000U);
+	return hasIntersection(flags, 0x4000000U);
 }
 
 void Move::setKingCastle() noexcept {
-	flags = 0xE0FFFFFFU & flags | 0x8000000U;
+	flags = 0xF0FFFFFFU & flags | 0x4000000U;
 }
 
 bool Move::isQueenCastle() const noexcept {
-	return hasIntersection(flags, 0x10000000U);
+	return hasIntersection(flags, 0x8000000U);
 }
 
 void Move::setQueenCastle() noexcept {
-	flags = 0xE0FFFFFFU & flags | 0x10000000U;
+	flags = 0xF0FFFFFFU & flags | 0x8000000U;
 }
 
 Color Move::getColor() const noexcept {
-	return static_cast<Color>(flags >> 29U);
+	return static_cast<Color>(flags >> 28U);
 }
 
 void Move::setColor(const Color color) noexcept {
-	flags = (0xDFFFFFFFU & flags) | static_cast<uInt>(color) << 29U;
+	flags = (0xFFFFFFFU & flags) | static_cast<uInt>(color) << 28U;
 }
 
 void Move::parseEntry(const char* entry) {
 	(*this)();
 
 	const size_t length = strlen(entry);
-	if (length < 4)
+	if (length < 4) {
+		std::cerr << "Entry size: " << length << std::endl;
 		return;
+	}
 
 	if (entry[0] > 'h' || entry[0] < 'a') {
 		std::cerr << "Entry error at index 0" << std::endl;
@@ -115,26 +117,24 @@ void Move::parseEntry(const char* entry) {
 		return;
 	}
 
-	const Square from = getSquareOf(static_cast<File>(entry[0] - 'a'), static_cast<Rank>(entry[1] - '1'));
-	const Square to = getSquareOf(static_cast<File>(entry[2] - 'a'), static_cast<Rank>(entry[3] - '1'));
+	setFrom(getSquareOf(static_cast<File>(entry[0] - 'a'), static_cast<Rank>(entry[1] - '1')));
+	setTo(getSquareOf(static_cast<File>(entry[2] - 'a'), static_cast<Rank>(entry[3] - '1')));
 
-	setFrom(from);
-	setTo(to);
-
-	if (length >= 5) //if (entry[4] != '\0')
-		if (entry[4] == 'q') {
-			setPawnPromotion();
+	if (length == 5) { //if (entry[4] != '\0')
+		switch (entry[4]) {
+		case 'q':
 			setPromotionPiece(QUEEN);
-		} else if (entry[4] == 'r') {
-			setPawnPromotion();
+			break;
+		case 'r':
 			setPromotionPiece(ROOK);
-		} else if (entry[4] == 'b') {
-			setPawnPromotion();
+			break;
+		case 'b':
 			setPromotionPiece(BISHOP);
-		} else if (entry[4] == 'n') {
-			setPawnPromotion();
+			break;
+		case 'n':
 			setPromotionPiece(KNIGHT);
 		}
+	}
 }
 
 std::ostream& operator<<(std::ostream& os, const Move& move) {
