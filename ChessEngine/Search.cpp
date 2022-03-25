@@ -1,12 +1,13 @@
 #include "Chess.h"
 
 static void checkUp() {
-	//if (info.stopTime > 0 && getTimeMilliseconds() > info.stopTime)
-		//info.stop = true;
+	auto now = std::chrono::high_resolution_clock::now();
+	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
+	info.stop = info.stopTime > 0 && duration.count() > info.stopTime;
 }
 
 static void swapForBestMove(const uShort index, Move moves[], const uShort size) {
-	int bestScore = -30000;
+	int bestScore = -INFINIT;
 	int bestIndex = 0;
 
 	for (uShort i = index; i < size; ++i)
@@ -18,16 +19,14 @@ static void swapForBestMove(const uShort index, Move moves[], const uShort size)
 	std::swap(moves[index], moves[bestIndex]);
 }
 
-struct Line {
-	uInt count = 0U;
-	Move moves[MAX_MOVES];
-};
-
 static int evaluatePosition(const BitBoard& bitBoard) {
 	Bitmap pieceBitmap;
-	int score = 0;
 	Square s = NONE_SQUARE;
+	int materialWeight = 0;
+	int numWhitePieces = materialWeight;
+	int numBlackPieces = numWhitePieces;
 	const Square(*popSquareOf)(Bitmap&) = nullptr;
+	Move moves[MAX_MOVES];
 
 	for (uChar c = WHITE; c <= BLACK; ++c) {
 		if (c == WHITE)
@@ -40,77 +39,44 @@ static int evaluatePosition(const BitBoard& bitBoard) {
 				s = popSquareOf(pieceBitmap);
 
 				if (bitBoard.isBlackTime()) {
-					score += PIECE_VALUE[p];
+					materialWeight += PIECE_VALUE[p];
 					s = ~s;
 				} else
-					score += -PIECE_VALUE[p];
+					materialWeight += -PIECE_VALUE[p];
 
-				score += SQUARE_VALUE[p][s];
+				materialWeight += SQUARE_VALUE[p][s];
 
-
-				score += moveGenerator::generateMoves(bitBoard, nullptr);
+				if (c == WHITE)
+					++numWhitePieces;
+				else if (c == BLACK)
+					++numBlackPieces;
 			}
 		}
 	}
-	return score;
+	int who2Move = bitBoard.isWhiteTime() ? 1 : -1;
+	return materialWeight * (numWhitePieces - numBlackPieces) * who2Move;
 }
 
-static int quiescence(BitBoard& bitBoard, int alpha, int beta) {
-	++info.nodes;
-	//if (info.nodes >= 2047)
-		//checkUp();
+struct Line {
+	int count;
+	Move moves[MAX_DEPTH];// The line.
+};
 
-	//if (bitBoard.isRepetition() || bitBoard.getFiftyMove() >= 100)
-		//return 0;
-
-	//if (bitBoard.getPly() > MAX_DEPTH - 1)
-		//return evaluatePosition(bitBoard);
-
-	int score = evaluatePosition(bitBoard);
-
-	if (score >= beta)
-		return beta;
-
-	if (score > alpha)
-		alpha = score;
-
-	Move moves[MAX_MOVES];
-	uShort movesCount = moveGenerator::generateCaptureMoves(bitBoard, moves);
-	MoveMaker& moveMaker = MoveMaker::getInstance();
-
-	for (uShort i = 0; i < movesCount; ++i) {
-		swapForBestMove(i, moves, movesCount);
-
-		if (!moveMaker.makeMove(bitBoard, moves[i]))
-			continue;
-
-		score = -quiescence(bitBoard, -beta, -alpha);
-		moveMaker.makeUndo(bitBoard);
-
-		if (info.stop)
-			return 0;
-
-		if (score >= beta)
-			return beta;
-		if (score > alpha)
-			alpha = score;
+static int negaMax(BitBoard& bitBoard, short depth, int alpha, int beta, Line* pvLine) {
+	if (depth <= 0) {
+		pvLine->count = 0;
+		return evaluatePosition(bitBoard);
 	}
-	return alpha;
-}
-
-static int negaMax(BitBoard& bitBoard, short depth, int alpha, int beta, Line& pLine) {
-	if (depth <= 0)
-		return quiescence(bitBoard, alpha, beta);
 
 	info.nodes++;
 
-	//if (info.nodes >= 2047)
-		//checkUp();
+	if (info.nodes >= 2047)
+		checkUp();
 
-	//if (bitBoard.isRepetition() || bitBoard.getFiftyMove() >= 100 && bitBoard.getPly())
-		//return 0;
+	if (bitBoard.isRepetition() || bitBoard.getFiftyMove() >= 100 && bitBoard.getPly())
+		return 0;
 
-	if (bitBoard.getPly() > MAX_DEPTH - 1)
+	if (bitBoard.getPly() > MAX_DEPTH - 1) 		
 		return evaluatePosition(bitBoard);
 
 	const Color color = bitBoard.getColorTime();
@@ -119,13 +85,13 @@ static int negaMax(BitBoard& bitBoard, short depth, int alpha, int beta, Line& p
 	if (inCheck)
 		++depth;
 
-	Line line;
 	uInt legal = 0U;
-	int score = -30000;
+	int score = -INFINIT;
 
 	Move moves[MAX_MOVES];
 	uShort moveCount = moveGenerator::generateMoves(bitBoard, moves);
 	MoveMaker& moveMaker = MoveMaker::getInstance();
+	Line line;
 
 	for (uShort i = 0; i < moveCount; ++i) {
 		swapForBestMove(i, moves, moveCount);
@@ -133,27 +99,27 @@ static int negaMax(BitBoard& bitBoard, short depth, int alpha, int beta, Line& p
 		if (!moveMaker.makeMove(bitBoard, moves[i]))
 			continue;
 
-		legal++;
-		score = -negaMax(bitBoard, depth - 1, -beta, -alpha, line);
+		++legal;
+		score = -negaMax(bitBoard, depth - 1, -beta, -alpha, &line);
 		moveMaker.makeUndo(bitBoard);
 
-		//if (info.stop == true)
-			//return 0;
+		if (info.stop == true)
+			return 0;
 
 		if (score >= beta)
 			return beta;
 
 		if (score > alpha) {
 			alpha = score;
-			pLine.moves[0] = moves[i];
-			memcpy(pLine.moves + 1, line.moves, line.count * sizeof(Move));
-			pLine.count = line.count + 1;
+			pvLine->moves[0] = moves[i];
+			memcpy(pvLine->moves + 1, line.moves, line.count * sizeof(Move));
+			pvLine->count = line.count + 1;
 		}
 	}
 
 	if (legal == 0) {
 		if (inCheck)
-			return -30000 + bitBoard.getPly();
+			return -INFINIT + bitBoard.getPly();
 		return 0;
 	}
 	return alpha;
@@ -163,13 +129,13 @@ void searchPosition(BitBoard& bitBoard) {
 	info.nodes = 0UL;
 	info.stop = false;
 
+	int score = -INFINIT;
 	Line line;
-	int score = -30000;
 
 	for (short d = 1; d <= info.depth; ++d) {
-		score = negaMax(bitBoard, d - 1, -30000, 30000, line);
-		//if (info.stop)
-			//break;
+		score = negaMax(bitBoard, d - 1, -INFINIT, INFINIT, &line);
+		if (info.stop)
+			d = info.depth;
 
 		std::cout << "info score " << score << " depth " << d << " nodes " << info.nodes;
 		//std::cout << " time " << getTimeMilliseconds() - info.startTime << std::endl;

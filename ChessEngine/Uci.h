@@ -25,21 +25,23 @@ class Uci {
 	const char* IS_READY = "isready";
 	const char* UCI_NEW_GAME = "ucinewgame";
 	const char* DEBUG = "debug";
+	const char* PRINT = "print";
 
-	
-	void inputPosition(BitBoard& bitBoard, std::istringstream& iss);
-	void inputGo(BitBoard& bitBoard, std::istringstream& iss);
-	void inputDebugAnalysisTest(BitBoard& bitBoard, std::istringstream& iss);
-	void inputUCI();
-	void inputSetOption();
-	void inputIsReady();
-	void inputQuit();
+
+	void position(BitBoard& bitBoard, std::istringstream& iss) const;
+	void go(BitBoard& bitBoard, std::istringstream& iss) const;
+	void debugAnalysisTest(BitBoard& bitBoard, std::istringstream& iss) const;
+	void print(const BitBoard& bitBoard) const;
+	void uci() const;
+	void setOption() const;
+	void isReady() const;
+	void quit() const;
 
 public:
 	Uci() = default;
 	~Uci() = default;
 
-	const Move findMove(BitBoard& bitBoard, const char* entry);
+	const Move findMove(BitBoard& bitBoard, const char* entry) const;
 
-	void loop();
+	void loop() const;
 };

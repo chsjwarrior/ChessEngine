@@ -6,7 +6,7 @@ static long long getMilliseconds() {
 	return duration.count();
 }
 
-const Move Uci::findMove(BitBoard& bitBoard, const char* entry) {
+const Move Uci::findMove(BitBoard& bitBoard, const char* entry) const {
 	Move target;
 	target.parseEntry(entry);
 
@@ -34,7 +34,7 @@ const Move Uci::findMove(BitBoard& bitBoard, const char* entry) {
 	return target;
 }
 
-void Uci::inputPosition(BitBoard& bitBoard, std::istringstream& iss) {
+void Uci::position(BitBoard& bitBoard, std::istringstream& iss) const {
 	std::string input;
 	iss >> input;
 
@@ -59,7 +59,7 @@ void Uci::inputPosition(BitBoard& bitBoard, std::istringstream& iss) {
 	}
 }
 
-void Uci::inputGo(BitBoard& bitBoard, std::istringstream& iss) {
+void Uci::go(BitBoard& bitBoard, std::istringstream& iss) const {
 	std::string input;
 
 	info.depth = -1;
@@ -121,7 +121,7 @@ void Uci::inputGo(BitBoard& bitBoard, std::istringstream& iss) {
 	searchPosition(bitBoard);
 }
 
-void Uci::inputDebugAnalysisTest(BitBoard& bitBoard, std::istringstream& iss) {
+void Uci::debugAnalysisTest(BitBoard& bitBoard, std::istringstream& iss) const {
 	const int time = 1140000;
 	info.depth = 6;
 	info.startTime = getMilliseconds();
@@ -135,27 +135,31 @@ void Uci::inputDebugAnalysisTest(BitBoard& bitBoard, std::istringstream& iss) {
 	searchPosition(bitBoard);
 }
 
-void Uci::inputUCI() {
+void Uci::print(const BitBoard& bitBoard) const {
+	std::cout << bitBoard << std::endl;
+}
+
+void Uci::uci() const {
 	std::cout << "id name " << NAME << std::endl;
 	std::cout << "id author " << AUTHOR << std::endl;
 	//options go here
 	std::cout << "uciok" << std::endl;
 }
 
-void Uci::inputSetOption() {
+void Uci::setOption() const {
 	//set options
 }
 
-void Uci::inputIsReady() {
+void Uci::isReady() const {
 	std::cout << "readyok" << std::endl;
 }
 
-void Uci::inputQuit() {
+void Uci::quit() const {
 	info.stop = true;
 	std::cout << "Bye" << std::endl;
 }
 
-void Uci::loop() {
+void Uci::loop() const {
 	BitBoard bitBoard;
 
 	std::string input;
@@ -172,24 +176,26 @@ void Uci::loop() {
 		iss >> std::skipws >> input;
 
 		if (input == POSITION) {
-			inputPosition(bitBoard, iss);
+			position(bitBoard, iss);
 		} else if (input == GO) {
 			std::cout << "Seen go.." << std::endl;
-			inputGo(bitBoard, iss);
+			go(bitBoard, iss);
+		} else if (input == PRINT) {
+			print(bitBoard);
 		} else if (input == UCI_NEW_GAME) {
 
 		} else if (input == UCI)
-			inputUCI();
+			uci();
 		else if (input == SET_OPTION)
-			inputSetOption();
+			setOption();
 		else if (input == DEBUG)
-			inputDebugAnalysisTest(bitBoard, iss);
+			debugAnalysisTest(bitBoard, iss);
 		else if (input == QUIT)
-			inputQuit();
+			quit();
 		else if (input == STOP)
 			info.stop = true;
 		else if (input == IS_READY)
-			inputIsReady();
+			isReady();
 
-	} while (input != "quit");
+	} while (input != QUIT);
 }

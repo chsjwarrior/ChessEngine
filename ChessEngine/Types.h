@@ -17,6 +17,8 @@ inline constexpr char PIECE_CHAR[6][2] = { {'P','p'}, {'N','n'}, {'B','b'}, {'R'
 
 inline constexpr int PIECE_VALUE[] = { 10,30,30,50,90,900,0 };
 
+inline constexpr int INFINIT = 30000;
+
 inline constexpr uInt MOVE_EMPTY = 0x00664040U;
 
 inline constexpr uShort BITBOARD_FLAGS_EMPTY = 0X0040U;

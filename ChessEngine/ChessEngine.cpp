@@ -18,7 +18,7 @@ int main() {
 	if (input.compare("uci") == 0) {
 		Uci uci;
 		//uci.loop();
-
+		
 		BitBoard b;
 		b.parseFEN(START_FEN);
 		std::cout << b;
