@@ -121,7 +121,7 @@ Bitmap BitBoard::getBitmapPiece(const Piece piece, const Color color) const {
 	return bitMaps[piece][color];
 }
 
-uLong BitBoard::getHashkey() const {
+uLong BitBoard::getHashkey() const noexcept {
 	return key;
 }
 
