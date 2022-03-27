@@ -1,6 +1,6 @@
 #include "Uci.h"
 
-static long long getMilliseconds() {
+const long long Uci::getMilliseconds() const {
 	auto now = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
 	return duration.count();

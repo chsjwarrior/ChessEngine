@@ -41,6 +41,7 @@ public:
 	Uci() = default;
 	~Uci() = default;
 
+	const long long getMilliseconds() const;
 	const Move findMove(BitBoard& bitBoard, const char* entry) const;
 
 	void loop() const;

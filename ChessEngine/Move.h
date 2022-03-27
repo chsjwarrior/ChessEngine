@@ -14,10 +14,9 @@ class Move {
 	00001000 00000000 00000000 00000000 is queen castle move 0x08000000U;
 	00010000 00000000 00000000 00000000 color move 0x10000000U;
 	*/
-public:
 	uInt flags;
 
-
+public:
 	int score;
 
 	friend std::ostream& operator<<(std::ostream& os, const Move& move);

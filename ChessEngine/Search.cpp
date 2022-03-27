@@ -3,7 +3,7 @@
 static void checkUp() {
 	auto now = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
-	info.stop = info.stopTime > 0 && duration.count() > info.stopTime;
+	info.stop = info.stopTime > 0 && info.startTime + duration.count() > info.stopTime;
 }
 
 static void swapForBestMove(const uShort index, Move moves[], const uShort size) {
@@ -70,13 +70,13 @@ static int negaMax(BitBoard& bitBoard, short depth, int alpha, int beta, Line* p
 
 	info.nodes++;
 
-	if (info.nodes >= 2047)
+	if (info.nodes >= 2047U)
 		checkUp();
 
 	if (bitBoard.isRepetition() || bitBoard.getFiftyMove() >= 100 && bitBoard.getPly())
 		return 0;
 
-	if (bitBoard.getPly() > MAX_DEPTH - 1) 		
+	if (bitBoard.getPly() > MAX_DEPTH - 1)
 		return evaluatePosition(bitBoard);
 
 	const Color color = bitBoard.getColorTime();

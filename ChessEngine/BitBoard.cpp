@@ -15,9 +15,9 @@ BitBoard::Zobrist::Zobrist() {
 }
 
 //0===========================BITBOARD::UNDO===========================0
-BitBoard::Undo::Undo() : move(), flags(BITBOARD_FLAGS_EMPTY), fiftyMove(0U), key(0UL) {}
+BitBoard::Undo::Undo() noexcept : move(), flags(BITBOARD_FLAGS_EMPTY), fiftyMove(0U), key(0UL) {}
 
-void BitBoard::Undo::operator()() {
+void BitBoard::Undo::operator()() noexcept {
 	move();
 	flags = BITBOARD_FLAGS_EMPTY;
 	fiftyMove = 0U;
@@ -40,7 +40,7 @@ BitBoard::BitBoard() : key(0UL), flags(BITBOARD_FLAGS_EMPTY), fiftyMove(0U), ply
 	}
 }
 
-void BitBoard::operator()() {
+void BitBoard::operator()() noexcept {
 	for (Piece p = PAWN; p != NONE_PIECE; ++p) {
 		bitMaps[p][0] = 0UL;
 		bitMaps[p][1] = 0UL;
@@ -50,7 +50,6 @@ void BitBoard::operator()() {
 	fiftyMove = 0U;
 	ply = fiftyMove;
 	historyCount = ply;
-
 	whiteTime = false;//checkMate = true;
 
 	for (Undo& h : history)
@@ -126,23 +125,23 @@ uLong BitBoard::getHashkey() const {
 	return key;
 }
 
-uShort BitBoard::getFiftyMove() const {
+uShort BitBoard::getFiftyMove() const noexcept {
 	return fiftyMove;
 }
 
-uShort BitBoard::getPly() const {
+uShort BitBoard::getPly() const noexcept {
 	return ply;
 }
 
-bool BitBoard::isWhiteTime() const {
+bool BitBoard::isWhiteTime() const noexcept {
 	return whiteTime;
 }
 
-bool BitBoard::isBlackTime() const {
+bool BitBoard::isBlackTime() const noexcept {
 	return !whiteTime;
 }
 
-Color BitBoard::getColorTime() const {
+Color BitBoard::getColorTime() const noexcept {
 	return whiteTime ? WHITE : BLACK;
 }
 
@@ -223,52 +222,38 @@ const std::string BitBoard::getFEN() const {
 void BitBoard::parseFEN(const char* fen) {
 	File file = FILE_A;
 	Rank rank = RANK_8;
-	uShort count = 0;
-	Piece piece = NONE_PIECE;
-	Color color;
 	(*this)();
 
 	while ((rank < NONE_RANK) && *fen) {
-		count = 1;
 		switch (*fen) {
-		case 'p': piece = PAWN; color = BLACK; break;
-		case 'n': piece = KNIGHT; color = BLACK; break;
-		case 'b': piece = BISHOP; color = BLACK; break;
-		case 'r': piece = ROOK; color = BLACK; break;
-		case 'q': piece = QUEEN; color = BLACK; break;
-		case 'k': piece = KING; color = BLACK; break;
-		case 'P': piece = PAWN; color = WHITE; break;
-		case 'R': piece = ROOK; color = WHITE; break;
-		case 'N': piece = KNIGHT; color = WHITE; break;
-		case 'B': piece = BISHOP; color = WHITE; break;
-		case 'K': piece = KING; color = WHITE; break;
-		case 'Q': piece = QUEEN; color = WHITE; break;
-		case '1':
-		case '2':
-		case '3':
-		case '4':
-		case '5':
-		case '6':
-		case '7':
-		case '8':
-			piece = NONE_PIECE;
-			count = *fen - '0';
-			break;
+		case 'p': setPieceOnSquare(PAWN, BLACK, getSquareOf(file, rank)); ++file; break;
+		case 'n': setPieceOnSquare(KNIGHT, BLACK, getSquareOf(file, rank)); ++file; break;
+		case 'b': setPieceOnSquare(BISHOP, BLACK, getSquareOf(file, rank)); ++file; break;
+		case 'r': setPieceOnSquare(ROOK, BLACK, getSquareOf(file, rank)); ++file; break;
+		case 'q': setPieceOnSquare(QUEEN, BLACK, getSquareOf(file, rank)); ++file; break;
+		case 'k': setPieceOnSquare(KING, BLACK, getSquareOf(file, rank)); ++file; break;
+		case 'P': setPieceOnSquare(PAWN, WHITE, getSquareOf(file, rank)); ++file; break;
+		case 'N': setPieceOnSquare(KNIGHT, WHITE, getSquareOf(file, rank)); ++file; break;
+		case 'B': setPieceOnSquare(BISHOP, WHITE, getSquareOf(file, rank)); ++file; break;
+		case 'R': setPieceOnSquare(ROOK, WHITE, getSquareOf(file, rank)); ++file; break;
+		case 'Q': setPieceOnSquare(QUEEN, WHITE, getSquareOf(file, rank)); ++file; break;
+		case 'K': setPieceOnSquare(KING, WHITE, getSquareOf(file, rank)); ++file; break;
+		case '1': file = static_cast<File>(file + 1); break;
+		case '2': file = static_cast<File>(file + 2); break;
+		case '3': file = static_cast<File>(file + 3); break;
+		case '4': file = static_cast<File>(file + 4); break;
+		case '5': file = static_cast<File>(file + 5); break;
+		case '6': file = static_cast<File>(file + 6); break;
+		case '7': file = static_cast<File>(file + 7); break;
+		case '8': file = static_cast<File>(file + 8); break;
 		case '/':
 		case ' ':
 			--rank;
 			file = FILE_A;
-			++fen;
-			continue;
+			break;
 		default:
 			std::cerr << "Fen error" << std::endl;
 			return;
-		}
-
-		for (uShort i = 0; i < count; ++i) {
-			if (piece != NONE_PIECE)
-				setPieceOnSquare(piece, color, getSquareOf(file, rank));
-			++file;
 		}
 		++fen;
 	}
@@ -281,20 +266,17 @@ void BitBoard::parseFEN(const char* fen) {
 
 	//castle permission
 	if (*fen != '-') {
-		if (*fen == 'K') {
-			setCastlePermission(KING_CASTLE, WHITE, true);
-			++fen;
-		}
-		if (*fen == 'Q') {
-			setCastlePermission(QUEEN_CASTLE, WHITE, true);
-			++fen;
-		}
-		if (*fen == 'k') {
-			setCastlePermission(KING_CASTLE, BLACK, true);
-			++fen;
-		}
-		if (*fen == 'q') {
-			setCastlePermission(QUEEN_CASTLE, BLACK, true);
+		for (uChar i = 0; i < 4U; ++i) {
+			if (*fen == ' ')
+				break;
+			else if (*fen == 'K')
+				setCastlePermission(KING_CASTLE, WHITE, true);
+			else if (*fen == 'Q')
+				setCastlePermission(QUEEN_CASTLE, WHITE, true);
+			else if (*fen == 'k')
+				setCastlePermission(KING_CASTLE, BLACK, true);
+			else if (*fen == 'q')
+				setCastlePermission(QUEEN_CASTLE, BLACK, true);
 			++fen;
 		}
 	} else

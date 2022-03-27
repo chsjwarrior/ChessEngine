@@ -25,7 +25,7 @@ inline constexpr uShort BITBOARD_FLAGS_EMPTY = 0X0040U;
 
 inline constexpr Bitmap SQUARE_MASK = 0x1UL;
 
-inline constexpr uChar MAX_MOVES = 128U;
+inline constexpr uChar MAX_MOVES = 255U;
 
 inline constexpr uChar MAX_DEPTH = 64U;
 

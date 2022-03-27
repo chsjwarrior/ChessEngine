@@ -18,7 +18,7 @@ int main() {
 	if (input.compare("uci") == 0) {
 		Uci uci;
 		//uci.loop();
-		
+
 		BitBoard b;
 		b.parseFEN(START_FEN);
 		std::cout << b;
@@ -37,6 +37,10 @@ int main() {
 						std::cin >> input;
 					} while (std::ranges::any_of(input.begin(), input.end(), [](char c) {return isdigit(c) == 0; }));
 					info.depth = std::stoi(input);
+					info.startTime = uci.getMilliseconds();
+					info.stopTime = info.startTime + 500000000;
+					std::cout << "start: " << info.startTime << std::endl;
+					std::cout << "stop: " << info.stopTime << std::endl;
 					searchPosition(b);
 				} else if (input.compare("p") == 0) {
 					do {

@@ -40,7 +40,7 @@ class BitBoard {
 		uShort fiftyMove;
 		uLong key;
 
-		Undo();
+		Undo() noexcept;
 		~Undo() = default;
 
 		Undo(Undo&) = delete;
@@ -48,10 +48,10 @@ class BitBoard {
 		Undo& operator=(Undo&) = delete;
 		Undo& operator=(Undo&&) = delete;
 
-		void operator()();
+		void operator()() noexcept;
 		Square getEnPassantSquare() const;
 		bool hasCastlePermission(const CastleFlags castleFlag, const Color color) const;
-	} history[MAX_MOVES];//128		
+	} history[MAX_MOVES];
 
 	friend class MoveMaker;
 public:
@@ -65,7 +65,7 @@ public:
 	BitBoard& operator=(const BitBoard&) = delete;
 	BitBoard& operator=(BitBoard&&) = delete;
 
-	void operator()();
+	void operator()() noexcept;
 
 	void setPieceOnSquare(const Piece piece, const Color color, const Square square);
 
@@ -87,17 +87,17 @@ public:
 
 	Bitmap getBitmapPiece(const Piece piece, const Color color) const;
 
-	uLong getHashkey() const;
+	uLong getHashkey() const noexcept;
 
-	uShort getFiftyMove() const;
+	uShort getFiftyMove() const noexcept;
 
-	uShort getPly() const;
+	uShort getPly() const noexcept;
 
-	bool isWhiteTime() const;
+	bool isWhiteTime() const noexcept;
 
-	bool isBlackTime() const;
+	bool isBlackTime() const noexcept;
 
-	Color getColorTime() const;
+	Color getColorTime() const noexcept;
 
 	const std::string getFEN() const;
 	/* This funcion still needs to be improve on read fifty move and ply*/
