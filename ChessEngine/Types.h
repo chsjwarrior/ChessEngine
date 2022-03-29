@@ -227,37 +227,6 @@ constexpr std::ostream& operator<<(std::ostream& os, const Square& square) {
 	return os;
 }
 
-/*This function does t1 & t2 != 0*/
-template <typename T>
-	requires std::integral<T>
-constexpr const bool hasIntersection(const T t1, const T t2) noexcept {
-	return (t1 & t2) != 0;
-}
-/*This function does t1 | t2*/
-template <typename T>
-	requires std::integral<T>
-constexpr const T getUnion(const T t1, const T t2) noexcept {
-	return t1 | t2;
-}
-/*This function does t1 & t2*/
-template <typename T>
-	requires std::integral<T>
-constexpr const T getIntersections(const T t1, const T t2) noexcept {
-	return t1 & t2;
-}
-/*This function does t1 ^ t2*/
-template <typename T>
-	requires std::integral<T>
-constexpr const T getDiference(const T t1, const T t2) noexcept {
-	return t1 ^ t2;
-}
-/*This function does t1 & ~t2*/
-template <typename T>
-	requires std::integral<T>
-constexpr const T unsetIntersections(const T t1, const T t2) noexcept {
-	return t1 & ~t2;
-}
-
 constexpr const uInt bitCount(Bitmap bitmap) noexcept {
 	bitmap = ((bitmap >> 1) & 0x5555555555555555UL) + (bitmap & 0x5555555555555555UL);
 	bitmap = ((bitmap >> 2) & 0x3333333333333333UL) + (bitmap & 0x3333333333333333UL);

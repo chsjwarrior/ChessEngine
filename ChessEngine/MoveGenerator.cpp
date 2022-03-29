@@ -14,7 +14,7 @@ static void setCapture(const BitBoard& bitBoard, Move& move, const Color color, 
 static bool canMakeKingCastle(const BitBoard& bitBoard, const Color color) {
 	if (bitBoard.hasCastlePermission(KING_CASTLE, color)) {
 		const Rank relativeRank = color == WHITE ? RANK_1 : RANK_8;
-		if (!hasIntersection((FILES[FILE_F] | FILES[FILE_G]) & RANKS[relativeRank], friendPieces | enemyPieces)) //isCastlePathClear
+		if ((((FILES[FILE_F] | FILES[FILE_G]) & RANKS[relativeRank]) & (friendPieces | enemyPieces)) == 0) //isCastlePathClear
 			if (!attacks::isSquareAttacked(bitBoard, ~color, getSquareOf(FILE_F, relativeRank)))//isCastlePathSecury
 				return !attacks::isSquareAttacked(bitBoard, ~color, getSquareOf(FILE_G, relativeRank));
 	}
@@ -24,7 +24,7 @@ static bool canMakeKingCastle(const BitBoard& bitBoard, const Color color) {
 static bool canMakeQueenCastle(const BitBoard& bitBoard, const Color color) {
 	if (bitBoard.hasCastlePermission(QUEEN_CASTLE, color)) {
 		const Rank relativeRank = color == WHITE ? RANK_1 : RANK_8;
-		if (!hasIntersection((FILES[FILE_B] | FILES[FILE_C] | FILES[FILE_D]) & RANKS[relativeRank], friendPieces | enemyPieces))//isCastlePathClear
+		if ((((FILES[FILE_B] | FILES[FILE_C] | FILES[FILE_D]) & RANKS[relativeRank]) & (friendPieces | enemyPieces)) == 0)//isCastlePathClear
 			if (!attacks::isSquareAttacked(bitBoard, ~color, getSquareOf(FILE_C, relativeRank)))//isCastlePathSecury
 				return !attacks::isSquareAttacked(bitBoard, ~color, getSquareOf(FILE_D, relativeRank));//isCastlePathSecury
 	}
@@ -40,7 +40,7 @@ static Bitmap getPiecesMoves(const BitBoard& bitBoard, const Piece piece, const 
 	else if (piece == KNIGHT)
 		attacks = attacks::getKnightMoves(squareBitmap);
 	else {
-		const Bitmap allPieces = getUnion(friendPieces, enemyPieces);
+		const Bitmap allPieces = friendPieces | enemyPieces;
 
 		if (piece == PAWN)
 			attacks = attacks::getPawnMoves(allPieces, color, getBitmapOf(bitBoard.getEnPassantSquare()), squareBitmap);
@@ -56,7 +56,7 @@ static Bitmap getPiecesMoves(const BitBoard& bitBoard, const Piece piece, const 
 				attacks = attacks::getBishopMoves(allPieces, file, rank, squareBitmap) | attacks::getRookMoves(allPieces, file, rank, squareBitmap);
 		}
 	}
-	return unsetIntersections(attacks, bitBoard.getBitmapAllPieces(color));//remove friend pieces square
+	return attacks & ~friendPieces;//remove friend pieces square
 }
 /* This function populates an array with the moves and returns the size */
 static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece piece, const Color color, const Square from, Bitmap attacks) {

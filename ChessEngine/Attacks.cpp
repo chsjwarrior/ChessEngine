@@ -87,33 +87,33 @@ bool attacks::isSquareAttacked(const BitBoard& bitBoard, const Color color, cons
 	const Bitmap squareBitmap = getBitmapOf(square);
 	//King
 	Bitmap attacks = getKingMoves(squareBitmap);
-	if (hasIntersection(attacks, bitBoard.getBitmapPiece(KING, color)))
+	if (attacks & bitBoard.getBitmapPiece(KING, color))
 		return true;
 	//Knight
 	attacks = getKnightMoves(squareBitmap);
-	if (hasIntersection(attacks, bitBoard.getBitmapPiece(KNIGHT, color)))
+	if (attacks & bitBoard.getBitmapPiece(KNIGHT, color))
 		return true;
 	//Pawn
 	if (color == WHITE)
-		attacks = getUnion(squareBitmap >> 7 & ~FILES[FILE_A], squareBitmap >> 9 & ~FILES[FILE_H]);
+		attacks = squareBitmap >> 7 & ~FILES[FILE_A] | squareBitmap >> 9 & ~FILES[FILE_H];
 	else if (color == BLACK)
-		attacks = getUnion(squareBitmap << 7 & ~FILES[FILE_H], squareBitmap << 9 & ~FILES[FILE_A]);
-	if (hasIntersection(attacks, bitBoard.getBitmapPiece(PAWN, color)))
+		attacks = squareBitmap << 7 & ~FILES[FILE_H] | squareBitmap << 9 & ~FILES[FILE_A];
+	if (attacks & bitBoard.getBitmapPiece(PAWN, color))
 		return true;
 
 	const File file = getFileOf(square);
 	const Rank rank = getRankOf(square);
-	const Bitmap allPieces = getUnion(bitBoard.getBitmapAllPieces(WHITE), bitBoard.getBitmapAllPieces(BLACK));
+	const Bitmap allPieces = bitBoard.getBitmapAllPieces(WHITE) | bitBoard.getBitmapAllPieces(BLACK);
 
 	//Bishop		
 	attacks = getBishopMoves(allPieces, file, rank, squareBitmap);
-	if (hasIntersection(attacks, bitBoard.getBitmapPiece(BISHOP, color)) ||
-		hasIntersection(attacks, bitBoard.getBitmapPiece(QUEEN, color)))
+	if (attacks & bitBoard.getBitmapPiece(BISHOP, color) ||
+		attacks & bitBoard.getBitmapPiece(QUEEN, color))
 		return true;
 	//Rook
 	attacks = getRookMoves(allPieces, file, rank, squareBitmap);
-	if (hasIntersection(attacks, bitBoard.getBitmapPiece(ROOK, color)) ||
-		hasIntersection(attacks, bitBoard.getBitmapPiece(QUEEN, color)))
+	if (attacks & bitBoard.getBitmapPiece(ROOK, color) ||
+		attacks & bitBoard.getBitmapPiece(QUEEN, color))
 		return true;
 	return false;
 }

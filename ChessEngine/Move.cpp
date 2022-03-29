@@ -52,7 +52,7 @@ bool Move::isPawnPromotion() const noexcept {
 }
 
 bool Move::isPawnStart() const noexcept {
-	return hasIntersection(flags, 0x1000000U);
+	return flags & 0x1000000U;
 }
 
 void Move::setPawnStart() noexcept {
@@ -60,7 +60,7 @@ void Move::setPawnStart() noexcept {
 }
 
 bool Move::isEnPassantCapture() const noexcept {
-	return hasIntersection(flags, 0x2000000U);
+	return flags & 0x2000000U;
 }
 
 void Move::setEnPassantCapture() noexcept {
@@ -68,7 +68,7 @@ void Move::setEnPassantCapture() noexcept {
 }
 
 bool Move::isKingCastle() const noexcept {
-	return hasIntersection(flags, 0x4000000U);
+	return flags & 0x4000000U;
 }
 
 void Move::setKingCastle() noexcept {
@@ -76,7 +76,7 @@ void Move::setKingCastle() noexcept {
 }
 
 bool Move::isQueenCastle() const noexcept {
-	return hasIntersection(flags, 0x8000000U);
+	return flags & 0x8000000U;
 }
 
 void Move::setQueenCastle() noexcept {
@@ -88,7 +88,7 @@ Color Move::getColor() const noexcept {
 }
 
 void Move::setColor(const Color color) noexcept {
-	flags = (0xFFFFFFFU & flags) | static_cast<uInt>(color) << 28U;
+	flags = 0xFFFFFFFU & flags | static_cast<uInt>(color) << 28U;
 }
 
 void Move::parseEntry(const char* entry) {

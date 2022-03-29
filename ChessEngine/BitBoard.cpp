@@ -29,7 +29,7 @@ Square BitBoard::Undo::getEnPassantSquare() const {
 }
 
 bool BitBoard::Undo::hasCastlePermission(const CastleFlags castleFlag, const Color color) const {
-	return hasIntersection(flags >> 8, 1 << (castleFlag + color));
+	return flags >> 8 & 1 << (castleFlag + color);
 }
 
 //0=============================BITBOARD===============================0
@@ -57,12 +57,12 @@ void BitBoard::operator()() noexcept {
 }
 
 void BitBoard::setPieceOnSquare(const Piece piece, const Color color, const Square square) {
-	bitMaps[piece][color] = getUnion(bitMaps[piece][color], getBitmapOf(square));
+	bitMaps[piece][color] |= getBitmapOf(square);
 	key ^= hashKeys.pieceKey[square][piece][color];
 }
 
 void BitBoard::unsetPieceOnSquare(const Piece piece, const Color color, const Square square) {
-	bitMaps[piece][color] = unsetIntersections(bitMaps[piece][color], getBitmapOf(square));
+	bitMaps[piece][color] &= ~getBitmapOf(square);
 	key ^= hashKeys.pieceKey[square][piece][color];
 }
 
@@ -96,17 +96,17 @@ void BitBoard::setEnPassantSquare(const Square square) {
 }
 
 bool BitBoard::hasCastlePermission(const CastleFlags castleFlag, const Color color) const {
-	return hasIntersection(flags >> 8, 1 << (castleFlag + color));
+	return flags >> 8 & 1 << (castleFlag + color);
 }
 
 void BitBoard::setCastlePermission(const CastleFlags castleFlag, const Color color, const bool permission) {
 	const int index = castleFlag + color;
 	if (hasCastlePermission(castleFlag, color) && permission == false) {
 		key ^= hashKeys.castleKey[index];
-		flags = unsetIntersections<uShort>(flags, 1 << (index + 8));
+		flags &= ~(1 << (index + 8));
 	} else if (!hasCastlePermission(castleFlag, color) && permission == true) {
 		key ^= hashKeys.castleKey[index];
-		flags = getUnion<uShort>(flags, 1 << (index + 8));
+		flags |= 1 << (index + 8);
 	}
 }
 
@@ -151,7 +151,7 @@ const std::string BitBoard::getFEN() const {
 	Square s = NONE_SQUARE;
 	Piece p = NONE_PIECE;
 	Color c;
-	Bitmap allPieces = getUnion(getBitmapAllPieces(WHITE), getBitmapAllPieces(BLACK));
+	Bitmap allPieces = getBitmapAllPieces(WHITE) | getBitmapAllPieces(BLACK);
 
 	for (Rank r = RANK_8; r != NONE_RANK; --r) {
 		for (File f = FILE_A; f < NONE_FILE; ++f) {
