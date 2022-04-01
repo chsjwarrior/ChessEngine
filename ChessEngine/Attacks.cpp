@@ -3,17 +3,17 @@
 Bitmap attacks::getBishopMoves(const Bitmap allPieces, const File file, const Rank rank, const Bitmap squareBitmap) {
 	const Bitmap reverseSquareBitmap = reverse(squareBitmap);
 
-	uShort index = file + rank;
+	uShort index = rank + file;
 
-	Bitmap aux1 = (allPieces & DIAGONAL_L[index]) - 2 * squareBitmap;
-	Bitmap aux2 = reverse(allPieces & DIAGONAL_L[index]) - 2 * reverseSquareBitmap;
-	const Bitmap ldMoves = (aux1 ^ reverse(aux2)) & DIAGONAL_L[index];
+	Bitmap aux1 = (allPieces & DIAGONAL[index]) - 2 * squareBitmap;
+	Bitmap aux2 = reverse(allPieces & DIAGONAL[index]) - 2 * reverseSquareBitmap;
+	const Bitmap ldMoves = (aux1 ^ reverse(aux2)) & DIAGONAL[index];
 
-	index = file + 7 - rank;
+	index = rank + 7 - file;
 
-	aux1 = (allPieces & DIAGONAL_R[index]) - 2 * squareBitmap;
-	aux2 = reverse(allPieces & DIAGONAL_R[index]) - 2 * reverseSquareBitmap;
-	const Bitmap dlMoves = (aux1 ^ reverse(aux2)) & DIAGONAL_R[index];
+	aux1 = (allPieces & ANTI_DIAGONAL[index]) - 2 * squareBitmap;
+	aux2 = reverse(allPieces & ANTI_DIAGONAL[index]) - 2 * reverseSquareBitmap;
+	const Bitmap dlMoves = (aux1 ^ reverse(aux2)) & ANTI_DIAGONAL[index];
 
 	return ldMoves | dlMoves;
 }
@@ -60,23 +60,27 @@ Bitmap attacks::getKingMoves(const Bitmap squareBitmap) {
 }
 
 Bitmap attacks::getPawnMoves(const Bitmap allPieces, const Color color, const Bitmap enPassantBitmap, const Bitmap squareBitmap) {
-	Bitmap moves = 0;
+	Bitmap moves = 0UL;
 	if (color == WHITE) {
-		//normal move and start move
+		//normal move
 		moves |= squareBitmap << 8 & ~allPieces;
+		//start move
 		moves |= squareBitmap << 16 & ~allPieces & ~allPieces << 8 & RANKS[RANK_4];
 		//capture move
 		moves |= squareBitmap << 7 & allPieces & ~FILES[FILE_H];
 		moves |= squareBitmap << 9 & allPieces & ~FILES[FILE_A];
+		//en passant capture move
 		moves |= squareBitmap << 7 & enPassantBitmap & RANKS[RANK_6] & ~FILES[FILE_H];
 		moves |= squareBitmap << 9 & enPassantBitmap & RANKS[RANK_6] & ~FILES[FILE_A];
 	} else if (color == BLACK) {
-		//normal move and start move
+		//normal move
 		moves |= squareBitmap >> 8 & ~allPieces;
+		//start move
 		moves |= squareBitmap >> 16 & ~allPieces & ~allPieces >> 8 & RANKS[RANK_5];
 		//capture move
 		moves |= squareBitmap >> 7 & allPieces & ~FILES[FILE_A];
 		moves |= squareBitmap >> 9 & allPieces & ~FILES[FILE_H];
+		//en passant capture move
 		moves |= squareBitmap >> 7 & enPassantBitmap & RANKS[RANK_3] & ~FILES[FILE_A];
 		moves |= squareBitmap >> 9 & enPassantBitmap & RANKS[RANK_3] & ~FILES[FILE_H];
 	}
