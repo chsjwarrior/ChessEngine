@@ -96,17 +96,16 @@ void BitBoard::setEnPassantSquare(const Square square) {
 }
 
 bool BitBoard::hasCastlePermission(const CastleFlags castleFlag, const Color color) const {
-	return flags >> 8 & 1 << (castleFlag + color);
+	return flags >> 8 & 1U << (castleFlag + color);
 }
 
 void BitBoard::setCastlePermission(const CastleFlags castleFlag, const Color color, const bool permission) {
-	const int index = castleFlag + color;
 	if (hasCastlePermission(castleFlag, color) && permission == false) {
-		key ^= hashKeys.castleKey[index];
-		flags &= ~(1 << (index + 8));
+		key ^= hashKeys.castleKey[castleFlag + color];
+		flags &= ~(1U << (castleFlag + color + 8));
 	} else if (!hasCastlePermission(castleFlag, color) && permission == true) {
-		key ^= hashKeys.castleKey[index];
-		flags |= 1 << (index + 8);
+		key ^= hashKeys.castleKey[castleFlag + color];
+		flags |= 1U << (castleFlag + color + 8);
 	}
 }
 
@@ -336,14 +335,10 @@ std::ostream& operator<<(std::ostream& os, const BitBoard& bitBoard) {
 	os << "Fifty move: " << bitBoard.fiftyMove << " ply: " << bitBoard.ply << std::endl;
 	os << "En Passant: " << bitBoard.getEnPassantSquare() << std::endl;
 	os << "castle permission: ";
-	if (bitBoard.hasCastlePermission(KING_CASTLE, WHITE))
-		os << 'K';
-	if (bitBoard.hasCastlePermission(QUEEN_CASTLE, WHITE))
-		os << 'Q';
-	if (bitBoard.hasCastlePermission(KING_CASTLE, BLACK))
-		os << 'k';
-	if (bitBoard.hasCastlePermission(QUEEN_CASTLE, BLACK))
-		os << 'q';
+	if (bitBoard.hasCastlePermission(KING_CASTLE, WHITE)) os << 'K'; else os << '-';
+	if (bitBoard.hasCastlePermission(QUEEN_CASTLE, WHITE)) os << 'Q'; else os << '-';
+	if (bitBoard.hasCastlePermission(KING_CASTLE, BLACK)) os << 'k'; else os << '-';
+	if (bitBoard.hasCastlePermission(QUEEN_CASTLE, BLACK)) os << 'q'; else os << '-';
 	os << std::endl << "Key: " << bitBoard.key << std::endl;
 
 	return os;

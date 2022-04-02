@@ -62,11 +62,8 @@ static Bitmap getPiecesMoves(const BitBoard& bitBoard, const Piece piece, const 
 static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece piece, const Color color, const Square from, Bitmap attacks) {
 	Square to = NONE_SQUARE;
 	Move move;
-	const Square(*popSquareOf)(Bitmap&) = nullptr;
-
-	if (color == WHITE)
-		popSquareOf = popFirstSquareOf;
-	else if (color == BLACK)
+	const Square(*popSquareOf)(Bitmap&) = popFirstSquareOf;
+	if (color == BLACK)
 		popSquareOf = popLastSquareOf;
 
 	if (piece == PAWN) {
@@ -100,6 +97,17 @@ static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece pie
 			moves[movesCount++] = move;
 		}
 	} else {
+		while (attacks) {
+			to = popSquareOf(attacks);
+
+			move();
+			move.setFrom(from);
+			move.setTo(to);
+			move.setColor(color);
+			setCapture(bitBoard, move, color, to);
+
+			moves[movesCount++] = move;
+		}
 		if (piece == KING)
 			if (!attacks::isSquareAttacked(bitBoard, ~color, getFirstSquareOf(bitBoard.getBitmapPiece(KING, color)))) {//King is not in check
 				if (canMakeKingCastle(bitBoard, color)) {
@@ -117,17 +125,6 @@ static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece pie
 					moves[movesCount++] = move;
 				}
 			}
-		while (attacks) {
-			to = popSquareOf(attacks);
-
-			move();
-			move.setFrom(from);
-			move.setTo(to);
-			move.setColor(color);
-			setCapture(bitBoard, move, color, to);
-
-			moves[movesCount++] = move;
-		}
 	}
 }
 
@@ -136,11 +133,8 @@ uShort moveGenerator::generateMoves(const BitBoard& bitBoard, Move moves[]) {
 	Bitmap attacks = 0UL;
 	Bitmap pieceBitmap;
 	Square square = NONE_SQUARE;
-	const Square(*popSquareOf)(Bitmap&) = nullptr;
-
-	if (color == WHITE)
-		popSquareOf = popFirstSquareOf;
-	else if (color == BLACK)
+	const Square(*popSquareOf)(Bitmap&) = popFirstSquareOf;
+	if (color == BLACK)
 		popSquareOf = popLastSquareOf;
 
 	friendPieces = bitBoard.getBitmapAllPieces(color);

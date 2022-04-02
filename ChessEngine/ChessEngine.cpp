@@ -29,7 +29,7 @@ int main() {
 		//uci.loop();
 
 		BitBoard b;
-		b.parseFEN(START_FEN);
+		b.parseFEN(TEST_CASTLE_RIGHTS);
 		std::cout << b;
 
 		while (input.compare("q") != 0) {
