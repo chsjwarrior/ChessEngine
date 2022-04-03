@@ -88,9 +88,9 @@ Square BitBoard::getEnPassantSquare() const {
 }
 
 void BitBoard::setEnPassantSquare(const Square square) {
-	if (getEnPassantSquare() != NONE_SQUARE)
+	if ((flags & 0x00FFU) != NONE_SQUARE)
 		key ^= hashKeys.enPassantColumn[getFileOf(getEnPassantSquare())];
-	flags = 0xF00U & flags | square;
+	flags = 0xFF00U & flags | square;
 	if (square != NONE_SQUARE)
 		key ^= hashKeys.enPassantColumn[getFileOf(square)];
 }

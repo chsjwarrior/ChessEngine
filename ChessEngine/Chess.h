@@ -10,6 +10,7 @@ struct SearchInfo {
 	int inc = 0;
 	int movestogo = 0;
 	short depth = 1;
+	short perft = 0;
 	int mate = 0;
 	uLong nodes = 0UL;
 	uLong infinite = 0UL;

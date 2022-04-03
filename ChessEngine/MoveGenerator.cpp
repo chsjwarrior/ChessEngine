@@ -86,10 +86,7 @@ static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece pie
 				}
 				continue;
 			}
-			if (color == WHITE && to - from == 16 ||
-				color == BLACK && from - to == 16)
-				move.setPawnStart();
-			else if (to == bitBoard.getEnPassantSquare())
+			if (to == bitBoard.getEnPassantSquare())
 				move.setEnPassantCapture();
 			else
 				setCapture(bitBoard, move, color, to);
@@ -130,16 +127,16 @@ static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece pie
 
 uShort moveGenerator::generateMoves(const BitBoard& bitBoard, Move moves[]) {
 	const Color color = bitBoard.getColorTime();
-	Bitmap attacks = 0UL;
+	friendPieces = bitBoard.getBitmapAllPieces(color);
+	enemyPieces = bitBoard.getBitmapAllPieces(~color);
+	movesCount = 0U;
+
+	Bitmap attacks;
 	Bitmap pieceBitmap;
 	Square square = NONE_SQUARE;
 	const Square(*popSquareOf)(Bitmap&) = popFirstSquareOf;
 	if (color == BLACK)
 		popSquareOf = popLastSquareOf;
-
-	friendPieces = bitBoard.getBitmapAllPieces(color);
-	enemyPieces = bitBoard.getBitmapAllPieces(~color);
-	movesCount = 0U;
 
 	for (Piece p = PAWN; p != NONE_PIECE; ++p) {
 		pieceBitmap = bitBoard.getBitmapPiece(p, color);

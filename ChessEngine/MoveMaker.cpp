@@ -82,6 +82,30 @@ void MoveMaker::checkCastleMove(BitBoard& bitBoard, const Move& move, const Colo
 	}
 }
 
+void MoveMaker::checkCastlePermission(BitBoard& bitBoard, const Square square, const Color color) const {
+	switch (square) {
+	case A1:
+		bitBoard.setCastlePermission(QUEEN_CASTLE, WHITE, false);
+		break;
+	case E1:
+		bitBoard.setCastlePermission(KING_CASTLE, WHITE, false);
+		bitBoard.setCastlePermission(QUEEN_CASTLE, WHITE, false);
+		break;
+	case H1:
+		bitBoard.setCastlePermission(KING_CASTLE, WHITE, false);
+		break;
+	case A8:
+		bitBoard.setCastlePermission(QUEEN_CASTLE, BLACK, false);
+		break;
+	case E8:
+		bitBoard.setCastlePermission(KING_CASTLE, BLACK, false);
+		bitBoard.setCastlePermission(QUEEN_CASTLE, BLACK, false);
+		break;
+	case H8:
+		bitBoard.setCastlePermission(KING_CASTLE, BLACK, false);
+	}
+}
+
 void MoveMaker::makeUndo(BitBoard& bitBoard) const {
 	if (bitBoard.historyCount == 0)
 		return;
@@ -96,15 +120,18 @@ void MoveMaker::makeUndo(BitBoard& bitBoard) const {
 
 	const Piece piece = bitBoard.getPieceFromSquare(color, move.getTo());
 
-	if (piece == ROOK) {
-		bitBoard.setCastlePermission(KING_CASTLE, color, bitBoard.history[bitBoard.historyCount].hasCastlePermission(KING_CASTLE, color));
-		bitBoard.setCastlePermission(QUEEN_CASTLE, color, bitBoard.history[bitBoard.historyCount].hasCastlePermission(QUEEN_CASTLE, color));
-	} else if (piece == KING) {
+	if (piece == KING) {
 		checkCastleMove(bitBoard, move, color, false);
 		bitBoard.setCastlePermission(KING_CASTLE, color, bitBoard.history[bitBoard.historyCount].hasCastlePermission(KING_CASTLE, color));
 		bitBoard.setCastlePermission(QUEEN_CASTLE, color, bitBoard.history[bitBoard.historyCount].hasCastlePermission(QUEEN_CASTLE, color));
 	} else if (piece == PAWN)
 		checkEnPassantCaptured(bitBoard, move, color, false);
+	else {
+		bitBoard.setCastlePermission(KING_CASTLE, color, bitBoard.history[bitBoard.historyCount].hasCastlePermission(KING_CASTLE, color));
+		bitBoard.setCastlePermission(QUEEN_CASTLE, color, bitBoard.history[bitBoard.historyCount].hasCastlePermission(QUEEN_CASTLE, color));
+		bitBoard.setCastlePermission(KING_CASTLE, ~color, bitBoard.history[bitBoard.historyCount].hasCastlePermission(KING_CASTLE, ~color));
+		bitBoard.setCastlePermission(QUEEN_CASTLE, ~color, bitBoard.history[bitBoard.historyCount].hasCastlePermission(QUEEN_CASTLE, ~color));
+	}
 
 	checkEnPassant(bitBoard, move, color, false);
 
@@ -157,18 +184,23 @@ bool MoveMaker::makeMove(BitBoard& bitBoard, const Move& move) const {
 		bitBoard.fiftyMove = 0U;
 		checkEnPassantCaptured(bitBoard, move, color, true);
 		checkPawnPromotion(bitBoard, move, color, true);
-	} else if (bitBoard.hasCastlePermission(KING_CASTLE, color) ||
-			   bitBoard.hasCastlePermission(QUEEN_CASTLE, color)) {
-		if (piece == KING) {
+	} else if (piece == KING) {
+		if (bitBoard.hasCastlePermission(KING_CASTLE, color) ||
+			bitBoard.hasCastlePermission(QUEEN_CASTLE, color)) {
 			checkCastleMove(bitBoard, move, color, true);
-			bitBoard.setCastlePermission(KING_CASTLE, color, false);
-			bitBoard.setCastlePermission(QUEEN_CASTLE, color, false);
-		} else if (piece == ROOK) {
-			const Square from = move.getFrom();
-			bitBoard.setCastlePermission(KING_CASTLE, color, !(from == H1 || from == H8));
-			bitBoard.setCastlePermission(QUEEN_CASTLE, color, !(from == A1 || from == A8));
 		}
 	}
+	checkCastlePermission(bitBoard, move.getFrom(), color);
+	checkCastlePermission(bitBoard, move.getTo(), color);
+	/*
+	Square square = color == WHITE ? H1 : H8;
+	bitBoard.setCastlePermission(KING_CASTLE, color, bitBoard.hasCastlePermission(KING_CASTLE, color) && (bitBoard.bitMaps[ROOK][color] & getBitmapOf(square)) != 0);
+	bitBoard.setCastlePermission(KING_CASTLE, ~color, bitBoard.hasCastlePermission(KING_CASTLE, ~color) && (bitBoard.bitMaps[ROOK][~color] & getBitmapOf(~square)));
+
+	square = color == WHITE ? A1 : A8;
+	bitBoard.setCastlePermission(QUEEN_CASTLE, color, bitBoard.hasCastlePermission(QUEEN_CASTLE, color) && (bitBoard.bitMaps[ROOK][color] & getBitmapOf(square)) != 0);
+	bitBoard.setCastlePermission(QUEEN_CASTLE, ~color, bitBoard.hasCastlePermission(QUEEN_CASTLE, ~color) && (bitBoard.bitMaps[ROOK][~color] & getBitmapOf(~square)));
+	*/
 
 	if (bitBoard.isBlackTime())
 		++bitBoard.ply;

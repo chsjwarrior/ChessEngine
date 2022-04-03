@@ -13,9 +13,10 @@ class MoveMaker {
 	void checkEnPassantCaptured(BitBoard& bitBoard, const Move& move, const Color color, const bool isNotUndo) const;
 	/* This function replace the pawn for the promotion piece */
 	void checkPawnPromotion(BitBoard& bitBoard, const Move& move, const Color color, const bool isNotUndo) const;
-	/* This function move the Roo to castle position */
+	/* This function move the Rook to castle position */
 	void checkCastleMove(BitBoard& bitBoard, const Move& move, const Color color, const bool isNotUndo) const;
-
+	/* This function check the castle permission */
+	void checkCastlePermission(BitBoard& bitBoard, const Square square, const Color color) const;
 public:
 	MoveMaker(const MoveMaker&) = delete;
 	MoveMaker(MoveMaker&&) = delete;
