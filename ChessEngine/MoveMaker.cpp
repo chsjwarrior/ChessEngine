@@ -186,21 +186,11 @@ bool MoveMaker::makeMove(BitBoard& bitBoard, const Move& move) const {
 		checkPawnPromotion(bitBoard, move, color, true);
 	} else if (piece == KING) {
 		if (bitBoard.hasCastlePermission(KING_CASTLE, color) ||
-			bitBoard.hasCastlePermission(QUEEN_CASTLE, color)) {
+			bitBoard.hasCastlePermission(QUEEN_CASTLE, color))
 			checkCastleMove(bitBoard, move, color, true);
-		}
 	}
 	checkCastlePermission(bitBoard, move.getFrom(), color);
 	checkCastlePermission(bitBoard, move.getTo(), color);
-	/*
-	Square square = color == WHITE ? H1 : H8;
-	bitBoard.setCastlePermission(KING_CASTLE, color, bitBoard.hasCastlePermission(KING_CASTLE, color) && (bitBoard.bitMaps[ROOK][color] & getBitmapOf(square)) != 0);
-	bitBoard.setCastlePermission(KING_CASTLE, ~color, bitBoard.hasCastlePermission(KING_CASTLE, ~color) && (bitBoard.bitMaps[ROOK][~color] & getBitmapOf(~square)));
-
-	square = color == WHITE ? A1 : A8;
-	bitBoard.setCastlePermission(QUEEN_CASTLE, color, bitBoard.hasCastlePermission(QUEEN_CASTLE, color) && (bitBoard.bitMaps[ROOK][color] & getBitmapOf(square)) != 0);
-	bitBoard.setCastlePermission(QUEEN_CASTLE, ~color, bitBoard.hasCastlePermission(QUEEN_CASTLE, ~color) && (bitBoard.bitMaps[ROOK][~color] & getBitmapOf(~square)));
-	*/
 
 	if (bitBoard.isBlackTime())
 		++bitBoard.ply;

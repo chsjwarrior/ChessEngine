@@ -63,6 +63,7 @@ void Uci::go(BitBoard& bitBoard, std::istringstream& iss) const {
 	std::string input;
 
 	info.depth = -1;
+	info.perft = 0;
 	info.moveTime = -1;
 	info.time = -1;
 	info.inc = 0;
@@ -86,6 +87,8 @@ void Uci::go(BitBoard& bitBoard, std::istringstream& iss) const {
 			iss >> info.movestogo;
 		else if (input == DEPTH)
 			iss >> info.depth;
+		else if (input == PERFT)
+			iss >> info.perft;
 		else if (input == MATE)
 			iss >> info.mate;
 		else if (input == INFINITE)
@@ -188,8 +191,6 @@ void Uci::loop() const {
 			uci();
 		else if (input == SET_OPTION)
 			setOption();
-		else if (input == DEBUG)
-			debugAnalysisTest(bitBoard, iss);
 		else if (input == QUIT)
 			quit();
 		else if (input == STOP)

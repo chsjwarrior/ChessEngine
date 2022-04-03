@@ -16,6 +16,7 @@ class Uci {
 	const char* B_INC = "binc";
 	const char* MOVES_TOGO = "movestogo";
 	const char* DEPTH = "depth";
+	const char* PERFT = "perft";
 	const char* NODES = "nodes";
 	const char* MATE = "mate";
 	const char* MOVE_TIME = "movetime";
@@ -24,7 +25,6 @@ class Uci {
 	const char* STOP = "stop";
 	const char* IS_READY = "isready";
 	const char* UCI_NEW_GAME = "ucinewgame";
-	const char* DEBUG = "debug";
 	const char* PRINT = "print";
 
 

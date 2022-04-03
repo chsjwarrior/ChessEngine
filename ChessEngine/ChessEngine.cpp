@@ -60,8 +60,7 @@ int main() {
 					perftTest(b, std::stoi(input));
 					auto stop = std::chrono::high_resolution_clock::now();
 					auto duration = duration_cast<std::chrono::milliseconds>(stop - start);
-					std::cout << "Time taken by function: " << duration.count() << " milliseconds" << std::endl;
-					std::cout << b;
+					std::cout << "Time taken by function: " << duration.count() << " milliseconds" << std::endl;					
 				} else if (input.compare("f") == 0) {
 					std::cout << "entry with the FEN >";
 					std::cin >> input;
