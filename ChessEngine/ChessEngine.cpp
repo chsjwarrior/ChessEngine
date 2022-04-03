@@ -4,7 +4,7 @@
 constexpr char TEST_CASTLING1[] = "5k2/8/8/8/8/8/8/4K2R w K - 0 1";// perft 6 = 661072 
 //--Long Castling Gives Check-ERROR
 constexpr char TEST_CASTLING2[] = "3k4/8/8/8/8/8/8/R3K3 w Q - 0 1";// perft 6 = 803711
-//--Castle Rights-ERROR
+//--Castle Rights-ERROR  a1d1 g7h6 perf 2
 constexpr char TEST_CASTLE_RIGHTS[] = "r3k2r/1b4bq/8/8/8/8/7B/R3K2R w KQkq - 0 1";// perft 4 = 1274206
 //--Castling Prevented -OK
 constexpr char TEST_CASTLE_PREVENTED[] = "r3k2r/8/3Q4/8/8/5q2/8/R3K2R b KQkq - 0 1";// perft 4 = 1720476
@@ -29,7 +29,7 @@ int main() {
 		//uci.loop();
 
 		BitBoard b;
-		b.parseFEN(TEST_CASTLE_RIGHTS);
+		b.parseFEN(TEST_FEN1);
 		std::cout << b;
 
 		while (input.compare("q") != 0) {
@@ -61,6 +61,7 @@ int main() {
 					auto stop = std::chrono::high_resolution_clock::now();
 					auto duration = duration_cast<std::chrono::milliseconds>(stop - start);
 					std::cout << "Time taken by function: " << duration.count() << " milliseconds" << std::endl;
+					std::cout << b;
 				} else if (input.compare("f") == 0) {
 					std::cout << "entry with the FEN >";
 					std::cin >> input;

@@ -136,7 +136,7 @@ void Move::parseEntry(const char* entry) {
 std::ostream& operator<<(std::ostream& os, const Move& move) {
 	if (move.flags != MOVE_EMPTY) {
 		os << move.getFrom();
-		if (move.getCaptured() != NONE_PIECE || move.isEnPassantCapture())
+		if (move.isCapture() || move.isEnPassantCapture())
 			os << 'x';
 		os << move.getTo();
 		if (move.isEnPassantCapture())

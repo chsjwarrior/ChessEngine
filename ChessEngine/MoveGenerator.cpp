@@ -105,6 +105,7 @@ static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece pie
 
 			moves[movesCount++] = move;
 		}
+		move();
 		if (piece == KING)
 			if (!attacks::isSquareAttacked(bitBoard, ~color, getFirstSquareOf(bitBoard.getBitmapPiece(KING, color)))) {//King is not in check
 				if (canMakeKingCastle(bitBoard, color)) {
