@@ -28,7 +28,7 @@ int main() {
 		//uci.loop();
 
 		BitBoard b;
-		b.parseFEN(TEST_FEN1);
+		b.parseFEN(START_FEN);
 		std::cout << b;
 
 		while (input.compare("q") != 0) {

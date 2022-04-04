@@ -25,7 +25,7 @@ static int evaluatePosition(const BitBoard& bitBoard) {
 	int materialWeight = 0;
 	int numWhitePieces = materialWeight;
 	int numBlackPieces = numWhitePieces;
-	const Square(*popSquareOf)(Bitmap&) = nullptr;
+	Square(*popSquareOf)(Bitmap&) = nullptr;
 	Move moves[MAX_MOVES];
 
 	for (uChar c = WHITE; c <= BLACK; ++c) {
