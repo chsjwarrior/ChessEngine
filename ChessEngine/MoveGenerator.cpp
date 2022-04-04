@@ -4,12 +4,6 @@ static Bitmap friendPieces;
 static Bitmap enemyPieces;
 static uShort movesCount;
 
-/* This function sets the captured piece in the Move if any */
-static void setCapture(const BitBoard& bitBoard, Move& move, const Color color, const Square to) {
-	const Piece capture = bitBoard.getPieceFromSquare(~color, to);
-	move.setCaptured(capture);
-	move.score += PIECE_VALUE[capture];
-}
 /* This function tests if is possible to make King castle */
 static bool canMakeKingCastle(const BitBoard& bitBoard, const Color color) {
 	if (bitBoard.hasCastlePermission(KING_CASTLE, color)) {
@@ -30,30 +24,34 @@ static bool canMakeQueenCastle(const BitBoard& bitBoard, const Color color) {
 	}
 	return false;
 }
+/* This function sets the captured piece in the Move if any */
+static void setCapture(const BitBoard& bitBoard, Move& move, const Color color, const Square to) {
+	const Piece capture = bitBoard.getPieceFromSquare(~color, to);
+	move.setCaptured(capture);
+	move.score += PIECE_VALUE[capture];
+}
 /* This function returns a bitmap with the attack squares */
 static Bitmap getPiecesMoves(const BitBoard& bitBoard, const Piece piece, const Color color, const Square square) {
-	const Bitmap squareBitmap = getBitmapOf(square);//1UL << square;
 	Bitmap attacks = 0UL;
-
 	if (piece == KING)
-		attacks = attacks::getKingMoves(squareBitmap);
+		attacks = attacks::getKingMoves(getBitmapOf(square));
 	else if (piece == KNIGHT)
-		attacks = attacks::getKnightMoves(squareBitmap);
+		attacks = attacks::getKnightMoves(getBitmapOf(square));
 	else {
 		const Bitmap allPieces = friendPieces | enemyPieces;
 
 		if (piece == PAWN)
-			attacks = attacks::getPawnMoves(allPieces, color, getBitmapOf(bitBoard.getEnPassantSquare()), squareBitmap);
+			attacks = attacks::getPawnMoves(allPieces, color, getBitmapOf(bitBoard.getEnPassantSquare()), getBitmapOf(square));
 		else {
 			const File file = getFileOf(square);
 			const Rank rank = getRankOf(square);
 
 			if (piece == BISHOP)
-				attacks = attacks::getBishopMoves(allPieces, file, rank, squareBitmap);
+				attacks = attacks::getBishopMoves(allPieces, file, rank, getBitmapOf(square));
 			else if (piece == ROOK)
-				attacks = attacks::getRookMoves(allPieces, file, rank, squareBitmap);
+				attacks = attacks::getRookMoves(allPieces, file, rank, getBitmapOf(square));
 			else if (piece == QUEEN)
-				attacks = attacks::getBishopMoves(allPieces, file, rank, squareBitmap) | attacks::getRookMoves(allPieces, file, rank, squareBitmap);
+				attacks = attacks::getBishopMoves(allPieces, file, rank, getBitmapOf(square)) | attacks::getRookMoves(allPieces, file, rank, getBitmapOf(square));
 		}
 	}
 	return attacks & ~friendPieces;//remove friend pieces square
@@ -62,7 +60,7 @@ static Bitmap getPiecesMoves(const BitBoard& bitBoard, const Piece piece, const 
 static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece piece, const Color color, const Square from, Bitmap attacks) {
 	Square to = NONE_SQUARE;
 	Move move;
-	const Square(*popSquareOf)(Bitmap&) = popFirstSquareOf;
+	Square(*popSquareOf)(Bitmap&) = popFirstSquareOf;
 	if (color == BLACK)
 		popSquareOf = popLastSquareOf;
 
@@ -135,7 +133,7 @@ uShort moveGenerator::generateMoves(const BitBoard& bitBoard, Move moves[]) {
 	Bitmap attacks;
 	Bitmap pieceBitmap;
 	Square square = NONE_SQUARE;
-	const Square(*popSquareOf)(Bitmap&) = popFirstSquareOf;
+	Square(*popSquareOf)(Bitmap&) = popFirstSquareOf;
 	if (color == BLACK)
 		popSquareOf = popLastSquareOf;
 

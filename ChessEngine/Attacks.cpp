@@ -72,7 +72,7 @@ Bitmap attacks::getPawnMoves(const Bitmap allPieces, const Color color, const Bi
 		//en passant capture move
 		moves |= squareBitmap << 7 & enPassantBitmap & RANKS[RANK_6] & ~FILES[FILE_H];
 		moves |= squareBitmap << 9 & enPassantBitmap & RANKS[RANK_6] & ~FILES[FILE_A];
-	} else if (color == BLACK) {
+	} else {
 		//normal move
 		moves |= squareBitmap >> 8 & ~allPieces;
 		//start move
@@ -100,7 +100,7 @@ bool attacks::isSquareAttacked(const BitBoard& bitBoard, const Color color, cons
 	//Pawn
 	if (color == WHITE)
 		attacks = squareBitmap >> 7 & ~FILES[FILE_A] | squareBitmap >> 9 & ~FILES[FILE_H];
-	else if (color == BLACK)
+	else
 		attacks = squareBitmap << 7 & ~FILES[FILE_H] | squareBitmap << 9 & ~FILES[FILE_A];
 	if (attacks & bitBoard.getBitmapPiece(PAWN, color))
 		return true;

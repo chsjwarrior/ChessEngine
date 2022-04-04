@@ -1,17 +1,16 @@
 #include "Uci.h"
 
-//--Short Castling Gives Check -ERROR
+//--Short Castling Gives Check
 constexpr char TEST_CASTLING1[] = "5k2/8/8/8/8/8/8/4K2R w K - 0 1";// perft 6 = 661072 
-//--Long Castling Gives Check-ERROR
+//--Long Castling Gives Check
 constexpr char TEST_CASTLING2[] = "3k4/8/8/8/8/8/8/R3K3 w Q - 0 1";// perft 6 = 803711
-//--Castle Rights-ERROR  a1d1 g7h6 perf 2
+//--Castle Rights
 constexpr char TEST_CASTLE_RIGHTS[] = "r3k2r/1b4bq/8/8/8/8/7B/R3K2R w KQkq - 0 1";// perft 4 = 1274206
-//--Castling Prevented -OK
+//--Castling Prevented
 constexpr char TEST_CASTLE_PREVENTED[] = "r3k2r/8/3Q4/8/8/5q2/8/R3K2R b KQkq - 0 1";// perft 4 = 1720476
 
 constexpr char TEST_FEN1[] = "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8";
 /*
-TEST_FEN1 does problem in depth 3
 D	N
 1	44
 2	1,486

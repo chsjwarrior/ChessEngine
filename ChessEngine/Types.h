@@ -146,37 +146,37 @@ constexpr Piece& operator--(Piece& p) noexcept { return p = p == PAWN ? NONE_PIE
 constexpr Color operator~(const Color& color) noexcept { return static_cast<Color>(color ^ BLACK); }
 
 /* This function returns the File of Square*/
-constexpr const File getFileOf(const Square square) noexcept {
+constexpr File getFileOf(const Square square) noexcept {
 	if (square >= NONE_SQUARE) return NONE_FILE;
 	return static_cast<File>(square & 7U);
 	// file = square % 8; or file = square & 7;
 }
 /* This function returns the Rank of Square*/
-constexpr const Rank getRankOf(const Square square) noexcept {
+constexpr Rank getRankOf(const Square square) noexcept {
 	if (square >= NONE_SQUARE) return NONE_RANK;
 	return static_cast<Rank>(square >> 3);
 	// rank = square / 8; or rank = square >> 3;
 }
 /* This function returns the Square of File and Rank*/
-constexpr const Square getSquareOf(const File file, const Rank rank) noexcept {
+constexpr Square getSquareOf(const File file, const Rank rank) noexcept {
 	if (file >= NONE_FILE || rank >= NONE_RANK) return NONE_SQUARE;
 	return static_cast<Square>((rank << 3) + file);
 	// square = 8 * rank + file;
 }
 /* This function returns a Bitmap of Square*/
-constexpr const Bitmap getBitmapOf(const Square square) noexcept {
+constexpr Bitmap getBitmapOf(const Square square) noexcept {
 	if (square >= NONE_SQUARE) return 0UL;
 	return SQUARE_MASK << square;
 }
 /*this function returns the position(Square) of the left most set bit*/
-constexpr const Square getLastSquareOf(const Bitmap bitmap) noexcept {
+constexpr Square getLastSquareOf(const Bitmap bitmap) noexcept {
 	if (bitmap == 0UL) return NONE_SQUARE;
 	unsigned long i;
 	_BitScanReverse64(&i, bitmap);
 	return static_cast<Square>(i);
 }
 /*this function returns and clear the position(Square) of the left most set bit*/
-constexpr const Square popLastSquareOf(Bitmap& bitmap) noexcept {
+constexpr Square popLastSquareOf(Bitmap& bitmap) noexcept {
 	if (bitmap == 0UL) return NONE_SQUARE;
 	unsigned long i;
 	_BitScanReverse64(&i, bitmap);
@@ -184,14 +184,14 @@ constexpr const Square popLastSquareOf(Bitmap& bitmap) noexcept {
 	return static_cast<Square>(i);
 }
 /*this function returns the position(Square) of the right most set bit*/
-constexpr const Square getFirstSquareOf(const Bitmap bitmap) noexcept {
+constexpr Square getFirstSquareOf(const Bitmap bitmap) noexcept {
 	if (bitmap == 0UL) return NONE_SQUARE;
 	unsigned long i;
 	_BitScanForward64(&i, bitmap);
 	return static_cast<Square>(i);
 }
 /*this function returns and clear the position (Square) of the right most set bit*/
-constexpr const Square popFirstSquareOf(Bitmap& bitmap) noexcept {
+constexpr Square popFirstSquareOf(Bitmap& bitmap) noexcept {
 	if (bitmap == 0UL) return NONE_SQUARE;
 	unsigned long i;
 	_BitScanForward64(&i, bitmap);
@@ -225,7 +225,7 @@ constexpr std::ostream& operator<<(std::ostream& os, const Square& square) {
 	return os;
 }
 
-constexpr const uInt bitCount(Bitmap bitmap) noexcept {
+constexpr uInt bitCount(Bitmap bitmap) noexcept {
 	bitmap = ((bitmap >> 1) & 0x5555555555555555UL) + (bitmap & 0x5555555555555555UL);
 	bitmap = ((bitmap >> 2) & 0x3333333333333333UL) + (bitmap & 0x3333333333333333UL);
 	uInt v = static_cast<uInt>((bitmap >> 32) + bitmap);
@@ -234,7 +234,7 @@ constexpr const uInt bitCount(Bitmap bitmap) noexcept {
 	return ((v >> 16) & 0x0000FFFFU) + (v & 0x0000FFFFU);
 }
 
-constexpr const Bitmap reverse(Bitmap bitmap) noexcept {
+constexpr Bitmap reverse(Bitmap bitmap) noexcept {
 	bitmap = (bitmap & 0x5555555555555555UL) << 1 | (bitmap >> 1) & 0x5555555555555555UL;
 	bitmap = (bitmap & 0x3333333333333333UL) << 2 | (bitmap >> 2) & 0x3333333333333333UL;
 	bitmap = (bitmap & 0x0F0F0F0F0F0F0F0FUL) << 4 | (bitmap >> 4) & 0x0F0F0F0F0F0F0F0FUL;
