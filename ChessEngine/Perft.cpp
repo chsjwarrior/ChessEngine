@@ -1,44 +1,39 @@
 #include "Chess.h"
 
-static void perft(BitBoard& bitBoard, const short depth, uLong& leafNodes) {
-	if (depth <= 0) {
-		++leafNodes;
-		return;
-	}
+static uLong perft(BitBoard& bitBoard, const short depth) {
+	if (depth <= 0)
+		return 1UL;
 
-	Move moves[MAX_MOVES];	
+	Move moves[MAX_MOVES];
 	uShort movesCount = moveGenerator::generateMoves(bitBoard, moves);
+	uLong nodes = 0UL;
 	MoveMaker& moveMaker = MoveMaker::getInstance();
 
 	for (Move* move = moves; move != moves + movesCount; ++move) {
 		if (!moveMaker.makeMove(bitBoard, *move))
 			continue;
 
-		perft(bitBoard, depth - 1, leafNodes);
+		nodes += perft(bitBoard, depth - 1);
 		moveMaker.makeUndo(bitBoard);
 	}
+	return nodes;
 }
 
-void perftTest(BitBoard& bitBoard, const short depth) {
-	std::cout << bitBoard;
-	std::cout << "Starting perft test to Depth: " << depth << std::endl;
-	uLong leafNodes = 0UL;
-	uLong cumnodes;
-
-	Move moves[MAX_MOVES];	
+void perftTest(BitBoard& bitBoard) {
+	Move moves[MAX_MOVES];
 	uShort movesCount = moveGenerator::generateMoves(bitBoard, moves);
+	uLong nodes;
 	MoveMaker& moveMaker = MoveMaker::getInstance();
 
 	for (Move* move = moves; move != moves + movesCount; ++move) {
 		if (!moveMaker.makeMove(bitBoard, *move))
 			continue;
 
-		cumnodes = leafNodes;
-		perft(bitBoard, depth - 1, leafNodes);
+		nodes = perft(bitBoard, info.depth - 1);
+		info.nodes += nodes;
 		moveMaker.makeUndo(bitBoard);
-		std::cout << *move << ": " << leafNodes - cumnodes << std::endl;
+		std::cout << *move << ": " << nodes << std::endl;
 	}
 
-	std::cout << "Test complete: " << std::endl;
-	std::cout << leafNodes << " nodes visited" << std::endl;
+	std::cout << "Node searched: " << info.nodes << std::endl;
 }

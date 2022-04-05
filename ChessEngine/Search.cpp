@@ -126,9 +126,6 @@ static int negaMax(BitBoard& bitBoard, short depth, int alpha, int beta, Line* p
 }
 
 void searchPosition(BitBoard& bitBoard) {
-	info.nodes = 0UL;
-	info.stop = false;
-
 	int score = -INFINIT;
 	Line line;
 

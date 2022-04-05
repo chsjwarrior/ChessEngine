@@ -1,23 +1,22 @@
 #include "Uci.h"
 
-const long long Uci::getMilliseconds() const {
+long long Uci::getMilliseconds() const {
 	auto now = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
 	return duration.count();
 }
 
-const Move Uci::findMove(BitBoard& bitBoard, const char* entry) const {
+Move Uci::findMove(const BitBoard& bitBoard, const char* entry) const {
 	Move target;
 	target.parseEntry(entry);
 
 	Move moves[MAX_MOVES];
 	uShort moveCount = moveGenerator::generateMoves(bitBoard, moves);
-	Piece promotion = NONE_PIECE;
 
-	for (Move* move = moves; move != moves + moveCount; ++move) {
+	for (Move* move = moves; move != moves + moveCount; ++move)
 		if (move->getFrom() == target.getFrom() && move->getTo() == target.getTo()) {
 			if (move->isPawnPromotion() && target.isPawnPromotion()) {
-				promotion = move->getPromotionPiece();
+				Piece promotion = move->getPromotionPiece();
 				if (promotion == QUEEN && target.getPromotionPiece() == promotion)
 					return *move;
 				else if (promotion == ROOK && target.getPromotionPiece() == promotion)
@@ -29,7 +28,7 @@ const Move Uci::findMove(BitBoard& bitBoard, const char* entry) const {
 			} else
 				return *move;
 		}
-	}
+
 	target();
 	return target;
 }
@@ -38,24 +37,25 @@ void Uci::position(BitBoard& bitBoard, std::istringstream& iss) const {
 	std::string input;
 	iss >> input;
 
-	if (input == FEN) {
+	if (input == START_POS)
+		bitBoard.parseFEN(START_FEN);
+	else if (input == FEN) {
 		std::string fen;
 		while (iss >> input && input != "moves")
 			fen += input + " ";
 		bitBoard.parseFEN(fen.c_str());
-	} else if (input == START_POS) {
-		bitBoard.parseFEN(START_FEN);
-		iss >> input;//consume 'moves' token
 	} else
 		return;
 
-	MoveMaker& moveMaker = MoveMaker::getInstance();
-	Move move;
-	while (iss >> input) {
-		move = findMove(bitBoard, input.c_str());
-		if (move.isEmpty())
-			break;
-		moveMaker.makeMove(bitBoard, move);
+	if (input == MOVES) {
+		Move move;
+		MoveMaker& moveMaker = MoveMaker::getInstance();
+		while (iss >> input) {
+			move = findMove(bitBoard, input.c_str());
+			if (move.isEmpty())
+				break;
+			moveMaker.makeMove(bitBoard, move);
+		}
 	}
 }
 
@@ -68,6 +68,8 @@ void Uci::go(BitBoard& bitBoard, std::istringstream& iss) const {
 	info.time = -1;
 	info.inc = 0;
 	info.movestogo = 30;
+	info.nodes = 0UL;
+	info.stop = false;
 
 	while (iss >> input) {
 		if (input == SEARCH_MOVES)
@@ -108,8 +110,11 @@ void Uci::go(BitBoard& bitBoard, std::istringstream& iss) const {
 		info.stopTime = info.startTime + info.time + info.inc;
 	}
 
-	if (info.depth)
-		info.depth = MAX_DEPTH;
+	if (info.depth == -1)
+		if (info.perft > 0)
+			info.depth = info.perft;
+		else
+			info.depth = MAX_DEPTH;
 
 	std::cout << "time: " << time;
 	std::cout << "start: " << info.startTime;
@@ -121,7 +126,10 @@ void Uci::go(BitBoard& bitBoard, std::istringstream& iss) const {
 	else
 		std::cout << "true" << std::endl;
 
-	searchPosition(bitBoard);
+	if (info.perft)
+		perftTest(bitBoard);
+	else
+		searchPosition(bitBoard);
 }
 
 void Uci::debugAnalysisTest(BitBoard& bitBoard, std::istringstream& iss) const {
@@ -164,6 +172,7 @@ void Uci::quit() const {
 
 void Uci::loop() const {
 	BitBoard bitBoard;
+	bitBoard.parseFEN(START_FEN);
 
 	std::string input;
 	std::istringstream iss;

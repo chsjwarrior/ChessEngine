@@ -23,4 +23,4 @@ inline SearchInfo info;
 
 void searchPosition(BitBoard& bitBoard);
 
-void perftTest(BitBoard& bitBoard, const short depth);
+void perftTest(BitBoard& bitBoard);
