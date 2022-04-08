@@ -1,7 +1,7 @@
 #include "Uci.h"
 
 int main() {
-	Uci uci;
+	const Uci uci;
 	uci.loop();
 	return 0;
 }

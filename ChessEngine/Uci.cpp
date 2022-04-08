@@ -37,9 +37,10 @@ void Uci::position(BitBoard& bitBoard, std::istringstream& iss) const {
 	std::string input;
 	iss >> input;
 
-	if (input == START_POS)
+	if (input == START_POS) {
 		bitBoard.parseFEN(START_FEN);
-	else if (input == FEN) {
+		iss >> input;
+	} else if (input == FEN) {
 		std::string fen;
 		while (iss >> input && input != "moves")
 			fen += input + " ";
