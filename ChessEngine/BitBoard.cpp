@@ -1,5 +1,7 @@
 #include "BitBoard.h"
 
+static const uShort BITBOARD_FLAGS_EMPTY = 0X0040U;
+
 //0===============================HASHKEY==============================0
 BitBoard::Zobrist::Zobrist() {
 	for (Square s = A1; s < NONE_SQUARE; ++s)

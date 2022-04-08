@@ -6,22 +6,22 @@ static uShort movesCount;
 
 /* This function tests if is possible to make King castle */
 static bool canMakeKingCastle(const BitBoard& bitBoard, const Color color) {
-	if (bitBoard.hasCastlePermission(KING_CASTLE, color)) {
-		const Rank relativeRank = color == WHITE ? RANK_1 : RANK_8;
-		if ((((FILES[FILE_F] | FILES[FILE_G]) & RANKS[relativeRank]) & (friendPieces | enemyPieces)) == 0) //isCastlePathClear
+	if (bitBoard.hasCastlePermission(KING_CASTLE, color))
+		if (((bitBoard.getBitmapPiece(KING, color) << 1U | bitBoard.getBitmapPiece(KING, color) << 2U) & (friendPieces | enemyPieces)) == 0) { //isCastlePathClear
+			const Rank relativeRank = color == WHITE ? RANK_1 : RANK_8;
 			if (!attacks::isSquareAttacked(bitBoard, ~color, getSquareOf(FILE_F, relativeRank)))//isCastlePathSecury
 				return !attacks::isSquareAttacked(bitBoard, ~color, getSquareOf(FILE_G, relativeRank));
-	}
+		}
 	return false;
 }
 /* This function tests if is possible to make Queen castle */
 static bool canMakeQueenCastle(const BitBoard& bitBoard, const Color color) {
-	if (bitBoard.hasCastlePermission(QUEEN_CASTLE, color)) {
-		const Rank relativeRank = color == WHITE ? RANK_1 : RANK_8;
-		if ((((FILES[FILE_B] | FILES[FILE_C] | FILES[FILE_D]) & RANKS[relativeRank]) & (friendPieces | enemyPieces)) == 0)//isCastlePathClear
+	if (bitBoard.hasCastlePermission(QUEEN_CASTLE, color))
+		if (((bitBoard.getBitmapPiece(KING, color) >> 1U | bitBoard.getBitmapPiece(KING, color) >> 2U | bitBoard.getBitmapPiece(KING, color) >> 3U) & (friendPieces | enemyPieces)) == 0) {//isCastlePathClear
+			const Rank relativeRank = color == WHITE ? RANK_1 : RANK_8;
 			if (!attacks::isSquareAttacked(bitBoard, ~color, getSquareOf(FILE_C, relativeRank)))//isCastlePathSecury
 				return !attacks::isSquareAttacked(bitBoard, ~color, getSquareOf(FILE_D, relativeRank));//isCastlePathSecury
-	}
+		}
 	return false;
 }
 /* This function sets the captured piece in the Move if any */
@@ -124,6 +124,22 @@ static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece pie
 				}
 			}
 	}
+}
+
+uShort moveGenerator::generateMoves(const BitBoard& bitBoard, Move moves[], const Square square) {
+	const Color color = bitBoard.getColorTime();
+	const Piece piece = bitBoard.getPieceFromSquare(color, square);
+
+	if (piece == NONE_PIECE)
+		return 0U;
+
+	friendPieces = bitBoard.getBitmapAllPieces(color);
+	enemyPieces = bitBoard.getBitmapAllPieces(~color);
+	movesCount = 0U;
+
+	Bitmap attacks = getPiecesMoves(bitBoard, piece, color, square);
+	catalogMoves(bitBoard, moves, piece, color, square, attacks);
+	return movesCount;
 }
 
 uShort moveGenerator::generateMoves(const BitBoard& bitBoard, Move moves[]) {

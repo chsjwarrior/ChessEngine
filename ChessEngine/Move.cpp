@@ -1,5 +1,7 @@
 #include "Move.h"
 
+static const uInt MOVE_EMPTY = 0x00664040U;
+
 Move::Move() noexcept : flags(MOVE_EMPTY), score(0) {}
 
 void Move::operator()() noexcept {
