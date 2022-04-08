@@ -53,25 +53,24 @@ void MoveMaker::checkPawnPromotion(BitBoard& bitBoard, const Move& move, const C
 }
 
 void MoveMaker::checkCastleMove(BitBoard& bitBoard, const Move& move, const Color color, const bool isNotUndo) const {
-	if (move.isKingCastle()) {
+	if (move.isCastle()) {
 		Square from, to;
-		if (isNotUndo) {
-			from = move.getFrom() + 3U;
-			to = move.getFrom() + 1U;
+		if (move.getTo() > move.getFrom()) {
+			if (isNotUndo) {
+				from = move.getFrom() + 3U;
+				to = move.getFrom() + 1U;
+			} else {
+				from = move.getFrom() + 1U;
+				to = move.getFrom() + 3U;
+			}
 		} else {
-			from = move.getFrom() + 1U;
-			to = move.getFrom() + 3U;
-		}
-		bitBoard.unsetPieceOnSquare(ROOK, color, from);
-		bitBoard.setPieceOnSquare(ROOK, color, to);
-	} else if (move.isQueenCastle()) {
-		Square from, to;
-		if (isNotUndo) {
-			from = move.getFrom() - 4U;
-			to = move.getFrom() - 1U;
-		} else {
-			from = move.getFrom() - 1U;
-			to = move.getFrom() - 4U;
+			if (isNotUndo) {
+				from = move.getFrom() - 4U;
+				to = move.getFrom() - 1U;
+			} else {
+				from = move.getFrom() - 1U;
+				to = move.getFrom() - 4U;
+			}
 		}
 		bitBoard.unsetPieceOnSquare(ROOK, color, from);
 		bitBoard.setPieceOnSquare(ROOK, color, to);

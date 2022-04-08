@@ -117,10 +117,10 @@ void Uci::go(BitBoard& bitBoard, std::istringstream& iss) const {
 			info.depth = MAX_DEPTH;
 
 	std::cout << "time: " << time;
-	std::cout << "start: " << info.startTime;
-	std::cout << "stop: " << info.stopTime;
-	std::cout << "depth: " << info.depth;
-	std::cout << "timeset: ";
+	std::cout << " start: " << info.startTime;
+	std::cout << " stop: " << info.stopTime;
+	std::cout << " depth: " << info.depth;
+	std::cout << " timeset: ";
 	if (info.moveTime == -1)
 		std::cout << "false" << std::endl;
 	else

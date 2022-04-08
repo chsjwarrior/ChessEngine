@@ -84,7 +84,9 @@ static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece pie
 				}
 				continue;
 			}
-			if (to == bitBoard.getEnPassantSquare())
+			if (color == WHITE && move.getTo() - move.getFrom() == 16 || color == BLACK && move.getFrom() - move.getTo() == 16)
+				move.setPawnStart();
+			else if (to == bitBoard.getEnPassantSquare())
 				move.setEnPassantCapture();
 			else
 				setCapture(bitBoard, move, color, to);
@@ -109,14 +111,14 @@ static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece pie
 				if (canMakeKingCastle(bitBoard, color)) {
 					move.setFrom(from);
 					move.setTo(from + 2U);
-					move.setKingCastle();
+					move.setCastle();
 					move.setColor(color);
 					moves[movesCount++] = move;
 				}
 				if (canMakeQueenCastle(bitBoard, color)) {
 					move.setFrom(from);
 					move.setTo(from - 2U);
-					move.setQueenCastle();
+					move.setCastle();
 					move.setColor(color);
 					moves[movesCount++] = move;
 				}

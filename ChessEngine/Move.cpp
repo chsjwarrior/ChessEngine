@@ -27,10 +27,6 @@ void Move::setTo(const Square square) noexcept {
 	flags = 0xFFFF00FFU & flags | square << 8U;
 }
 
-bool Move::isPawnStart() const noexcept {
-	return getColor() == WHITE && getTo() - getFrom() == 16 || getColor() == BLACK && getFrom() - getTo() == 16;
-}
-
 Piece Move::getCaptured() const noexcept {
 	return static_cast<Piece>(flags >> 16U & 0xFU);
 }
@@ -55,27 +51,27 @@ bool Move::isPawnPromotion() const noexcept {
 	return (flags >> 20U & 0xFU) != NONE_PIECE;
 }
 
-bool Move::isEnPassantCapture() const noexcept {
+bool Move::isPawnStart() const noexcept {
 	return flags & 0x1000000U;
 }
 
-void Move::setEnPassantCapture() noexcept {
+void Move::setPawnStart() noexcept {
 	flags = 0xF8FFFFFFU & flags | 0x1000000U;
 }
 
-bool Move::isKingCastle() const noexcept {
+bool Move::isEnPassantCapture() const noexcept {
 	return flags & 0x2000000U;
 }
 
-void Move::setKingCastle() noexcept {
+void Move::setEnPassantCapture() noexcept {
 	flags = 0xF8FFFFFFU & flags | 0x2000000U;
 }
 
-bool Move::isQueenCastle() const noexcept {
+bool Move::isCastle() const noexcept {
 	return flags & 0x4000000U;
 }
 
-void Move::setQueenCastle() noexcept {
+void Move::setCastle() noexcept {
 	flags = 0xF8FFFFFFU & flags | 0x4000000U;
 }
 
@@ -143,10 +139,11 @@ std::ostream& operator<<(std::ostream& os, const Move& move) {
 			os << "e.p.";
 		else if (move.isPawnPromotion())
 			os << PIECE_CHAR[move.getPromotionPiece()][move.getColor()];
-		else if (move.isKingCastle())
-			os << "0-0";
-		else if (move.isQueenCastle())
-			os << "0-0-0";
+		else if (move.isCastle())
+			if (move.getTo() > move.getFrom())
+				os << "0-0";
+			else
+				os << "0-0-0";
 	} else
 		os << "MOVE EMPTY";
 	return os;
