@@ -125,7 +125,7 @@ bool attacks::isSquareAttacked(const BitBoard& bitBoard, const Color color, cons
 	const Rank rank = getRankOf(square);
 	const Bitmap allPieces = bitBoard.getBitmapAllPieces(WHITE) | bitBoard.getBitmapAllPieces(BLACK);
 
-	//Bishop		
+	//Bishop
 	attacks = getBishopMoves(allPieces, file, rank, squareBitmap);
 	if (attacks & bitBoard.getBitmapPiece(BISHOP, color) ||
 		attacks & bitBoard.getBitmapPiece(QUEEN, color))
