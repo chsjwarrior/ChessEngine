@@ -32,7 +32,7 @@ static void setCapture(const BitBoard& bitBoard, Move& move, const Color color, 
 }
 /* This function returns a bitmap with the attack squares */
 static Bitmap getPiecesMoves(const BitBoard& bitBoard, const Piece piece, const Color color, const Square square) {
-	Bitmap attacks = 0UL;
+	Bitmap attacks;
 	if (piece == KING)
 		attacks = attacks::getKingMoves(getBitmapOf(square));
 	else if (piece == KNIGHT)
@@ -58,7 +58,7 @@ static Bitmap getPiecesMoves(const BitBoard& bitBoard, const Piece piece, const 
 }
 /* This function populates an array with the moves and returns the size */
 static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece piece, const Color color, const Square from, Bitmap attacks) {
-	Square to = NONE_SQUARE;
+	Square to;
 	Move move;
 	Square(*popSquareOf)(Bitmap&) = popFirstSquareOf;
 	if (color == BLACK)
@@ -111,15 +111,15 @@ static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece pie
 				if (canMakeKingCastle(bitBoard, color)) {
 					move.setFrom(from);
 					move.setTo(from + 2U);
-					move.setCastle();
 					move.setColor(color);
+					move.setCastle();
 					moves[movesCount++] = move;
 				}
 				if (canMakeQueenCastle(bitBoard, color)) {
 					move.setFrom(from);
 					move.setTo(from - 2U);
-					move.setCastle();
 					move.setColor(color);
+					move.setCastle();
 					moves[movesCount++] = move;
 				}
 			}
@@ -150,7 +150,7 @@ uShort moveGenerator::generateMoves(const BitBoard& bitBoard, Move moves[]) {
 
 	Bitmap attacks;
 	Bitmap pieceBitmap;
-	Square square = NONE_SQUARE;
+	Square square;
 	Square(*popSquareOf)(Bitmap&) = popFirstSquareOf;
 	if (color == BLACK)
 		popSquareOf = popLastSquareOf;

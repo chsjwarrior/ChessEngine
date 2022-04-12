@@ -18,10 +18,7 @@ void MoveMaker::checkEnPassant(BitBoard& bitBoard, const Move& move, const Color
 	Square enPassantSquare = NONE_SQUARE;
 	if (isNotUndo) {
 		if (move.isPawnStart())
-			if (color == WHITE)
-				enPassantSquare = move.getTo() - 8U;
-			else
-				enPassantSquare = move.getTo() + 8U;
+			enPassantSquare = color == WHITE ? move.getTo() - 8U : move.getTo() + 8U;
 	} else
 		enPassantSquare = bitBoard.history[bitBoard.historyCount].getEnPassantSquare();
 	bitBoard.setEnPassantSquare(enPassantSquare);
@@ -29,11 +26,7 @@ void MoveMaker::checkEnPassant(BitBoard& bitBoard, const Move& move, const Color
 
 void MoveMaker::checkEnPassantCaptured(BitBoard& bitBoard, const Move& move, const Color color, const bool isNotUndo) const {
 	if (move.isEnPassantCapture()) {
-		Square captured = NONE_SQUARE;
-		if (color == WHITE)
-			captured = move.getTo() - 8U;
-		else
-			captured = move.getTo() + 8U;
+		const Square captured = color == WHITE ? move.getTo() - 8U : move.getTo() + 8U;
 		if (isNotUndo)
 			bitBoard.unsetPieceOnSquare(PAWN, ~color, captured);
 		else

@@ -52,11 +52,8 @@ class Uci {
 	void position(BitBoard& bitBoard, std::istringstream& iss) const;
 	void go(BitBoard& bitBoard, std::istringstream& iss) const;
 	void debugAnalysisTest(BitBoard& bitBoard, std::istringstream& iss) const;
-	void print(const BitBoard& bitBoard) const;
 	void uci() const;
 	void setOption() const;
-	void isReady() const;
-	void quit() const;
 
 public:
 	Uci() = default;

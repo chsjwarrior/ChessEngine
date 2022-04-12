@@ -20,18 +20,17 @@ static void swapForBestMove(const uShort index, Move moves[], const uShort size)
 }
 
 static int evaluatePosition(const BitBoard& bitBoard) {
-	Bitmap pieceBitmap;
-	Square s = NONE_SQUARE;
 	int materialWeight = 0;
 	int numWhitePieces = materialWeight;
 	int numBlackPieces = numWhitePieces;
-	Square(*popSquareOf)(Bitmap&) = nullptr;
-	Move moves[MAX_MOVES];
+	Bitmap pieceBitmap;
+	Square s;
+	Square(*popSquareOf)(Bitmap&);
 
 	for (uChar c = WHITE; c <= BLACK; ++c) {
 		if (c == WHITE)
 			popSquareOf = popFirstSquareOf;
-		else if (c == BLACK)
+		else
 			popSquareOf = popLastSquareOf;
 		for (Piece p = PAWN; p != NONE_PIECE; ++p) {
 			pieceBitmap = bitBoard.getBitmapPiece(p, static_cast<Color>(c));
@@ -48,7 +47,7 @@ static int evaluatePosition(const BitBoard& bitBoard) {
 
 				if (c == WHITE)
 					++numWhitePieces;
-				else if (c == BLACK)
+				else
 					++numBlackPieces;
 			}
 		}

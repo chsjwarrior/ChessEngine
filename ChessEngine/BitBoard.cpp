@@ -69,10 +69,10 @@ void BitBoard::unsetPieceOnSquare(const Piece piece, const Color color, const Sq
 }
 
 Piece BitBoard::getPieceFromSquare(const Color color, const Square square) const {
-	const Bitmap bitmap = getBitmapOf(square);
+	const Bitmap squareBitmap = getBitmapOf(square);
 
 	Piece piece = PAWN;
-	while (piece != NONE_PIECE && (bitMaps[piece][color] & bitmap) == 0)
+	while (piece != NONE_PIECE && (bitMaps[piece][color] & squareBitmap) == 0)
 		++piece;
 
 	return piece;
@@ -103,11 +103,11 @@ bool BitBoard::hasCastlePermission(const CastleFlags castleFlag, const Color col
 
 void BitBoard::setCastlePermission(const CastleFlags castleFlag, const Color color, const bool permission) {
 	if (hasCastlePermission(castleFlag, color) && permission == false) {
-		key ^= hashKeys.castleKey[castleFlag + color];
 		flags &= ~(1U << (castleFlag + color + 8));
-	} else if (!hasCastlePermission(castleFlag, color) && permission == true) {
 		key ^= hashKeys.castleKey[castleFlag + color];
+	} else if (!hasCastlePermission(castleFlag, color) && permission == true) {
 		flags |= 1U << (castleFlag + color + 8);
+		key ^= hashKeys.castleKey[castleFlag + color];
 	}
 }
 

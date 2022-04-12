@@ -147,10 +147,6 @@ void Uci::debugAnalysisTest(BitBoard& bitBoard, std::istringstream& iss) const {
 	searchPosition(bitBoard);
 }
 
-void Uci::print(const BitBoard& bitBoard) const {
-	std::cout << bitBoard << std::endl;
-}
-
 void Uci::uci() const {
 	std::cout << "id name " << NAME << std::endl;
 	std::cout << "id author " << AUTHOR << std::endl;
@@ -160,15 +156,6 @@ void Uci::uci() const {
 
 void Uci::setOption() const {
 	//set options
-}
-
-void Uci::isReady() const {
-	std::cout << "readyok" << std::endl;
-}
-
-void Uci::quit() const {
-	info.stop = true;
-	std::cout << "Bye" << std::endl;
 }
 
 void Uci::loop() const {
@@ -193,20 +180,21 @@ void Uci::loop() const {
 		} else if (input == GO) {
 			std::cout << "Seen go.." << std::endl;
 			go(bitBoard, iss);
-		} else if (input == PRINT) {
-			print(bitBoard);
 		} else if (input == UCI_NEW_GAME) {
 
 		} else if (input == UCI)
 			uci();
 		else if (input == SET_OPTION)
 			setOption();
+		else if (input == PRINT)
+			std::cout << bitBoard << std::endl;
 		else if (input == QUIT)
-			quit();
+			info.stop = true;
 		else if (input == STOP)
 			info.stop = true;
 		else if (input == IS_READY)
-			isReady();
+			std::cout << "readyok" << std::endl;
 
 	} while (input != QUIT);
+	std::cout << "Bye" << std::endl;
 }

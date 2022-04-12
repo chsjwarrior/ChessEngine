@@ -58,7 +58,6 @@ Bitmap attacks::getKnightMoves(const Bitmap squareBitmap) {
 	moves |= squareBitmap >> 17 & ~FILES[FILE_H];
 	moves |= squareBitmap >> 6 & ~(FILES[FILE_A] | FILES[FILE_B]);
 	moves |= squareBitmap >> 15 & ~FILES[FILE_A];
-
 	return moves;
 }
 
@@ -71,7 +70,6 @@ Bitmap attacks::getKingMoves(const Bitmap squareBitmap) {
 	moves |= squareBitmap >> 1 & ~FILES[FILE_H];
 	moves |= squareBitmap >> 9 & ~FILES[FILE_H];
 	moves |= squareBitmap >> 7 & ~FILES[FILE_A];
-
 	return moves;
 }
 

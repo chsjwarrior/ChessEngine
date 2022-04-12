@@ -134,19 +134,10 @@ void Move::parseEntry(const char* entry) {
 std::ostream& operator<<(std::ostream& os, const Move& move) {
 	if (move.flags != MOVE_EMPTY) {
 		os << move.getFrom();
-		if (move.isCapture() || move.isEnPassantCapture())
-			os << 'x';
 		os << move.getTo();
-		if (move.isEnPassantCapture())
-			os << "e.p.";
-		else if (move.isPawnPromotion())
+		if (move.isPawnPromotion())
 			os << PIECE_CHAR[move.getPromotionPiece()][move.getColor()];
-		else if (move.isCastle())
-			if (move.getTo() > move.getFrom())
-				os << "0-0";
-			else
-				os << "0-0-0";
 	} else
-		os << "MOVE EMPTY";
+		os << "0000";//"MOVE EMPTY"
 	return os;
 }

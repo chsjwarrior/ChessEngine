@@ -18,9 +18,9 @@ class MoveMaker {
 	/* This function check the castle permission */
 	void checkCastlePermission(BitBoard& bitBoard, const Square square, const Color color) const;
 public:
-	MoveMaker(const MoveMaker&) = delete;
+	MoveMaker(MoveMaker&) = delete;
 	MoveMaker(MoveMaker&&) = delete;
-	MoveMaker& operator=(const MoveMaker&) = delete;
+	MoveMaker& operator=(MoveMaker&) = delete;
 	MoveMaker& operator=(MoveMaker&&) = delete;
 
 	static MoveMaker& getInstance();
