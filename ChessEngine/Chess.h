@@ -3,20 +3,19 @@
 #include "MoveGenerator.h"
 
 struct SearchInfo {
-	long long startTime = 0L;
-	long long stopTime = 0L;
-	long long moveTime = 0L;
-	long long time = 0L;
-	int inc = 0;
-	int movestogo = 0;
-	short depth = 1;
-	short perft = 0;
-	int mate = 0;
-	uLong nodes = 0UL;
-	uLong infinite = 0UL;
-
-	bool ponderMode = false;
-	bool stop = false;
+	long long startTime;
+	long long stopTime;
+	long long moveTime;
+	long long time;
+	int inc;
+	int movestogo;
+	short depth;
+	short perft;
+	int mate;
+	uLong nodes;
+	uLong infinite;
+	bool ponderMode;
+	bool stop;
 };
 
 inline SearchInfo info;
