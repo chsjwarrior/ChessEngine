@@ -1,6 +1,7 @@
 #pragma once
 #include <chrono>
 #include "MoveGenerator.h"
+#include "MoveMaker.h"
 
 struct SearchInfo {
 	long long startTime;

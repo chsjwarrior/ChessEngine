@@ -13,9 +13,9 @@ inline constexpr char AUTHOR[] = "Carlos Henrique Stapait Junior";
 
 inline constexpr char START_FEN[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-inline constexpr char PIECE_CHAR[6][2] = { {'P','p'}, {'N','n'}, {'B','b'}, {'R','r'}, {'Q','q'}, {'K','k'} };
-
 inline constexpr int PIECE_VALUE[] = { 10,30,30,50,90,900,0 };
+
+inline constexpr char PIECE_CHAR[6][2] = { {'P','p'}, {'N','n'}, {'B','b'}, {'R','r'}, {'Q','q'}, {'K','k'} };
 
 inline constexpr int INFINIT = 30000;
 
@@ -24,62 +24,6 @@ inline constexpr Bitmap SQUARE_MASK = 0x1UL;
 inline constexpr uChar MAX_MOVES = 128U;
 
 inline constexpr uChar MAX_DEPTH = 64U;
-
-inline constexpr int SQUARE_VALUE[6][64] = {
-		{//PAWN
-			0,  0,  0,  0,  0,  0,  0,  0,
-			50, 50, 50, 50, 50, 50, 50, 50,
-			10, 10, 20, 30, 30, 20, 10, 10,
-			5,  5, 10, 25, 25, 10,  5,  5,
-			0,  0,  0, 20, 20,  0,  0,  0,
-			5, -5,-10,  0,  0,-10, -5,  5,
-			5, 10, 10,-20,-20, 10, 10,  5,
-			0,  0,  0,  0,  0,  0,  0,  0},
-		{//kNIGHT
-			-50,-40,-30,-30,-30,-30,-40,-50,
-			-40,-20,  0,  0,  0,  0,-20,-40,
-			-30,  0, 10, 15, 15, 10,  0,-30,
-			-30,  5, 15, 20, 20, 15,  5,-30,
-			-30,  0, 15, 20, 20, 15,  0,-30,
-			-30,  5, 10, 15, 15, 10,  5,-30,
-			-40,-20,  0,  5,  5,  0,-20,-40,
-			-50,-40,-30,-30,-30,-30,-40,-50},
-		{//BISHOP
-			-20,-10,-10,-10,-10,-10,-10,-20,
-			-10,  0,  0,  0,  0,  0,  0,-10,
-			-10,  0,  5, 10, 10,  5,  0,-10,
-			-10,  5,  5, 10, 10,  5,  5,-10,
-			-10,  0, 10, 10, 10, 10,  0,-10,
-			-10, 10, 10, 10, 10, 10, 10,-10,
-			-10,  5,  0,  0,  0,  0,  5,-10,
-			-20,-10,-10,-10,-10,-10,-10,-20},
-		{//ROOK
-			 0,  0,  0,  0,  0,  0,  0,  0,
-			 5, 10, 10, 10, 10, 10, 10,  5,
-			-5,  0,  0,  0,  0,  0,  0, -5,
-			-5,  0,  0,  0,  0,  0,  0, -5,
-			-5,  0,  0,  0,  0,  0,  0, -5,
-			-5,  0,  0,  0,  0,  0,  0, -5,
-			-5,  0,  0,  0,  0,  0,  0, -5,
-			 0,  0,  0,  5,  5,  0,  0,  0},
-		{//QUEEN
-			-20,-10,-10, -5, -5,-10,-10,-20,
-			-10,  0,  0,  0,  0,  0,  0,-10,
-			-10,  0,  5,  5,  5,  5,  0,-10,
-			-5,  0,  5,  5,  5,  5,  0, -5,
-			 0,  0,  5,  5,  5,  5,  0, -5,
-			-10,  5,  5,  5,  5,  5,  0,-10,
-			-10,  0,  5,  0,  0,  0,  0,-10,
-			-20,-10,-10, -5, -5,-10,-10,-20},
-		{//KING
-			-30,-40,-40,-50,-50,-40,-40,-30,
-			-30,-40,-40,-50,-50,-40,-40,-30,
-			-30,-40,-40,-50,-50,-40,-40,-30,
-			-30,-40,-40,-50,-50,-40,-40,-30,
-			-20,-30,-30,-40,-40,-30,-30,-20,
-			-10,-20,-20,-20,-20,-20,-20,-10,
-			 20, 20,  0,  0,  0,  0, 20, 20,
-			 20, 30, 10,  0,  0, 10, 30, 20} };
 
 enum CastleFlags : uChar { KING_CASTLE = 0, QUEEN_CASTLE = 2 };//for black (KING_CASTLE + color) = 1 (QUEEN_CASTLE + color) = 3
 
@@ -103,12 +47,12 @@ enum Color : uChar { WHITE, BLACK };
 
 enum Piece : uChar { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, NONE_PIECE }; // NONE_PIECE = 0X6U
 
-constexpr File& operator++(File& f) noexcept { return f = static_cast<File>((static_cast<uInt>(f) + 1U) % 9U); }
-constexpr File& operator--(File& f) noexcept { return f = f == FILE_A ? NONE_FILE : static_cast<File>(static_cast<uInt>(f) - 1U); }
+inline File& operator++(File& f) noexcept { return f = static_cast<File>((static_cast<uInt>(f) + 1U) % 9U); }
+inline File& operator--(File& f) noexcept { return f = f == FILE_A ? NONE_FILE : static_cast<File>(static_cast<uInt>(f) - 1U); }
 constexpr File operator~(const File& f) noexcept { return static_cast<File>(f ^ FILE_H); }
 
-constexpr Rank& operator++(Rank& r) noexcept { return r = static_cast<Rank>((static_cast<uInt>(r) + 1U) % 9U); }
-constexpr Rank& operator--(Rank& r) noexcept { return r = r == RANK_1 ? NONE_RANK : static_cast<Rank>(static_cast<uInt>(r) - 1U); }
+inline Rank& operator++(Rank& r) noexcept { return r = static_cast<Rank>((static_cast<uInt>(r) + 1U) % 9U); }
+inline Rank& operator--(Rank& r) noexcept { return r = r == RANK_1 ? NONE_RANK : static_cast<Rank>(static_cast<uInt>(r) - 1U); }
 constexpr Rank operator~(const Rank& r) noexcept { return static_cast<Rank>(r ^ RANK_8); }
 
 template <typename T>
@@ -117,12 +61,12 @@ constexpr Square operator+(Square s, const T t) noexcept { return static_cast<Sq
 template <typename T>
 	requires std::integral<T>
 constexpr Square operator-(Square s, const T t) noexcept { return static_cast<Square>((static_cast<T>(s) - (t % 64U)) % 64U); }
-constexpr Square& operator++(Square& s) noexcept { return s = s + 1U; }
-constexpr Square& operator--(Square& s) noexcept { return s = s - 1U; }
+inline Square& operator++(Square& s) noexcept { return s = s + 1U; }
+inline Square& operator--(Square& s) noexcept { return s = s - 1U; }
 constexpr Square operator~(const Square& s) noexcept { return static_cast<Square>(s ^ A8); }
 
-constexpr Piece& operator++(Piece& p) noexcept { return p = static_cast<Piece>((static_cast<uChar>(p) + 1U) % 7U); }
-constexpr Piece& operator--(Piece& p) noexcept { return p = p == PAWN ? NONE_PIECE : static_cast<Piece>(static_cast<uInt>(p) - 1U); }
+inline Piece& operator++(Piece& p) noexcept { return p = static_cast<Piece>((static_cast<uChar>(p) + 1U) % 7U); }
+inline Piece& operator--(Piece& p) noexcept { return p = p == PAWN ? NONE_PIECE : static_cast<Piece>(static_cast<uInt>(p) - 1U); }
 
 constexpr Color operator~(const Color& color) noexcept { return static_cast<Color>(color ^ BLACK); }
 

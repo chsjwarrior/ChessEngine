@@ -1,5 +1,5 @@
 #pragma once
-#include "MoveMaker.h"
+#include "Attacks.h"
 
 namespace moveGenerator {
 	/* This function generate moves by square, illegals included */

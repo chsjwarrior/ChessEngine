@@ -1,4 +1,5 @@
 #include "Chess.h"
+#include "Evaluator.h"
 
 static void checkUp() {
 	auto now = std::chrono::high_resolution_clock::now();
@@ -17,43 +18,6 @@ static void swapForBestMove(const uShort index, Move moves[], const uShort size)
 		}
 
 	std::swap(moves[index], moves[bestIndex]);
-}
-
-static int evaluatePosition(const BitBoard& bitBoard) {
-	int materialWeight = 0;
-	int numWhitePieces = materialWeight;
-	int numBlackPieces = numWhitePieces;
-	Bitmap pieceBitmap;
-	Square s;
-	Square(*popSquareOf)(Bitmap&);
-
-	for (uChar c = WHITE; c <= BLACK; ++c) {
-		if (c == WHITE)
-			popSquareOf = popFirstSquareOf;
-		else
-			popSquareOf = popLastSquareOf;
-		for (Piece p = PAWN; p != NONE_PIECE; ++p) {
-			pieceBitmap = bitBoard.getBitmapPiece(p, static_cast<Color>(c));
-			while (pieceBitmap) {
-				s = popSquareOf(pieceBitmap);
-
-				if (bitBoard.isBlackTime()) {
-					materialWeight += PIECE_VALUE[p];
-					s = ~s;
-				} else
-					materialWeight += -PIECE_VALUE[p];
-
-				materialWeight += SQUARE_VALUE[p][s];
-
-				if (c == WHITE)
-					++numWhitePieces;
-				else
-					++numBlackPieces;
-			}
-		}
-	}
-	int who2Move = bitBoard.isWhiteTime() ? 1 : -1;
-	return materialWeight * (numWhitePieces - numBlackPieces) * who2Move;
 }
 
 struct Line {
