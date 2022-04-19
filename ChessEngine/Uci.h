@@ -22,6 +22,9 @@ D	N
 */
 
 class Uci {
+	const char* NAME = "ChessEngine 1.0";
+	const char* AUTHOR = "Carlos Henrique Stapait Junior";
+	const char* START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 	const char* UCI = "uci";
 	const char* SET_OPTION = "setoption";
 	const char* POSITION = "position";

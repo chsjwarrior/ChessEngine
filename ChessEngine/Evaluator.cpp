@@ -76,10 +76,10 @@ int evaluatePosition(const BitBoard& bitBoard) {
 				s = popSquareOf(pieceBitmap);
 
 				if (bitBoard.isBlackTime()) {
-					materialWeight += PIECE_VALUE[p];
+					materialWeight += -PIECE_VALUE[p];
 					s = ~s;
 				} else
-					materialWeight += -PIECE_VALUE[p];
+					materialWeight += PIECE_VALUE[p];
 
 				materialWeight += SQUARE_VALUE[p][s];
 

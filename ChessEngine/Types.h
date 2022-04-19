@@ -7,12 +7,6 @@ using uInt = unsigned int;
 using uShort = unsigned short;
 using uChar = unsigned char;
 
-inline constexpr char NAME[] = "ChessEngine 1.0";
-
-inline constexpr char AUTHOR[] = "Carlos Henrique Stapait Junior";
-
-inline constexpr char START_FEN[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-
 inline constexpr int PIECE_VALUE[] = { 10,30,30,50,90,900,0 };
 
 inline constexpr char PIECE_CHAR[6][2] = { {'P','p'}, {'N','n'}, {'B','b'}, {'R','r'}, {'Q','q'}, {'K','k'} };

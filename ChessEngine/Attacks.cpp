@@ -125,13 +125,11 @@ bool attacks::isSquareAttacked(const BitBoard& bitBoard, const Color color, cons
 
 	//Bishop
 	attacks = getBishopMoves(allPieces, file, rank, squareBitmap);
-	if (attacks & bitBoard.getBitmapPiece(BISHOP, color) ||
-		attacks & bitBoard.getBitmapPiece(QUEEN, color))
+	if (attacks & bitBoard.getBitmapPiece(BISHOP, color) || attacks & bitBoard.getBitmapPiece(QUEEN, color))
 		return true;
 	//Rook
 	attacks = getRookMoves(allPieces, file, rank, squareBitmap);
-	if (attacks & bitBoard.getBitmapPiece(ROOK, color) ||
-		attacks & bitBoard.getBitmapPiece(QUEEN, color))
+	if (attacks & bitBoard.getBitmapPiece(ROOK, color) || attacks & bitBoard.getBitmapPiece(QUEEN, color))
 		return true;
 	return false;
 }

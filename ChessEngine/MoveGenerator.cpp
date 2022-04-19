@@ -32,7 +32,7 @@ static void setCapture(const BitBoard& bitBoard, Move& move, const Color color, 
 }
 /* This function returns a bitmap with the attack squares */
 static Bitmap getPiecesMoves(const BitBoard& bitBoard, const Piece piece, const Color color, const Square square) {
-	Bitmap attacks;
+	Bitmap attacks = 0UL;
 	if (piece == KING)
 		attacks = attacks::getKingMoves(getBitmapOf(square));
 	else if (piece == KNIGHT)
