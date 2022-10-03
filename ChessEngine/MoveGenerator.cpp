@@ -80,11 +80,12 @@ static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece pie
 				for (Piece p = QUEEN; p > PAWN; --p) {
 					move.setPromotionPiece(p);
 					moves[movesCount] = move;
-					moves[movesCount++].score = PIECE_VALUE[p];
+					moves[movesCount++].score += PIECE_VALUE[p];
 				}
 				continue;
 			}
-			if (color == WHITE && move.getTo() - move.getFrom() == 16 || color == BLACK && move.getFrom() - move.getTo() == 16)
+			if (color == WHITE && move.getTo() - move.getFrom() == 16 ||
+				color == BLACK && move.getFrom() - move.getTo() == 16)
 				move.setPawnStart();
 			else if (to == bitBoard.getEnPassantSquare())
 				move.setEnPassantCapture();

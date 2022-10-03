@@ -15,7 +15,7 @@ inline constexpr int INFINIT = 30000;
 
 inline constexpr Bitmap SQUARE_MASK = 0x1UL;
 
-inline constexpr uChar MAX_MOVES = 128U;
+inline constexpr uShort MAX_MOVES = 256U;
 
 inline constexpr uChar MAX_DEPTH = 64U;
 
