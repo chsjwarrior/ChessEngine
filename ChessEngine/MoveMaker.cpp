@@ -130,7 +130,9 @@ void MoveMaker::makeUndo(BitBoard& bitBoard) const {
 
 	if (!bitBoard.whiteTime)
 		--bitBoard.ply;
+
 	bitBoard.fiftyMove = bitBoard.history[bitBoard.historyCount].fiftyMove;
+
 	if (bitBoard.key != bitBoard.history[bitBoard.historyCount].key) {
 		std::cout << "HASHKEY IS INVALID!" << std::endl;
 		printBits("BitBoard.flags:", bitBoard.flags);
@@ -184,6 +186,7 @@ bool MoveMaker::makeMove(BitBoard& bitBoard, const Move& move) const {
 
 	if (bitBoard.isBlackTime())
 		++bitBoard.ply;
+
 	++bitBoard.historyCount;
 	bitBoard.whiteTime = !bitBoard.whiteTime;
 	bitBoard.key ^= bitBoard.hashKeys.sideKey;
