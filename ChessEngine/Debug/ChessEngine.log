@@ -1,0 +1,12 @@
+﻿  Attacks.cpp
+  BitBoard.cpp
+  ChessEngine.cpp
+  Evaluator.cpp
+  Move.cpp
+  MoveGenerator.cpp
+  MoveMaker.cpp
+  Perft.cpp
+  Search.cpp
+  Uci.cpp
+  Gerando Código...
+  ChessEngine.vcxproj -> C:\Users\chsjw\source\repos\chsjwarrior\ChessEngine\Debug\ChessEngine.exe

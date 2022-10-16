@@ -1,5 +1,7 @@
 #include "MoveGenerator.h"
 
+enum MoveType { CAPTURES, QUIETS };
+
 static Bitmap friendPieces;
 static Bitmap enemyPieces;
 static uShort movesCount;
@@ -14,6 +16,7 @@ static bool canMakeKingCastle(const BitBoard& bitBoard, const Color color) {
 		}
 	return false;
 }
+
 /* This function tests if is possible to make Queen castle */
 static bool canMakeQueenCastle(const BitBoard& bitBoard, const Color color) {
 	if (bitBoard.hasCastlePermission(QUEEN_CASTLE, color))
@@ -24,12 +27,14 @@ static bool canMakeQueenCastle(const BitBoard& bitBoard, const Color color) {
 		}
 	return false;
 }
+
 /* This function sets the captured piece in the Move if any */
 static void setCapture(const BitBoard& bitBoard, Move& move, const Color color, const Square to) {
 	const Piece capture = bitBoard.getPieceFromSquare(~color, to);
 	move.setCaptured(capture);
 	move.score += PIECE_VALUE[capture];
 }
+
 /* This function returns a bitmap with the attack squares */
 static Bitmap getPiecesMoves(const BitBoard& bitBoard, const Piece piece, const Color color, const Square square) {
 	Bitmap attacks = 0UL;
@@ -56,7 +61,9 @@ static Bitmap getPiecesMoves(const BitBoard& bitBoard, const Piece piece, const 
 	}
 	return attacks & ~friendPieces;//remove friend pieces square
 }
+
 /* This function populates an array with the moves and returns the size */
+template<MoveType moveType>
 static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece piece, const Color color, const Square from, Bitmap attacks) {
 	Square to;
 	Move move;
@@ -72,11 +79,13 @@ static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece pie
 			move.setFrom(from);
 			move.setTo(to);
 			move.setColor(color);
+			setCapture(bitBoard, move, color, to);
+			if (moveType == MoveType::CAPTURES)
+				if (!move.isCapture())
+					continue;
 
 			if (color == WHITE && getRankOf(to) == RANK_8 ||
 				color == BLACK && getRankOf(to) == RANK_1) {
-				setCapture(bitBoard, move, color, to);
-
 				for (Piece p = QUEEN; p > PAWN; --p) {
 					move.setPromotionPiece(p);
 					moves[movesCount] = move;
@@ -89,8 +98,6 @@ static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece pie
 				move.setPawnStart();
 			else if (to == bitBoard.getEnPassantSquare())
 				move.setEnPassantCapture();
-			else
-				setCapture(bitBoard, move, color, to);
 
 			moves[movesCount++] = move;
 		}
@@ -103,47 +110,38 @@ static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece pie
 			move.setTo(to);
 			move.setColor(color);
 			setCapture(bitBoard, move, color, to);
+			if (moveType == MoveType::CAPTURES)
+				if (!move.isCapture())
+					continue;
 
 			moves[movesCount++] = move;
 		}
-		move();
-		if (piece == KING)
-			if (!attacks::isSquareAttacked(bitBoard, ~color, getFirstSquareOf(bitBoard.getBitmapPiece(KING, color)))) {//King is not in check
-				if (canMakeKingCastle(bitBoard, color)) {
-					move.setFrom(from);
-					move.setTo(from + 2U);
-					move.setColor(color);
-					move.setCastle();
-					moves[movesCount++] = move;
-				}
-				if (canMakeQueenCastle(bitBoard, color)) {
-					move.setFrom(from);
-					move.setTo(from - 2U);
-					move.setColor(color);
-					move.setCastle();
-					moves[movesCount++] = move;
-				}
-			}
+		if (moveType != MoveType::CAPTURES) {
+			move();
+			if (piece == KING)
+				if (moveType == MoveType::CAPTURES)
+					if (!attacks::isSquareAttacked(bitBoard, ~color, getFirstSquareOf(bitBoard.getBitmapPiece(KING, color)))) {//King is not in check
+						if (canMakeKingCastle(bitBoard, color)) {
+							move.setFrom(from);
+							move.setTo(from + 2U);
+							move.setColor(color);
+							move.setCastle();
+							moves[movesCount++] = move;
+						}
+						if (canMakeQueenCastle(bitBoard, color)) {
+							move.setFrom(from);
+							move.setTo(from - 2U);
+							move.setColor(color);
+							move.setCastle();
+							moves[movesCount++] = move;
+						}
+					}
+		}
 	}
 }
 
-uShort moveGenerator::generateMoves(const BitBoard& bitBoard, Move moves[], const Square square) {
-	const Color color = bitBoard.getColorTime();
-	const Piece piece = bitBoard.getPieceFromSquare(color, square);
-
-	if (piece == NONE_PIECE)
-		return 0U;
-
-	friendPieces = bitBoard.getBitmapAllPieces(color);
-	enemyPieces = bitBoard.getBitmapAllPieces(~color);
-	movesCount = 0U;
-
-	Bitmap attacks = getPiecesMoves(bitBoard, piece, color, square);
-	catalogMoves(bitBoard, moves, piece, color, square, attacks);
-	return movesCount;
-}
-
-uShort moveGenerator::generateMoves(const BitBoard& bitBoard, Move moves[]) {
+template<MoveType moveType>
+static uShort generateMoves(const BitBoard& bitBoard, Move moves[]) {
 	const Color color = bitBoard.getColorTime();
 	friendPieces = bitBoard.getBitmapAllPieces(color);
 	enemyPieces = bitBoard.getBitmapAllPieces(~color);
@@ -161,20 +159,32 @@ uShort moveGenerator::generateMoves(const BitBoard& bitBoard, Move moves[]) {
 		while (pieceBitmap) {
 			square = popSquareOf(pieceBitmap);
 			attacks = getPiecesMoves(bitBoard, p, color, square);
-			catalogMoves(bitBoard, moves, p, color, square, attacks);
+			catalogMoves<moveType>(bitBoard, moves, p, color, square, attacks);
 		}
 	}
 	return movesCount;
 }
 
-uShort moveGenerator::generateCaptureMoves(const BitBoard& bitBoard, Move moves[]) {
-	generateMoves(bitBoard, moves);
+uShort moveGenerator::generateMoves(const BitBoard& bitBoard, Move moves[], const Square square) {
+	const Color color = bitBoard.getColorTime();
+	const Piece piece = bitBoard.getPieceFromSquare(color, square);
 
-	for (short i = 0; i < movesCount; ++i)
-		if (moves[i].getCaptured() == NONE_PIECE && !moves[i].isEnPassantCapture()) {
-			moves[i]();
-			std::swap(moves[i--], moves[--movesCount]);
-		}
+	if (piece == NONE_PIECE)
+		return 0U;
 
+	friendPieces = bitBoard.getBitmapAllPieces(color);
+	enemyPieces = bitBoard.getBitmapAllPieces(~color);
+	movesCount = 0U;
+
+	Bitmap attacks = getPiecesMoves(bitBoard, piece, color, square);
+	catalogMoves<MoveType::QUIETS>(bitBoard, moves, piece, color, square, attacks);
 	return movesCount;
+}
+
+uShort moveGenerator::generateMoves(const BitBoard& bitBoard, Move moves[]) {
+	return generateMoves<MoveType::QUIETS>(bitBoard, moves);
+}
+
+uShort moveGenerator::generateCaptureMoves(const BitBoard& bitBoard, Move moves[]) {
+	return generateMoves<MoveType::CAPTURES>(bitBoard, moves);
 }

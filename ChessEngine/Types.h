@@ -88,6 +88,36 @@ inline Bitmap getBitmapOf(const Square square) noexcept {
 	return SQUARE_MASK << square;
 }
 
+#if defined(__GNUC__) // GCC, Clang, ICC
+
+/*this function returns the position(Square) of the left most set bit*/
+inline Square getLastSquareOf(const Bitmap bitmap) noexcept {
+	if (bitmap == 0UL) return NONE_SQUARE;
+	return static_cast<Square>(__builtin_ctzll(b));
+}
+/*this function returns and clear the position(Square) of the left most set bit*/
+inline Square popLastSquareOf(Bitmap& bitmap) noexcept {
+	if (bitmap == 0UL) return NONE_SQUARE;
+	unsigned long i = __builtin_ctzll(b);
+	bitmap &= ~(SQUARE_MASK << i);
+	return static_cast<Square>(i);
+}
+/*this function returns the position(Square) of the right most set bit*/
+inline Square getFirstSquareOf(const Bitmap bitmap) noexcept {
+	if (bitmap == 0UL) return NONE_SQUARE;
+	return static_cast<Square>(63 ^ __builtin_clzll(b));
+}
+/*this function returns and clear the position (Square) of the right most set bit*/
+inline Square popFirstSquareOf(Bitmap& bitmap) noexcept {
+	if (bitmap == 0UL) return NONE_SQUARE;
+	unsigned long i = 63 ^ __builtin_clzll(b);
+	bitmap &= (bitmap - 1U);
+	return static_cast<Square>(i);
+}
+
+#elif defined(_MSC_VER) // MSVC
+#ifdef _WIN64 // MSVC, WIN64
+
 /*this function returns the position(Square) of the left most set bit*/
 inline Square getLastSquareOf(const Bitmap bitmap) noexcept {
 	if (bitmap == 0UL) return NONE_SQUARE;
@@ -118,6 +148,13 @@ inline Square popFirstSquareOf(Bitmap& bitmap) noexcept {
 	bitmap &= (bitmap - 1U);
 	return static_cast<Square>(i);
 }
+
+#else // MSVC, WIN32
+#error "Processor 32 bit is not compatible."
+#endif
+#else // Compiler is not compatible
+#error "Compiler not supported."
+#endif
 
 inline std::ostream& operator<<(std::ostream& os, const File& file) {
 	if (file < NONE_FILE)
