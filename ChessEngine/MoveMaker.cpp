@@ -48,7 +48,7 @@ void MoveMaker::checkPawnPromotion(BitBoard& bitBoard, const Move& move, const C
 void MoveMaker::checkCastleMove(BitBoard& bitBoard, const Move& move, const Color color, const bool isNotUndo) const {
 	if (move.isCastle()) {
 		Square from, to;
-		if (move.getTo() > move.getFrom()) {
+		if (move.getTo() > move.getFrom()) {//king side
 			if (isNotUndo) {
 				from = move.getFrom() + 3U;
 				to = move.getFrom() + 1U;
@@ -56,7 +56,7 @@ void MoveMaker::checkCastleMove(BitBoard& bitBoard, const Move& move, const Colo
 				from = move.getFrom() + 1U;
 				to = move.getFrom() + 3U;
 			}
-		} else {
+		} else {//queen side
 			if (isNotUndo) {
 				from = move.getFrom() - 4U;
 				to = move.getFrom() - 1U;
@@ -157,11 +157,11 @@ bool MoveMaker::makeMove(BitBoard& bitBoard, const Move& move) const {
 	if (piece == NONE_PIECE)
 		return false;
 
-	//0=======================SAVE=PREVIOUS=STATE===========================0
+	//0=======================SAVE=CURRENT=STATE===========================0
 	bitBoard.history[bitBoard.historyCount].move = move;
 	bitBoard.history[bitBoard.historyCount].flags = bitBoard.flags;
 	bitBoard.history[bitBoard.historyCount].fiftyMove = bitBoard.fiftyMove;
-	bitBoard.history[bitBoard.historyCount].key = bitBoard.key;
+	bitBoard.history[bitBoard.historyCount++].key = bitBoard.key;
 	//0=====================================================================0
 
 	++bitBoard.fiftyMove;
@@ -187,7 +187,6 @@ bool MoveMaker::makeMove(BitBoard& bitBoard, const Move& move) const {
 	if (bitBoard.isBlackTime())
 		++bitBoard.ply;
 
-	++bitBoard.historyCount;
 	bitBoard.whiteTime = !bitBoard.whiteTime;
 	bitBoard.key ^= bitBoard.hashKeys.sideKey;
 
