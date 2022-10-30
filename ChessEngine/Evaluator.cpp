@@ -56,40 +56,41 @@ static const int SQUARE_VALUE[6][64] = {
 			 20, 20,  0,  0,  0,  0, 20, 20,
 			 20, 30, 10,  0,  0, 10, 30, 20} };
 
+static void evaluatePosition(const BitBoard& bitBoard, const Color color, int& materialWeight, int& numPieces) {
+	Bitmap pieceBitmap;
+	Square s;
+	Square(*popSquareOf)(Bitmap&);
+	if (color == WHITE)
+		popSquareOf = popFirstSquareOf;
+	else
+		popSquareOf = popLastSquareOf;
+
+	for (Piece p = PAWN; p != NONE_PIECE; ++p) {
+		pieceBitmap = bitBoard.getBitmapPiece(p, color);
+		while (pieceBitmap) {
+			s = popSquareOf(pieceBitmap);
+
+			if (bitBoard.isBlackTime()) {
+				materialWeight += -PIECE_VALUE[p];
+				s = ~s;
+			} else
+				materialWeight += PIECE_VALUE[p];
+
+			materialWeight += SQUARE_VALUE[p][s];
+
+			++numPieces;
+		}
+	}
+}
 
 int evaluatePosition(const BitBoard& bitBoard) {
 	int materialWeight = 0;
 	int numWhitePieces = materialWeight;
 	int numBlackPieces = numWhitePieces;
-	Bitmap pieceBitmap;
-	Square s;
-	Square(*popSquareOf)(Bitmap&);
 
-	for (uChar c = WHITE; c <= BLACK; ++c) {
-		if (c == WHITE)
-			popSquareOf = popFirstSquareOf;
-		else
-			popSquareOf = popLastSquareOf;
-		for (Piece p = PAWN; p != NONE_PIECE; ++p) {
-			pieceBitmap = bitBoard.getBitmapPiece(p, static_cast<Color>(c));
-			while (pieceBitmap) {
-				s = popSquareOf(pieceBitmap);
+	evaluatePosition(bitBoard, WHITE, materialWeight, numWhitePieces);
+	evaluatePosition(bitBoard, BLACK, materialWeight, numBlackPieces);
 
-				if (bitBoard.isBlackTime()) {
-					materialWeight += -PIECE_VALUE[p];
-					s = ~s;
-				} else
-					materialWeight += PIECE_VALUE[p];
-
-				materialWeight += SQUARE_VALUE[p][s];
-
-				if (c == WHITE)
-					++numWhitePieces;
-				else
-					++numBlackPieces;
-			}
-		}
-	}
 	int who2Move = bitBoard.isWhiteTime() ? 1 : -1;
 	return materialWeight * (numWhitePieces - numBlackPieces) * who2Move;
 }
