@@ -1,4 +1,7 @@
 #include "Uci.h"
+#include <thread>
+
+static std::thread* thread = nullptr;
 
 long long Uci::getMilliseconds() const {
 	auto now = std::chrono::high_resolution_clock::now();
@@ -128,9 +131,17 @@ void Uci::go(BitBoard& bitBoard, std::istringstream& iss) const {
 		std::cout << "true" << std::endl;
 
 	if (info.perft)
+		thread = new std::thread([&bitBoard] {
 		perftTest(bitBoard);
+		thread = nullptr;
+		std::cout << "thread stopped" << std::endl;
+								 });
 	else
+		thread = new std::thread([&bitBoard] {
 		searchPosition(bitBoard);
+		thread = nullptr;
+		std::cout << "thread stopped" << std::endl;
+								 });
 }
 
 void Uci::debugAnalysisTest(BitBoard& bitBoard, std::istringstream& iss) const {
@@ -144,7 +155,11 @@ void Uci::debugAnalysisTest(BitBoard& bitBoard, std::istringstream& iss) const {
 	std::cout << " stop: " << info.stopTime;
 	std::cout << " depth: " << info.depth << std::endl;
 
-	searchPosition(bitBoard);
+	thread = new std::thread([&bitBoard] {
+		searchPosition(bitBoard);
+		thread = nullptr;
+		std::cout << "thread stopped" << std::endl;
+							 });
 }
 
 void Uci::uci() const {
@@ -176,8 +191,10 @@ void Uci::loop() const {
 		iss >> std::skipws >> input;
 
 		if (input == POSITION) {
+			info.stop = true;
 			position(bitBoard, iss);
 		} else if (input == GO) {
+			info.stop = true;
 			std::cout << "Seen go.." << std::endl;
 			go(bitBoard, iss);
 		} else if (input == UCI_NEW_GAME) {

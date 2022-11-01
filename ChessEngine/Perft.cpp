@@ -4,6 +4,9 @@ static uLong perft(BitBoard& bitBoard, const short depth) {
 	if (depth <= 0)
 		return 1UL;
 
+	if (info.stop == true)
+		return 1UL;
+
 	Move moves[MAX_MOVES];
 	uShort movesCount = moveGenerator::generateMoves(bitBoard, moves);
 	uLong nodes = 0UL;
@@ -15,7 +18,11 @@ static uLong perft(BitBoard& bitBoard, const short depth) {
 
 		nodes += perft(bitBoard, depth - 1);
 		moveMaker.makeUndo(bitBoard);
+
+		if (info.stop == true)
+			break;
 	}
+
 	return nodes;
 }
 
@@ -33,6 +40,9 @@ void perftTest(BitBoard& bitBoard) {
 		info.nodes += nodes;
 		moveMaker.makeUndo(bitBoard);
 		std::cout << *move << ": " << nodes << std::endl;
+
+		if (info.stop == true)
+			break;
 	}
 
 	std::cout << "Node searched: " << info.nodes << std::endl;
