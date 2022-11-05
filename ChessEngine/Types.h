@@ -9,7 +9,7 @@ using uChar = unsigned char;
 
 inline constexpr int PIECE_VALUE[] = { 10,30,30,50,90,900,0 };
 
-inline constexpr char PIECE_CHAR[6][2] = { {'P','p'}, {'N','n'}, {'B','b'}, {'R','r'}, {'Q','q'}, {'K','k'} };
+inline constexpr char PIECE_CHAR[12] = { 'P', 'N', 'B', 'R', 'Q', 'K', 'p', 'n', 'b', 'r', 'q', 'k' };
 
 inline constexpr int INFINIT = 30000;
 

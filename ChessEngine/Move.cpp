@@ -136,7 +136,7 @@ std::ostream& operator<<(std::ostream& os, const Move& move) {
 		os << move.getFrom();
 		os << move.getTo();
 		if (move.isPawnPromotion())
-			os << PIECE_CHAR[move.getPromotionPiece()][move.getColor()];
+			os << PIECE_CHAR[move.getPromotionPiece() + move.getColor() * 6];
 	} else
 		os << "0000";//"MOVE EMPTY"
 	return os;

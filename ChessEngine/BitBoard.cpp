@@ -171,7 +171,7 @@ const std::string BitBoard::getFEN() const {
 					p = getPieceFromSquare(c, s);
 				}
 
-				fen.append(1, PIECE_CHAR[p][c]);
+				fen.append(1, PIECE_CHAR[p + c * 6]);
 			} else
 				++count;
 		}
@@ -322,7 +322,7 @@ std::ostream& operator<<(std::ostream& os, const BitBoard& bitBoard) {
 
 			os << "  ";
 			if (p != NONE_PIECE)
-				os << PIECE_CHAR[p][c];
+				os << PIECE_CHAR[p + c * 6];
 			else
 				os << '-';
 		}
