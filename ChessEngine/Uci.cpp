@@ -134,13 +134,11 @@ void Uci::go(BitBoard& bitBoard, std::istringstream& iss) const {
 		thread = new std::thread([&bitBoard] {
 		perftTest(bitBoard);
 		thread = nullptr;
-		std::cout << "thread stopped" << std::endl;
 								 });
 	else
 		thread = new std::thread([&bitBoard] {
 		searchPosition(bitBoard);
 		thread = nullptr;
-		std::cout << "thread stopped" << std::endl;
 								 });
 }
 
@@ -158,7 +156,6 @@ void Uci::debugAnalysisTest(BitBoard& bitBoard, std::istringstream& iss) const {
 	thread = new std::thread([&bitBoard] {
 		searchPosition(bitBoard);
 		thread = nullptr;
-		std::cout << "thread stopped" << std::endl;
 							 });
 }
 
