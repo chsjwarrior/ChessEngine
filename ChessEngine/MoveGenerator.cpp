@@ -119,23 +119,22 @@ static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece pie
 		if (moveType != MoveType::CAPTURES) {
 			move();
 			if (piece == KING)
-				if (moveType == MoveType::CAPTURES)
-					if (!attacks::isSquareAttacked(bitBoard, ~color, getFirstSquareOf(bitBoard.getBitmapPiece(KING, color)))) {//King is not in check
-						if (canMakeKingCastle(bitBoard, color)) {
-							move.setFrom(from);
-							move.setTo(from + 2U);
-							move.setColor(color);
-							move.setCastle();
-							moves[movesCount++] = move;
-						}
-						if (canMakeQueenCastle(bitBoard, color)) {
-							move.setFrom(from);
-							move.setTo(from - 2U);
-							move.setColor(color);
-							move.setCastle();
-							moves[movesCount++] = move;
-						}
+				if (!attacks::isSquareAttacked(bitBoard, ~color, getFirstSquareOf(bitBoard.getBitmapPiece(KING, color)))) {//King is not in check
+					if (canMakeKingCastle(bitBoard, color)) {
+						move.setFrom(from);
+						move.setTo(from + 2U);
+						move.setColor(color);
+						move.setCastle();
+						moves[movesCount++] = move;
 					}
+					if (canMakeQueenCastle(bitBoard, color)) {
+						move.setFrom(from);
+						move.setTo(from - 2U);
+						move.setColor(color);
+						move.setCastle();
+						moves[movesCount++] = move;
+					}
+				}
 		}
 	}
 }
