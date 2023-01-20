@@ -90,29 +90,40 @@ inline Bitmap getBitmapOf(const Square square) noexcept {
 
 #if defined(__GNUC__) // GCC, Clang, ICC
 
+/*
+* all the GCC function must be tested!!!
+* i am not sure if they are working
+*/
+
 /*this function returns the position(Square) of the left most set bit*/
 inline Square getLastSquareOf(const Bitmap bitmap) noexcept {
 	if (bitmap == 0UL) return NONE_SQUARE;
-	return static_cast<Square>(__builtin_ctzll(b));
+	unsigned long i = __builtin_ctzll(bitmap);
+	return static_cast<Square>(i);
 }
 /*this function returns and clear the position(Square) of the left most set bit*/
 inline Square popLastSquareOf(Bitmap& bitmap) noexcept {
 	if (bitmap == 0UL) return NONE_SQUARE;
-	unsigned long i = __builtin_ctzll(b);
+	unsigned long i = __builtin_ctzll(bitmap);
 	bitmap &= ~(SQUARE_MASK << i);
 	return static_cast<Square>(i);
 }
 /*this function returns the position(Square) of the right most set bit*/
 inline Square getFirstSquareOf(const Bitmap bitmap) noexcept {
 	if (bitmap == 0UL) return NONE_SQUARE;
-	return static_cast<Square>(63 ^ __builtin_clzll(b));
+	unsigned long i = 63 ^ __builtin_clzll(bitmap);
+	return static_cast<Square>(i);
 }
 /*this function returns and clear the position (Square) of the right most set bit*/
 inline Square popFirstSquareOf(Bitmap& bitmap) noexcept {
 	if (bitmap == 0UL) return NONE_SQUARE;
-	unsigned long i = 63 ^ __builtin_clzll(b);
+	unsigned long i = 63 ^ __builtin_clzll(bitmap);
 	bitmap &= (bitmap - 1U);
 	return static_cast<Square>(i);
+}
+
+inline uInt bitCount(const Bitmap bitmap) noexcept {
+	return static_cast<uInt>()__builtin_popcountll(bitmap));
 }
 
 #elif defined(_MSC_VER) // MSVC
@@ -149,6 +160,10 @@ inline Square popFirstSquareOf(Bitmap& bitmap) noexcept {
 	return static_cast<Square>(i);
 }
 
+inline uInt bitCount(const Bitmap bitmap) noexcept {
+	return static_cast<uInt>(__popcnt64(bitmap));
+}
+
 #else // MSVC, WIN32
 #error "Processor 32 bit is not compatible."
 #endif
@@ -181,7 +196,7 @@ inline std::ostream& operator<<(std::ostream& os, const Square& square) {
 		os << "NONE SQUARE";
 	return os;
 }
-
+/*
 inline uInt bitCount(Bitmap bitmap) noexcept {
 	bitmap = ((bitmap >> 1) & 0x5555555555555555UL) + (bitmap & 0x5555555555555555UL);
 	bitmap = ((bitmap >> 2) & 0x3333333333333333UL) + (bitmap & 0x3333333333333333UL);
@@ -190,7 +205,7 @@ inline uInt bitCount(Bitmap bitmap) noexcept {
 	v = ((v >> 8) & 0x00FF00FFU) + (v & 0x00F00FFU);
 	return ((v >> 16) & 0x0000FFFFU) + (v & 0x0000FFFFU);
 }
-
+*/
 inline Bitmap reverse(Bitmap bitmap) noexcept {
 	bitmap = (bitmap & 0x5555555555555555UL) << 1 | (bitmap >> 1) & 0x5555555555555555UL;
 	bitmap = (bitmap & 0x3333333333333333UL) << 2 | (bitmap >> 2) & 0x3333333333333333UL;
