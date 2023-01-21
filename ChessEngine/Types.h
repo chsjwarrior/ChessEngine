@@ -89,7 +89,6 @@ inline Bitmap getBitmapOf(const Square square) noexcept {
 }
 
 #if defined(__GNUC__) // GCC, Clang, ICC
-
 /*
 * all the GCC function must be tested!!!
 * i am not sure if they are working
@@ -121,7 +120,7 @@ inline Square popFirstSquareOf(Bitmap& bitmap) noexcept {
 	bitmap &= (bitmap - 1U);
 	return static_cast<Square>(i);
 }
-
+/*this function returns the number of zero*/
 inline uInt bitCount(const Bitmap bitmap) noexcept {
 	return static_cast<uInt>()__builtin_popcountll(bitmap));
 }
@@ -159,7 +158,7 @@ inline Square popFirstSquareOf(Bitmap& bitmap) noexcept {
 	bitmap &= (bitmap - 1U);
 	return static_cast<Square>(i);
 }
-
+/*this function returns the number of zero*/
 inline uInt bitCount(const Bitmap bitmap) noexcept {
 	return static_cast<uInt>(__popcnt64(bitmap));
 }
@@ -170,6 +169,26 @@ inline uInt bitCount(const Bitmap bitmap) noexcept {
 #else // Compiler is not compatible
 #error "Compiler not supported."
 #endif
+/*
+inline uInt bitCount(Bitmap bitmap) noexcept {
+	bitmap = ((bitmap >> 1) & 0x5555555555555555UL) + (bitmap & 0x5555555555555555UL);
+	bitmap = ((bitmap >> 2) & 0x3333333333333333UL) + (bitmap & 0x3333333333333333UL);
+	uInt v = static_cast<uInt>((bitmap >> 32) + bitmap);
+	v = ((v >> 4) & 0x0F0F0F0FU) + (v & 0x0F0F0F0FU);
+	v = ((v >> 8) & 0x00FF00FFU) + (v & 0x00F00FFU);
+	return ((v >> 16) & 0x0000FFFFU) + (v & 0x0000FFFFU);
+}
+*/
+/*htis function return the reverse bit position*/
+inline Bitmap reverse(Bitmap bitmap) noexcept {
+	bitmap = (bitmap & 0x5555555555555555UL) << 1 | (bitmap >> 1) & 0x5555555555555555UL;
+	bitmap = (bitmap & 0x3333333333333333UL) << 2 | (bitmap >> 2) & 0x3333333333333333UL;
+	bitmap = (bitmap & 0x0F0F0F0F0F0F0F0FUL) << 4 | (bitmap >> 4) & 0x0F0F0F0F0F0F0F0FUL;
+	bitmap = (bitmap & 0x00FF00FF00FF00FFUL) << 8 | (bitmap >> 8) & 0x00FF00FF00FF00FFUL;
+	bitmap = (bitmap << 48) | ((bitmap & 0xFFFF0000UL) << 16) |
+		((bitmap >> 16) & 0xFFFF0000UL) | (bitmap >> 48);
+	return bitmap;
+}
 
 inline std::ostream& operator<<(std::ostream& os, const File& file) {
 	if (file < NONE_FILE)
@@ -195,25 +214,6 @@ inline std::ostream& operator<<(std::ostream& os, const Square& square) {
 	} else
 		os << "NONE SQUARE";
 	return os;
-}
-/*
-inline uInt bitCount(Bitmap bitmap) noexcept {
-	bitmap = ((bitmap >> 1) & 0x5555555555555555UL) + (bitmap & 0x5555555555555555UL);
-	bitmap = ((bitmap >> 2) & 0x3333333333333333UL) + (bitmap & 0x3333333333333333UL);
-	uInt v = static_cast<uInt>((bitmap >> 32) + bitmap);
-	v = ((v >> 4) & 0x0F0F0F0FU) + (v & 0x0F0F0F0FU);
-	v = ((v >> 8) & 0x00FF00FFU) + (v & 0x00F00FFU);
-	return ((v >> 16) & 0x0000FFFFU) + (v & 0x0000FFFFU);
-}
-*/
-inline Bitmap reverse(Bitmap bitmap) noexcept {
-	bitmap = (bitmap & 0x5555555555555555UL) << 1 | (bitmap >> 1) & 0x5555555555555555UL;
-	bitmap = (bitmap & 0x3333333333333333UL) << 2 | (bitmap >> 2) & 0x3333333333333333UL;
-	bitmap = (bitmap & 0x0F0F0F0F0F0F0F0FUL) << 4 | (bitmap >> 4) & 0x0F0F0F0F0F0F0F0FUL;
-	bitmap = (bitmap & 0x00FF00FF00FF00FFUL) << 8 | (bitmap >> 8) & 0x00FF00FF00FF00FFUL;
-	bitmap = (bitmap << 48) | ((bitmap & 0xFFFF0000UL) << 16) |
-		((bitmap >> 16) & 0xFFFF0000UL) | (bitmap >> 48);
-	return bitmap;
 }
 
 template <typename T>
