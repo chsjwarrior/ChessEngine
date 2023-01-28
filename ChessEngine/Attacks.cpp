@@ -73,31 +73,38 @@ Bitmap attacks::getKingMoves(const Bitmap squareBitmap) {
 	return moves;
 }
 
+static void getWhitePawnMoves(const Bitmap allPieces, const Bitmap enPassantBitmap, const Bitmap squareBitmap, Bitmap& moves) {
+	//normal move
+	moves |= squareBitmap << 8 & ~allPieces;
+	//start move
+	moves |= squareBitmap << 16 & ~allPieces & ~allPieces << 8 & RANKS[RANK_4];
+	//capture move
+	moves |= squareBitmap << 7 & allPieces & ~FILES[FILE_H];
+	moves |= squareBitmap << 9 & allPieces & ~FILES[FILE_A];
+	//en passant capture move
+	moves |= squareBitmap << 7 & enPassantBitmap & RANKS[RANK_6] & ~FILES[FILE_H];
+	moves |= squareBitmap << 9 & enPassantBitmap & RANKS[RANK_6] & ~FILES[FILE_A];
+}
+
+static void getBlackPawnMoves(const Bitmap allPieces, const Bitmap enPassantBitmap, const Bitmap squareBitmap, Bitmap& moves) {
+	//normal move
+	moves |= squareBitmap >> 8 & ~allPieces;
+	//start move
+	moves |= squareBitmap >> 16 & ~allPieces & ~allPieces >> 8 & RANKS[RANK_5];
+	//capture move
+	moves |= squareBitmap >> 7 & allPieces & ~FILES[FILE_A];
+	moves |= squareBitmap >> 9 & allPieces & ~FILES[FILE_H];
+	//en passant capture move
+	moves |= squareBitmap >> 7 & enPassantBitmap & RANKS[RANK_3] & ~FILES[FILE_A];
+	moves |= squareBitmap >> 9 & enPassantBitmap & RANKS[RANK_3] & ~FILES[FILE_H];
+}
+
 Bitmap attacks::getPawnMoves(const Bitmap allPieces, const Color color, const Bitmap enPassantBitmap, const Bitmap squareBitmap) {
 	Bitmap moves = 0UL;
-	if (color == WHITE) {
-		//normal move
-		moves |= squareBitmap << 8 & ~allPieces;
-		//start move
-		moves |= squareBitmap << 16 & ~allPieces & ~allPieces << 8 & RANKS[RANK_4];
-		//capture move
-		moves |= squareBitmap << 7 & allPieces & ~FILES[FILE_H];
-		moves |= squareBitmap << 9 & allPieces & ~FILES[FILE_A];
-		//en passant capture move
-		moves |= squareBitmap << 7 & enPassantBitmap & RANKS[RANK_6] & ~FILES[FILE_H];
-		moves |= squareBitmap << 9 & enPassantBitmap & RANKS[RANK_6] & ~FILES[FILE_A];
-	} else {
-		//normal move
-		moves |= squareBitmap >> 8 & ~allPieces;
-		//start move
-		moves |= squareBitmap >> 16 & ~allPieces & ~allPieces >> 8 & RANKS[RANK_5];
-		//capture move
-		moves |= squareBitmap >> 7 & allPieces & ~FILES[FILE_A];
-		moves |= squareBitmap >> 9 & allPieces & ~FILES[FILE_H];
-		//en passant capture move
-		moves |= squareBitmap >> 7 & enPassantBitmap & RANKS[RANK_3] & ~FILES[FILE_A];
-		moves |= squareBitmap >> 9 & enPassantBitmap & RANKS[RANK_3] & ~FILES[FILE_H];
-	}
+	if (color == WHITE)
+		getWhitePawnMoves(allPieces, enPassantBitmap, squareBitmap, moves);
+	else
+		getBlackPawnMoves(allPieces, enPassantBitmap, squareBitmap, moves);
 	return moves;
 }
 
