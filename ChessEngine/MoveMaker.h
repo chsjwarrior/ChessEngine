@@ -16,7 +16,7 @@ class MoveMaker {
 	/* This function move the Rook to castle position */
 	void checkCastleMove(BitBoard& bitBoard, const Move& move, const Color color, const bool isNotUndo) const;
 	/* This function check the castle permission */
-	void checkCastlePermission(BitBoard& bitBoard, const Square square, const Color color) const;
+	void checkCastlePermission(BitBoard& bitBoard, const Square square) const;
 public:
 	MoveMaker(MoveMaker&) = delete;
 	MoveMaker(MoveMaker&&) = delete;

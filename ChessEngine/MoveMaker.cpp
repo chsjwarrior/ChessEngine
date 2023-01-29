@@ -70,7 +70,7 @@ void MoveMaker::checkCastleMove(BitBoard& bitBoard, const Move& move, const Colo
 	}
 }
 
-void MoveMaker::checkCastlePermission(BitBoard& bitBoard, const Square square, const Color color) const {
+void MoveMaker::checkCastlePermission(BitBoard& bitBoard, const Square square) const {
 	switch (square) {
 	case A1:
 		bitBoard.setCastlePermission(QUEEN_CASTLE, WHITE, false);
@@ -181,8 +181,8 @@ bool MoveMaker::makeMove(BitBoard& bitBoard, const Move& move) const {
 			bitBoard.hasCastlePermission(QUEEN_CASTLE, color))
 			checkCastleMove(bitBoard, move, color, true);
 	}
-	checkCastlePermission(bitBoard, move.getFrom(), color);
-	checkCastlePermission(bitBoard, move.getTo(), color);
+	checkCastlePermission(bitBoard, move.getFrom());
+	checkCastlePermission(bitBoard, move.getTo());
 
 	if (bitBoard.isBlackTime())
 		++bitBoard.ply;
