@@ -11,7 +11,7 @@ BitBoard::Zobrist::Zobrist() {
 		}
 	for (File f = FILE_A; f < NONE_FILE; ++f)
 		enPassantColumn[f] = static_cast<uLong>(std::rand()) << 32 | static_cast<uLong>(std::rand()) << 16 | std::rand();
-	for (uChar i = 0; i < 4; ++i)
+	for (uChar i = 0; i < 16; ++i)
 		castleKey[i] = static_cast<uLong>(std::rand()) << 32 | static_cast<uLong>(std::rand()) << 16 | std::rand();
 	sideKey = static_cast<uLong>(std::rand()) << 32 | static_cast<uLong>(std::rand()) << 16 | std::rand();
 }
@@ -30,8 +30,8 @@ Square BitBoard::Undo::getEnPassantSquare() const {
 	return static_cast<Square>(flags & 0x00FFU);
 }
 
-bool BitBoard::Undo::hasCastlePermission(const CastleFlags castleFlag, const Color color) const {
-	return flags >> 8 & 1 << (castleFlag + color);
+uChar BitBoard::Undo::getCastlePermission() const {
+	return flags >> 8U;
 }
 
 //0=============================BITBOARD===============================0
@@ -97,18 +97,21 @@ void BitBoard::setEnPassantSquare(const Square square) {
 		key ^= hashKeys.enPassantColumn[getFileOf(square)];
 }
 
-bool BitBoard::hasCastlePermission(const CastleFlags castleFlag, const Color color) const {
-	return flags >> 8U & 1U << (castleFlag + color);
+bool BitBoard::hasCastlePermission(const uChar castleFlag) const {
+	uChar temp = flags >> 8U & castleFlag;
+	return  temp == castleFlag;
 }
 
-void BitBoard::setCastlePermission(const CastleFlags castleFlag, const Color color, const bool permission) {
-	if (hasCastlePermission(castleFlag, color) && permission == false) {
-		flags &= ~(1U << (castleFlag + color + 8U));
-		key ^= hashKeys.castleKey[castleFlag + color];
-	} else if (!hasCastlePermission(castleFlag, color) && permission == true) {
-		flags |= 1U << (castleFlag + color + 8U);
-		key ^= hashKeys.castleKey[castleFlag + color];
-	}
+void BitBoard::setCastlePermission(const uChar castleFlag) {
+	key ^= hashKeys.castleKey[flags >> 8U];
+	flags |= castleFlag << 8U;
+	key ^= hashKeys.castleKey[flags >> 8U];
+}
+
+void BitBoard::unsetCastlePermission(const uChar castleFlag) {
+	key ^= hashKeys.castleKey[flags >> 8U];
+	flags &= ~(castleFlag << 8U);
+	key ^= hashKeys.castleKey[flags >> 8U];
 }
 
 bool BitBoard::isRepetition() const {
@@ -185,19 +188,19 @@ const std::string BitBoard::getFEN() const {
 	fen.append(whiteTime ? "w " : "b ");
 
 	bool castle = false;
-	if (hasCastlePermission(KING_CASTLE, WHITE)) {
+	if (hasCastlePermission(WHITE_KING_CASTLE)) {
 		fen.append("K");
 		castle = true;
 	}
-	if (hasCastlePermission(QUEEN_CASTLE, WHITE)) {
+	if (hasCastlePermission(WHITE_QUEEN_CASTLE)) {
 		fen.append("Q");
 		castle = true;
 	}
-	if (hasCastlePermission(KING_CASTLE, BLACK)) {
+	if (hasCastlePermission(BLACK_KING_CASTLE)) {
 		fen.append("k");
 		castle = true;
 	}
-	if (hasCastlePermission(QUEEN_CASTLE, BLACK)) {
+	if (hasCastlePermission(BLACK_QUEEN_CASTLE)) {
 		fen.append("q");
 		castle = true;
 	}
@@ -267,19 +270,22 @@ void BitBoard::parseFEN(const char* fen) {
 
 	//castle permission
 	if (*fen != '-') {
+		uChar castleFlag = 0U;
 		for (uChar i = 0; i < 4U; ++i) {
 			if (*fen == ' ')
 				break;
 			else if (*fen == 'K')
-				setCastlePermission(KING_CASTLE, WHITE, true);
+				castleFlag |= WHITE_KING_CASTLE;
 			else if (*fen == 'Q')
-				setCastlePermission(QUEEN_CASTLE, WHITE, true);
+				castleFlag |= WHITE_QUEEN_CASTLE;
 			else if (*fen == 'k')
-				setCastlePermission(KING_CASTLE, BLACK, true);
+				castleFlag |= BLACK_KING_CASTLE;
 			else if (*fen == 'q')
-				setCastlePermission(QUEEN_CASTLE, BLACK, true);
+				castleFlag |= BLACK_QUEEN_CASTLE;
 			++fen;
 		}
+		key ^= hashKeys.castleKey[flags >> 8U];
+		setCastlePermission(castleFlag);
 	} else
 		++fen;
 
@@ -337,10 +343,10 @@ std::ostream& operator<<(std::ostream& os, const BitBoard& bitBoard) {
 	os << "Fifty move: " << bitBoard.fiftyMove << " ply: " << bitBoard.ply << std::endl;
 	os << "En Passant: " << bitBoard.getEnPassantSquare() << std::endl;
 	os << "castle permission: ";
-	if (bitBoard.hasCastlePermission(KING_CASTLE, WHITE)) os << 'K'; else os << '-';
-	if (bitBoard.hasCastlePermission(QUEEN_CASTLE, WHITE)) os << 'Q'; else os << '-';
-	if (bitBoard.hasCastlePermission(KING_CASTLE, BLACK)) os << 'k'; else os << '-';
-	if (bitBoard.hasCastlePermission(QUEEN_CASTLE, BLACK)) os << 'q'; else os << '-';
+	if (bitBoard.hasCastlePermission(WHITE_KING_CASTLE)) os << 'K'; else os << '-';
+	if (bitBoard.hasCastlePermission(WHITE_QUEEN_CASTLE)) os << 'Q'; else os << '-';
+	if (bitBoard.hasCastlePermission(BLACK_KING_CASTLE)) os << 'k'; else os << '-';
+	if (bitBoard.hasCastlePermission(BLACK_QUEEN_CASTLE)) os << 'q'; else os << '-';
 	os << std::endl << "Key: " << bitBoard.key << std::endl;
 
 	return os;

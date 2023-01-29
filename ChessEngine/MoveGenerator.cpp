@@ -8,7 +8,8 @@ static uShort movesCount;
 
 /* This function tests if is possible to make King castle */
 static bool canMakeKingCastle(const BitBoard& bitBoard, const Color color) {
-	if (bitBoard.hasCastlePermission(KING_CASTLE, color))
+	if (color == WHITE && bitBoard.hasCastlePermission(WHITE_KING_CASTLE) ||
+		color == BLACK && bitBoard.hasCastlePermission(BLACK_KING_CASTLE))
 		if (((bitBoard.getBitmapPiece(KING, color) << 1U | bitBoard.getBitmapPiece(KING, color) << 2U) & (friendPieces | enemyPieces)) == 0) { //isCastlePathClear
 			const Rank relativeRank = color == WHITE ? RANK_1 : RANK_8;
 			if (!attacks::isSquareAttacked(bitBoard, ~color, getSquareOf(FILE_F, relativeRank)))//isCastlePathSecury
@@ -19,7 +20,8 @@ static bool canMakeKingCastle(const BitBoard& bitBoard, const Color color) {
 
 /* This function tests if is possible to make Queen castle */
 static bool canMakeQueenCastle(const BitBoard& bitBoard, const Color color) {
-	if (bitBoard.hasCastlePermission(QUEEN_CASTLE, color))
+	if (color == WHITE && bitBoard.hasCastlePermission(WHITE_QUEEN_CASTLE) ||
+		color == BLACK && bitBoard.hasCastlePermission(BLACK_QUEEN_CASTLE))
 		if (((bitBoard.getBitmapPiece(KING, color) >> 1U | bitBoard.getBitmapPiece(KING, color) >> 2U | bitBoard.getBitmapPiece(KING, color) >> 3U) & (friendPieces | enemyPieces)) == 0) {//isCastlePathClear
 			const Rank relativeRank = color == WHITE ? RANK_1 : RANK_8;
 			if (!attacks::isSquareAttacked(bitBoard, ~color, getSquareOf(FILE_C, relativeRank)))//isCastlePathSecury

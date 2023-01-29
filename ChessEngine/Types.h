@@ -19,7 +19,13 @@ inline constexpr uShort MAX_MOVES = 256U;
 
 inline constexpr uChar MAX_DEPTH = 64U;
 
-enum CastleFlags : uChar { KING_CASTLE = 0, QUEEN_CASTLE = 2 };//for black (KING_CASTLE + color) = 1 (QUEEN_CASTLE + color) = 3
+inline constexpr uChar WHITE_KING_CASTLE = 1U; //= 0001
+
+inline constexpr uChar WHITE_QUEEN_CASTLE = 2U; //= 0010
+
+inline constexpr uChar BLACK_KING_CASTLE = 4U; //= 0100
+
+inline constexpr uChar BLACK_QUEEN_CASTLE = 8U; //= 1000
 
 enum File : uChar { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, NONE_FILE };
 

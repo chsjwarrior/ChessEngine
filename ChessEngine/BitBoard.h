@@ -22,7 +22,7 @@ class BitBoard {
 	const struct Zobrist {
 		uLong pieceKey[NONE_SQUARE][NONE_PIECE][2];
 		uLong enPassantColumn[NONE_FILE];
-		uLong castleKey[4];
+		uLong castleKey[16];
 		uLong sideKey;
 
 		Zobrist();
@@ -50,7 +50,7 @@ class BitBoard {
 
 		void operator()() noexcept;
 		Square getEnPassantSquare() const;
-		bool hasCastlePermission(const CastleFlags castleFlag, const Color color) const;
+		uChar getCastlePermission() const;
 	} history[MAX_MOVES];
 
 	friend class MoveMaker;
@@ -79,9 +79,11 @@ public:
 
 	void setEnPassantSquare(const Square square);
 
-	bool hasCastlePermission(const CastleFlags castleFlag, const Color color) const;
+	bool hasCastlePermission(const uChar castleFlag) const;
 
-	void setCastlePermission(const CastleFlags castleFlag, const Color color, const bool permission);
+	void setCastlePermission(const uChar castleFlag);
+
+	void unsetCastlePermission(const uChar castleFlag);
 
 	bool isRepetition() const;
 
