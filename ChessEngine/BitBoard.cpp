@@ -98,15 +98,15 @@ void BitBoard::setEnPassantSquare(const Square square) {
 }
 
 bool BitBoard::hasCastlePermission(const CastleFlags castleFlag, const Color color) const {
-	return flags >> 8 & 1U << (castleFlag + color);
+	return flags >> 8U & 1U << (castleFlag + color);
 }
 
 void BitBoard::setCastlePermission(const CastleFlags castleFlag, const Color color, const bool permission) {
 	if (hasCastlePermission(castleFlag, color) && permission == false) {
-		flags &= ~(1U << (castleFlag + color + 8));
+		flags &= ~(1U << (castleFlag + color + 8U));
 		key ^= hashKeys.castleKey[castleFlag + color];
 	} else if (!hasCastlePermission(castleFlag, color) && permission == true) {
-		flags |= 1U << (castleFlag + color + 8);
+		flags |= 1U << (castleFlag + color + 8U);
 		key ^= hashKeys.castleKey[castleFlag + color];
 	}
 }
