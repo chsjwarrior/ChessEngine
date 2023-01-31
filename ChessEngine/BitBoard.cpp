@@ -58,17 +58,17 @@ void BitBoard::operator()() noexcept {
 		h();
 }
 
-void BitBoard::setPieceOnSquare(const Piece piece, const Color color, const Square square) {
+void BitBoard::setPieceOnSquare(const Piece piece, const Color color, const Square square) noexcept {
 	bitMaps[piece][color] |= getBitmapOf(square);
 	key ^= hashKeys.pieceKey[square][piece][color];
 }
 
-void BitBoard::unsetPieceOnSquare(const Piece piece, const Color color, const Square square) {
+void BitBoard::unsetPieceOnSquare(const Piece piece, const Color color, const Square square) noexcept {
 	bitMaps[piece][color] &= ~getBitmapOf(square);
 	key ^= hashKeys.pieceKey[square][piece][color];
 }
 
-Piece BitBoard::getPieceFromSquare(const Color color, const Square square) const {
+Piece BitBoard::getPieceFromSquare(const Color color, const Square square) const noexcept {
 	const Bitmap squareBitmap = getBitmapOf(square);
 
 	Piece piece = PAWN;
@@ -78,18 +78,18 @@ Piece BitBoard::getPieceFromSquare(const Color color, const Square square) const
 	return piece;
 }
 
-Bitmap BitBoard::getBitmapAllPieces(const Color color) const {
+Bitmap BitBoard::getBitmapAllPieces(const Color color) const noexcept {
 	const Bitmap bitmap = bitMaps[PAWN][color] | bitMaps[KNIGHT][color] |
 		bitMaps[BISHOP][color] | bitMaps[ROOK][color] |
 		bitMaps[QUEEN][color] | bitMaps[KING][color];
 	return bitmap;
 }
 
-Square BitBoard::getEnPassantSquare() const {
+Square BitBoard::getEnPassantSquare() const noexcept {
 	return static_cast<Square>(flags & 0x00FFU);
 }
 
-void BitBoard::setEnPassantSquare(const Square square) {
+void BitBoard::setEnPassantSquare(const Square square) noexcept {
 	if ((flags & 0x00FFU) != NONE_SQUARE)
 		key ^= hashKeys.enPassantColumn[getFileOf(getEnPassantSquare())];
 	flags = 0xFF00U & flags | square;
@@ -97,31 +97,30 @@ void BitBoard::setEnPassantSquare(const Square square) {
 		key ^= hashKeys.enPassantColumn[getFileOf(square)];
 }
 
-bool BitBoard::hasCastlePermission(const uChar castleFlag) const {
-	uChar temp = flags >> 8U & castleFlag;
-	return  temp == castleFlag;
+bool BitBoard::hasCastlePermission(const uChar castleFlag) const noexcept {
+	return (flags >> 8U & castleFlag) == castleFlag;
 }
 
-void BitBoard::setCastlePermission(const uChar castleFlag) {
+void BitBoard::setCastlePermission(const uChar castleFlag) noexcept {
 	key ^= hashKeys.castleKey[flags >> 8U];
 	flags |= castleFlag << 8U;
 	key ^= hashKeys.castleKey[flags >> 8U];
 }
 
-void BitBoard::unsetCastlePermission(const uChar castleFlag) {
+void BitBoard::unsetCastlePermission(const uChar castleFlag) noexcept {
 	key ^= hashKeys.castleKey[flags >> 8U];
 	flags &= ~(castleFlag << 8U);
 	key ^= hashKeys.castleKey[flags >> 8U];
 }
 
-bool BitBoard::isRepetition() const {
+bool BitBoard::isRepetition() const noexcept {
 	for (uShort i = historyCount - fiftyMove; i < historyCount; ++i)
 		if (key == history[i].key)
 			return true;
 	return false;
 }
 
-Bitmap BitBoard::getBitmapPiece(const Piece piece, const Color color) const {
+Bitmap BitBoard::getBitmapPiece(const Piece piece, const Color color) const noexcept {
 	return bitMaps[piece][color];
 }
 

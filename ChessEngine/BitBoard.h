@@ -67,27 +67,27 @@ public:
 
 	void operator()() noexcept;
 
-	void setPieceOnSquare(const Piece piece, const Color color, const Square square);
+	void setPieceOnSquare(const Piece piece, const Color color, const Square square) noexcept;
 
-	void unsetPieceOnSquare(const Piece piece, const Color color, const Square square);
+	void unsetPieceOnSquare(const Piece piece, const Color color, const Square square) noexcept;
 
-	Piece getPieceFromSquare(const Color color, const Square square) const;
+	Piece getPieceFromSquare(const Color color, const Square square) const noexcept;
 
-	Bitmap getBitmapAllPieces(const Color color) const;
+	Bitmap getBitmapAllPieces(const Color color) const noexcept;
 
-	Square getEnPassantSquare() const;
+	Square getEnPassantSquare() const noexcept;
 
-	void setEnPassantSquare(const Square square);
+	void setEnPassantSquare(const Square square) noexcept;
 
-	bool hasCastlePermission(const uChar castleFlag) const;
+	bool hasCastlePermission(const uChar castleFlag) const noexcept;
 
-	void setCastlePermission(const uChar castleFlag);
+	void setCastlePermission(const uChar castleFlag) noexcept;
 
-	void unsetCastlePermission(const uChar castleFlag);
+	void unsetCastlePermission(const uChar castleFlag) noexcept;
 
-	bool isRepetition() const;
+	bool isRepetition() const noexcept;
 
-	Bitmap getBitmapPiece(const Piece piece, const Color color) const;
+	Bitmap getBitmapPiece(const Piece piece, const Color color) const noexcept;
 
 	uLong getHashkey() const noexcept;
 
