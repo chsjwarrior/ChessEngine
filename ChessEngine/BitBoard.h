@@ -53,7 +53,8 @@ class BitBoard {
 		uChar getCastlePermission() const;
 	} history[MAX_MOVES];
 
-	friend class MoveMaker;
+	friend void makeUndo(BitBoard& bitBoard);
+	friend bool makeMove(BitBoard& bitBoard, const Move& move);
 public:
 	friend std::ostream& operator<<(std::ostream& os, const BitBoard& bitBoard);
 

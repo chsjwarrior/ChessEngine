@@ -53,18 +53,17 @@ static int negaMax(BitBoard& bitBoard, short depth, int alpha, int beta, Line* p
 
 	Move moves[MAX_MOVES];
 	uShort moveCount = moveGenerator::generateMoves(bitBoard, moves);
-	MoveMaker& moveMaker = MoveMaker::getInstance();
 	Line line;
 
 	for (uShort i = 0; i < moveCount; ++i) {
 		swapForBestMove(i, moves, moveCount);
 
-		if (!moveMaker.makeMove(bitBoard, moves[i]))
+		if (!makeMove(bitBoard, moves[i]))
 			continue;
 
 		++legal;
 		score = -negaMax(bitBoard, depth - 1, -beta, -alpha, &line);
-		moveMaker.makeUndo(bitBoard);
+		makeUndo(bitBoard);
 
 		if (info.stop == true)
 			return 0;

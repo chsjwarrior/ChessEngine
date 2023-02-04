@@ -1,42 +1,20 @@
-#include "MoveMaker.h"
+#include "Attacks.h"
 
-MoveMaker& MoveMaker::getInstance() {
-	static MoveMaker instance;
-	return instance;
-}
-
-void MoveMaker::checkCapture(BitBoard& bitBoard, const Move& move, const Color color, const bool isNotUndo) const {
-	if (move.isCapture())
-		if (isNotUndo) {
-			bitBoard.fiftyMove = 0U;
-			bitBoard.unsetPieceOnSquare(move.getCaptured(), ~color, move.getTo());
-		} else
-			bitBoard.setPieceOnSquare(move.getCaptured(), ~color, move.getTo());
-}
-
-void MoveMaker::checkEnPassant(BitBoard& bitBoard, const Move& move, const Color color, const bool isNotUndo) const {
-	Square enPassantSquare = NONE_SQUARE;
-	if (isNotUndo) {
-		if (move.isPawnStart())
-			enPassantSquare = color == WHITE ? move.getTo() - 8U : move.getTo() + 8U;
-	} else
-		enPassantSquare = bitBoard.history[bitBoard.historyCount].getEnPassantSquare();
-	bitBoard.setEnPassantSquare(enPassantSquare);
-}
-
-void MoveMaker::checkEnPassantCaptured(BitBoard& bitBoard, const Move& move, const Color color, const bool isNotUndo) const {
+/* This function remove the captured pawn of the bitBoard */
+static void checkEnPassantCaptured(BitBoard& bitBoard, const Move& move, const Color color, const bool isDoMove) {
 	if (move.isEnPassantCapture()) {
 		const Square captured = color == WHITE ? move.getTo() - 8U : move.getTo() + 8U;
-		if (isNotUndo)
+		if (isDoMove)
 			bitBoard.unsetPieceOnSquare(PAWN, ~color, captured);
 		else
 			bitBoard.setPieceOnSquare(PAWN, ~color, captured);
 	}
 }
 
-void MoveMaker::checkPawnPromotion(BitBoard& bitBoard, const Move& move, const Color color, const bool isNotUndo) const {
+/* This function replace the pawn for the promotion piece */
+static void checkPawnPromotion(BitBoard& bitBoard, const Move& move, const Color color, const bool isDoMove) {
 	if (move.isPawnPromotion())
-		if (isNotUndo) {
+		if (isDoMove) {
 			bitBoard.unsetPieceOnSquare(PAWN, color, move.getTo());
 			bitBoard.setPieceOnSquare(move.getPromotionPiece(), color, move.getTo());
 		} else {
@@ -45,11 +23,12 @@ void MoveMaker::checkPawnPromotion(BitBoard& bitBoard, const Move& move, const C
 		}
 }
 
-void MoveMaker::checkCastleMove(BitBoard& bitBoard, const Move& move, const Color color, const bool isNotUndo) const {
+/* This function move the Rook to castle position */
+static void checkCastleMove(BitBoard& bitBoard, const Move& move, const Color color, const bool isDoMove) {
 	if (move.isCastle()) {
 		Square from, to;
 		if (move.getTo() > move.getFrom()) {//king side
-			if (isNotUndo) {
+			if (isDoMove) {
 				from = move.getFrom() + 3U;
 				to = move.getFrom() + 1U;
 			} else {
@@ -57,7 +36,7 @@ void MoveMaker::checkCastleMove(BitBoard& bitBoard, const Move& move, const Colo
 				to = move.getFrom() + 3U;
 			}
 		} else {//queen side
-			if (isNotUndo) {
+			if (isDoMove) {
 				from = move.getFrom() - 4U;
 				to = move.getFrom() - 1U;
 			} else {
@@ -70,7 +49,8 @@ void MoveMaker::checkCastleMove(BitBoard& bitBoard, const Move& move, const Colo
 	}
 }
 
-void MoveMaker::checkCastlePermission(BitBoard& bitBoard, const Square square) const {
+/* This function check the castle permission */
+static void checkCastlePermission(BitBoard& bitBoard, const Square square) {
 	switch (square) {
 	case A1:
 		bitBoard.unsetCastlePermission(WHITE_QUEEN_CASTLE);
@@ -92,7 +72,7 @@ void MoveMaker::checkCastlePermission(BitBoard& bitBoard, const Square square) c
 	}
 }
 
-void MoveMaker::makeUndo(BitBoard& bitBoard) const {
+void makeUndo(BitBoard& bitBoard) {
 	if (bitBoard.historyCount == 0)
 		return;
 
@@ -114,12 +94,14 @@ void MoveMaker::makeUndo(BitBoard& bitBoard) const {
 	} else
 		bitBoard.setCastlePermission(bitBoard.history[bitBoard.historyCount].getCastlePermission());
 
-	checkEnPassant(bitBoard, move, color, false);
+	//set or clear en passant square
+	bitBoard.setEnPassantSquare(bitBoard.history[bitBoard.historyCount].getEnPassantSquare());
 
 	bitBoard.unsetPieceOnSquare(piece, color, move.getTo());
 	bitBoard.setPieceOnSquare(piece, color, move.getFrom());
 
-	checkCapture(bitBoard, move, color, false);
+	if (move.isCapture()) //if is capture move than put the piece back			
+		bitBoard.setPieceOnSquare(move.getCaptured(), ~color, move.getTo());
 
 	if (!bitBoard.whiteTime)
 		--bitBoard.ply;
@@ -136,7 +118,7 @@ void MoveMaker::makeUndo(BitBoard& bitBoard) const {
 	}
 }
 
-bool MoveMaker::makeMove(BitBoard& bitBoard, const Move& move) const {
+bool makeMove(BitBoard& bitBoard, const Move& move) {
 	if (move.isEmpty())
 		return false;
 
@@ -158,15 +140,21 @@ bool MoveMaker::makeMove(BitBoard& bitBoard, const Move& move) const {
 	//0=====================================================================0
 
 	++bitBoard.fiftyMove;
-	checkCapture(bitBoard, move, color, true);
+	if (move.isCapture()) {//if is capture move than 
+		bitBoard.fiftyMove = 0U;//reset fifty move counter
+		bitBoard.unsetPieceOnSquare(move.getCaptured(), ~color, move.getTo());//remove captured piece
+	}
 
 	bitBoard.unsetPieceOnSquare(piece, color, move.getFrom());
 	bitBoard.setPieceOnSquare(piece, color, move.getTo());
 
-	checkEnPassant(bitBoard, move, color, true);
+	if (move.isPawnStart())//if is pawn start set en passant square
+		bitBoard.setEnPassantSquare(color == WHITE ? move.getTo() - 8U : move.getTo() + 8U);
+	else if (bitBoard.getEnPassantSquare() != NONE_SQUARE)//clear en passant square
+		bitBoard.setEnPassantSquare(NONE_SQUARE);
 
-	if (piece == PAWN) {
-		bitBoard.fiftyMove = 0U;
+	if (piece == PAWN) {//if pawn move than
+		bitBoard.fiftyMove = 0U;//reset fifty move counter
 		checkEnPassantCaptured(bitBoard, move, color, true);
 		checkPawnPromotion(bitBoard, move, color, true);
 	} else if (piece == KING)

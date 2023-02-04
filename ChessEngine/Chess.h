@@ -21,6 +21,11 @@ struct SearchInfo {
 
 inline SearchInfo info;
 
+/* This function undo the last move */
+void makeUndo(BitBoard& bitBoard);
+/* This function make a move */
+bool makeMove(BitBoard& bitBoard, const Move& move);
+
 void searchPosition(BitBoard& bitBoard);
 
 void perftTest(BitBoard& bitBoard);

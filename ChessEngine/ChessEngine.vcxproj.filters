@@ -55,9 +55,6 @@
     <ClInclude Include="Attacks.h">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
-    <ClInclude Include="MoveMaker.h">
-      <Filter>Arquivos de Cabeçalho</Filter>
-    </ClInclude>
     <ClInclude Include="MoveGenerator.h">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>

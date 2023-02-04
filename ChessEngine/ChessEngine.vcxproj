@@ -161,7 +161,6 @@
     <ClInclude Include="Evaluator.h" />
     <ClInclude Include="Move.h" />
     <ClInclude Include="MoveGenerator.h" />
-    <ClInclude Include="MoveMaker.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="Uci.h" />
   </ItemGroup>
