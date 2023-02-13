@@ -24,6 +24,10 @@ public:
 	~Move() = default;
 
 	void operator()() noexcept;
+
+	/*This function comparete the equality but ignore the score value of the both moves */
+	bool operator==(const Move& other) const noexcept;
+
 	bool isEmpty() const noexcept;
 
 	Square getFrom() const noexcept;

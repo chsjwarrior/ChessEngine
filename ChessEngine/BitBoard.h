@@ -49,12 +49,13 @@ class BitBoard {
 		Undo& operator=(Undo&&) = delete;
 
 		void operator()() noexcept;
-		Square getEnPassantSquare() const;
-		uChar getCastlePermission() const;
+		Square getEnPassantSquare() const noexcept;
+		uChar getCastlePermission() const noexcept;
 	} history[MAX_MOVES];
 
 	friend void makeUndo(BitBoard& bitBoard);
 	friend bool makeMove(BitBoard& bitBoard, const Move& move);
+	friend void searchPosition(BitBoard& bitBoard);
 public:
 	friend std::ostream& operator<<(std::ostream& os, const BitBoard& bitBoard);
 
@@ -103,6 +104,6 @@ public:
 	Color getColorTime() const noexcept;
 
 	const std::string getFEN() const;
-	/* This funcion still needs to be improve on read fifty move and ply*/
+	/* This funcion still needs to be improve on read fifty move and ply */
 	void parseFEN(const char* fen);
 };

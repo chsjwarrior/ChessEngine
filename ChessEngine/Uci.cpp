@@ -52,7 +52,7 @@ void Uci::position(BitBoard& bitBoard, std::istringstream& iss) const {
 		return;
 
 	if (input == MOVES) {
-		Move move;		
+		Move move;
 		while (iss >> input) {
 			move = findMove(bitBoard, input.c_str());
 			if (move.isEmpty())

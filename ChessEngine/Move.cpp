@@ -9,6 +9,10 @@ void Move::operator()() noexcept {
 	score = 0;
 }
 
+bool Move::operator==(const Move& other) const noexcept {
+	return flags == other.flags;
+}
+
 bool Move::isEmpty() const noexcept {
 	return flags == MOVE_EMPTY;
 }

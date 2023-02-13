@@ -19,8 +19,25 @@ struct SearchInfo {
 	bool stop;
 };
 
+enum NodeType { HFNONE, HFALPHA, HFBETA, HFEXACT };
+
+struct TranspositionTableEntry {
+	uLong hash;
+	short depth;
+	int score;
+	NodeType nodeType;
+	Move move;
+};
+
 inline SearchInfo info;
 
+inline TranspositionTableEntry transpositionTable[1000000];
+
+void clearTranspositionTable();
+
+void storeTranspositionTableEntry(uLong hash, short depth, int score, NodeType nodeType, Move bestMove);
+
+TranspositionTableEntry* retrieveTranspositionTableEntry(uLong hash);
 /* This function undo the last move */
 void makeUndo(BitBoard& bitBoard);
 /* This function make a move */

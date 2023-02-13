@@ -26,11 +26,11 @@ void BitBoard::Undo::operator()() noexcept {
 	key = 0UL;
 }
 
-Square BitBoard::Undo::getEnPassantSquare() const {
+Square BitBoard::Undo::getEnPassantSquare() const noexcept {
 	return static_cast<Square>(flags & 0x00FFU);
 }
 
-uChar BitBoard::Undo::getCastlePermission() const {
+uChar BitBoard::Undo::getCastlePermission() const noexcept {
 	return flags >> 8U;
 }
 

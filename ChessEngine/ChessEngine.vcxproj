@@ -152,6 +152,7 @@
     <ClCompile Include="MoveMaker.cpp" />
     <ClCompile Include="Perft.cpp" />
     <ClCompile Include="Search.cpp" />
+    <ClCompile Include="TranspositionTable.cpp" />
     <ClCompile Include="Uci.cpp" />
   </ItemGroup>
   <ItemGroup>
