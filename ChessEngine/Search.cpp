@@ -189,8 +189,13 @@ void searchPosition(BitBoard& bitBoard) {
 		pvSize = generatePvLine(bitBoard, pvLine, d);
 
 		std::cout << "info score " << score << " depth " << d << " nodes " << info.nodes << std::endl;
+		std::cout << "pvLies: ";
 		for (uShort i = 0U; i < pvSize; ++i)
 			std::cout << pvLine[i] << " ";
+		std::cout << "\nTransposition table: ";
+		for (TranspositionTableEntry& t : transpositionTable)
+			if (t.hash != 0)
+				std::cout << t.move << std::endl;
 		std::cout << "\n";
 	}
 	std::cout << "bestmove: " << pvLine[0] << std::endl;

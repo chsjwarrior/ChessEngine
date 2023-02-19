@@ -7,15 +7,15 @@ using uInt = unsigned int;
 using uShort = unsigned short;
 using uChar = unsigned char;
 
-inline constexpr int PIECE_VALUE[] = { 10,30,30,50,90,900,0 };
-
 inline constexpr char PIECE_CHAR[12] = { 'P', 'N', 'B', 'R', 'Q', 'K', 'p', 'n', 'b', 'r', 'q', 'k' };
+
+inline constexpr int PIECE_VALUE[] = { 10,30,30,50,90,900,0 };
 
 inline constexpr int INFINIT = 30000;
 
 inline constexpr Bitmap SQUARE_MASK = 0x1UL;
 
-inline constexpr uShort MAX_MOVES = 256U;
+inline constexpr uChar MAX_MOVES = 255U;
 
 inline constexpr uChar MAX_DEPTH = 64U;
 
@@ -164,7 +164,7 @@ inline Square popFirstSquareOf(Bitmap& bitmap) noexcept {
 	bitmap &= (bitmap - 1U);
 	return static_cast<Square>(i);
 }
-/*this function returns the number of zero*/
+/*this function returns the number of non zero*/
 inline uInt bitCount(const Bitmap bitmap) noexcept {
 	return static_cast<uInt>(__popcnt64(bitmap));
 }
@@ -175,17 +175,8 @@ inline uInt bitCount(const Bitmap bitmap) noexcept {
 #else // Compiler is not compatible
 #error "Compiler not supported."
 #endif
-/*
-inline uInt bitCount(Bitmap bitmap) noexcept {
-	bitmap = ((bitmap >> 1) & 0x5555555555555555UL) + (bitmap & 0x5555555555555555UL);
-	bitmap = ((bitmap >> 2) & 0x3333333333333333UL) + (bitmap & 0x3333333333333333UL);
-	uInt v = static_cast<uInt>((bitmap >> 32) + bitmap);
-	v = ((v >> 4) & 0x0F0F0F0FU) + (v & 0x0F0F0F0FU);
-	v = ((v >> 8) & 0x00FF00FFU) + (v & 0x00F00FFU);
-	return ((v >> 16) & 0x0000FFFFU) + (v & 0x0000FFFFU);
-}
-*/
-/*htis function return the reverse bit position*/
+
+/*this function return the reverse bit position*/
 inline Bitmap reverse(Bitmap bitmap) noexcept {
 	bitmap = (bitmap & 0x5555555555555555UL) << 1 | (bitmap >> 1) & 0x5555555555555555UL;
 	bitmap = (bitmap & 0x3333333333333333UL) << 2 | (bitmap >> 2) & 0x3333333333333333UL;
