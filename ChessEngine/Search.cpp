@@ -8,17 +8,7 @@ static void checkUp() {
 }
 
 static void clearSearch() {
-	for (uShort i = 0, j; i < MAX_DEPTH; ++i) {
-		for (j = 0; j < NONE_PIECE; ++j) {
-			searchHistory[j][0][i]();
-			searchHistory[j][1][i]();
-		}
-		searchKiller[0][i]();
-		searchKiller[1][i]();
-	};
-
 	clearTranspositionTable();
-
 	info.fh = 0;
 	info.fhf = 0;
 }
@@ -37,7 +27,7 @@ static void swapForBestMove(const uShort index, Move moves[], const uShort size)
 }
 
 static int quiesce(BitBoard& bitBoard, int alpha, int beta) {
-	if (info.nodes <= 2047)
+	if (info.nodes >= 2047)
 		checkUp();
 
 	++info.nodes;
@@ -58,6 +48,7 @@ static int quiesce(BitBoard& bitBoard, int alpha, int beta) {
 
 	Move moves[MAX_MOVES];
 	uShort moveCount = moveGenerator::generateCaptureMoves(bitBoard, moves);
+	uInt legal = 0U;
 
 	for (uShort i = 0; i < moveCount; ++i) {
 		swapForBestMove(i, moves, moveCount);
@@ -65,16 +56,22 @@ static int quiesce(BitBoard& bitBoard, int alpha, int beta) {
 		if (!makeMove(bitBoard, moves[i]))
 			continue;
 
+		++legal;
 		score = -quiesce(bitBoard, -beta, -alpha);
 		makeUndo(bitBoard);
 
 		if (info.stop)
 			return 0;
 
-		if (score >= beta)
-			return beta;
-		if (score > alpha)
+		if (score > alpha) {
+			if (score >= beta) {
+				if (legal == 1)
+					++info.fhf;
+				++info.fh;
+				return beta;
+			}
 			alpha = score;
+		}
 	}
 	return alpha;
 }
@@ -84,7 +81,7 @@ static int alphaBeta(BitBoard& bitBoard, short depth, int alpha, int beta) {
 		return evaluatePosition(bitBoard);
 	//return quiesce(bitBoard, alpha, beta);
 
-	if (info.nodes <= 2047U)
+	if (info.nodes >= 2047U)
 		checkUp();
 
 	++info.nodes;
@@ -119,12 +116,11 @@ static int alphaBeta(BitBoard& bitBoard, short depth, int alpha, int beta) {
 	if (inCheck)
 		++depth;
 
+	Move moves[MAX_MOVES];
+	uShort moveCount = moveGenerator::generateAllMoves(bitBoard, moves);
 	uInt legal = 0U;
 	int score, oldAlpha = alpha, bestScore = -INFINIT;
 	Move bestMove;
-
-	Move moves[MAX_MOVES];
-	uShort moveCount = moveGenerator::generateAllMoves(bitBoard, moves);
 
 	for (uShort i = 0; i < moveCount; ++i) {
 		swapForBestMove(i, moves, moveCount);
@@ -157,7 +153,7 @@ static int alphaBeta(BitBoard& bitBoard, short depth, int alpha, int beta) {
 
 	if (legal == 0) {
 		if (inCheck)
-			return -MATE + bitBoard.getPly();
+			return -INFINIT + bitBoard.getPly();
 		return 0;
 	}
 	if (alpha != oldAlpha)
@@ -198,6 +194,7 @@ void searchPosition(BitBoard& bitBoard) {
 	clearSearch();
 	bitBoard.ply = 0U;
 
+	Move bestMove;
 	Move pvLine[MAX_DEPTH];
 	uShort pvSize;
 	int score;
@@ -209,6 +206,7 @@ void searchPosition(BitBoard& bitBoard) {
 			d = info.depth;
 
 		pvSize = generatePvLine(bitBoard, pvLine, d);
+		bestMove = pvLine[0];
 
 		std::cout << "info score " << score << " depth " << d << " nodes " << info.nodes << std::endl;
 		std::cout << "pvLine: ";

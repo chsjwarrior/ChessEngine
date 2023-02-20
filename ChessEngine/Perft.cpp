@@ -12,7 +12,9 @@ static uLong perft(BitBoard& bitBoard, const short depth) {
 	uLong nodes = 0UL;
 
 	for (Move* move = moves; move != moves + movesCount; ++move) {
-		makeMove(bitBoard, *move);
+		if (!makeMove(bitBoard, *move))
+			continue;
+
 		nodes += perft(bitBoard, depth - 1);
 		makeUndo(bitBoard);
 
@@ -29,7 +31,8 @@ void perftTest(BitBoard& bitBoard) {
 	uLong nodes;
 
 	for (Move* move = moves; move != moves + movesCount; ++move) {
-		makeMove(bitBoard, *move);
+		if (!makeMove(bitBoard, *move))
+			continue;
 
 		nodes = perft(bitBoard, info.depth - 1);
 		info.nodes += nodes;

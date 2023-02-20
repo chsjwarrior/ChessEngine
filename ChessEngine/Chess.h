@@ -34,9 +34,6 @@ struct TranspositionTableEntry {
 
 inline SearchInfo info;
 
-inline Move searchHistory[NONE_PIECE][2][NONE_PIECE];
-inline Move searchKiller[2][NONE_PIECE];
-
 inline TranspositionTableEntry transpositionTable[0x100000];
 
 void clearTranspositionTable();
