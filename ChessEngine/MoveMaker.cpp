@@ -1,6 +1,6 @@
 #include "Attacks.h"
 
-/* This function remove the captured pawn of the bitBoard */
+/* This function removes the captured pawn from the bitBoard */
 static void checkEnPassantCaptured(BitBoard& bitBoard, const Move& move, const Color color, const bool isDoMove) {
 	if (move.isEnPassantCapture()) {
 		const Square captured = color == WHITE ? move.getTo() - 8U : move.getTo() + 8U;
@@ -11,7 +11,7 @@ static void checkEnPassantCaptured(BitBoard& bitBoard, const Move& move, const C
 	}
 }
 
-/* This function replace the pawn for the promotion piece */
+/* This function replaces the pawn for the promotion piece */
 static void checkPawnPromotion(BitBoard& bitBoard, const Move& move, const Color color, const bool isDoMove) {
 	if (move.isPawnPromotion())
 		if (isDoMove) {
@@ -49,7 +49,7 @@ static void checkCastleMove(BitBoard& bitBoard, const Move& move, const Color co
 	}
 }
 
-/* This function check the castle permission */
+/* This function removes the castle permission */
 static void checkCastlePermission(BitBoard& bitBoard, const Square square) {
 	switch (square) {
 	case A1:
@@ -100,7 +100,7 @@ void makeUndo(BitBoard& bitBoard) {
 	bitBoard.unsetPieceOnSquare(piece, color, move.getTo());
 	bitBoard.setPieceOnSquare(piece, color, move.getFrom());
 
-	if (move.isCapture()) //if is capture move than put the piece back			
+	if (move.isCapture()) //if is a capture move than put the piece back			
 		bitBoard.setPieceOnSquare(move.getCaptured(), ~color, move.getTo());
 
 	if (!bitBoard.whiteTime)
@@ -140,20 +140,20 @@ bool makeMove(BitBoard& bitBoard, const Move& move) {
 	//0=====================================================================0
 
 	++bitBoard.fiftyMove;
-	if (move.isCapture()) {//if is capture move than 
+	if (move.isCapture()) {//if is a capture move then 
 		bitBoard.fiftyMove = 0U;//reset fifty move counter
-		bitBoard.unsetPieceOnSquare(move.getCaptured(), ~color, move.getTo());//remove captured piece
+		bitBoard.unsetPieceOnSquare(move.getCaptured(), ~color, move.getTo());//remove the captured piece
 	}
 
 	bitBoard.unsetPieceOnSquare(piece, color, move.getFrom());
 	bitBoard.setPieceOnSquare(piece, color, move.getTo());
 
-	if (move.isPawnStart())//if is pawn start set en passant square
+	if (move.isPawnStart())//if is pawn start then set the  en passant square
 		bitBoard.setEnPassantSquare(color == WHITE ? move.getTo() - 8U : move.getTo() + 8U);
-	else if (bitBoard.getEnPassantSquare() != NONE_SQUARE)//clear en passant square
+	else if (bitBoard.getEnPassantSquare() != NONE_SQUARE)//clear the en passant square
 		bitBoard.setEnPassantSquare(NONE_SQUARE);
 
-	if (piece == PAWN) {//if pawn move than
+	if (piece == PAWN) {//if si pawn move then
 		bitBoard.fiftyMove = 0U;//reset fifty move counter
 		checkEnPassantCaptured(bitBoard, move, color, true);
 		checkPawnPromotion(bitBoard, move, color, true);

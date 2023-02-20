@@ -72,25 +72,25 @@ inline Piece& operator--(Piece& p) noexcept { return p = p == PAWN ? NONE_PIECE 
 
 inline Color operator~(const Color& color) noexcept { return static_cast<Color>(color ^ BLACK); }
 
-/* This function returns the File of Square*/
+/* This function returns the File of Square */
 inline File getFileOf(const Square square) noexcept {
 	if (square >= NONE_SQUARE) return NONE_FILE;
 	return static_cast<File>(square & 7U);
 	// file = square % 8; or file = square & 7;
 }
-/* This function returns the Rank of Square*/
+/* This function returns the Rank of Square */
 inline Rank getRankOf(const Square square) noexcept {
 	if (square >= NONE_SQUARE) return NONE_RANK;
 	return static_cast<Rank>(square >> 3);
 	// rank = square / 8; or rank = square >> 3;
 }
-/* This function returns the Square of File and Rank*/
+/* This function returns the Square of File and Rank */
 inline Square getSquareOf(const File file, const Rank rank) noexcept {
 	if (file >= NONE_FILE || rank >= NONE_RANK) return NONE_SQUARE;
 	return static_cast<Square>((rank << 3) + file);
 	// square = 8 * rank + file;
 }
-/* This function returns a Bitmap of Square*/
+/* This function returns a Bitmap of Square */
 inline Bitmap getBitmapOf(const Square square) noexcept {
 	if (square >= NONE_SQUARE) return 0UL;
 	return SQUARE_MASK << square;
@@ -102,33 +102,33 @@ inline Bitmap getBitmapOf(const Square square) noexcept {
 * i am not sure if they are working
 */
 
-/*this function returns the position(Square) of the left most set bit*/
+/* This function returns the position(Square) from the left most set bit */
 inline Square getLastSquareOf(const Bitmap bitmap) noexcept {
 	if (bitmap == 0UL) return NONE_SQUARE;
 	unsigned long i = __builtin_ctzll(bitmap);
 	return static_cast<Square>(i);
 }
-/*this function returns and clear the position(Square) of the left most set bit*/
+/* This function returns and clear the position(Square) from the left most set bit */
 inline Square popLastSquareOf(Bitmap& bitmap) noexcept {
 	if (bitmap == 0UL) return NONE_SQUARE;
 	unsigned long i = __builtin_ctzll(bitmap);
 	bitmap &= ~(SQUARE_MASK << i);
 	return static_cast<Square>(i);
 }
-/*this function returns the position(Square) of the right most set bit*/
+/* This function returns the position(Square) from the right most set bit */
 inline Square getFirstSquareOf(const Bitmap bitmap) noexcept {
 	if (bitmap == 0UL) return NONE_SQUARE;
 	unsigned long i = 63 ^ __builtin_clzll(bitmap);
 	return static_cast<Square>(i);
 }
-/*this function returns and clear the position (Square) of the right most set bit*/
+/* This function returns and clear the position (Square) from the right most set bit */
 inline Square popFirstSquareOf(Bitmap& bitmap) noexcept {
 	if (bitmap == 0UL) return NONE_SQUARE;
 	unsigned long i = 63 ^ __builtin_clzll(bitmap);
 	bitmap &= (bitmap - 1U);
 	return static_cast<Square>(i);
 }
-/*this function returns the number of zero*/
+/* This function returns the number of set bits */
 inline uInt bitCount(const Bitmap bitmap) noexcept {
 	return static_cast<uInt>()__builtin_popcountll(bitmap));
 }
@@ -136,14 +136,14 @@ inline uInt bitCount(const Bitmap bitmap) noexcept {
 #elif defined(_MSC_VER) // MSVC
 #ifdef _WIN64 // MSVC, WIN64
 
-/*this function returns the position(Square) of the left most set bit*/
+/* This function returns the position(Square) from the left most set bit */
 inline Square getLastSquareOf(const Bitmap bitmap) noexcept {
 	if (bitmap == 0UL) return NONE_SQUARE;
 	unsigned long i;
 	_BitScanReverse64(&i, bitmap);
 	return static_cast<Square>(i);
 }
-/*this function returns and clear the position(Square) of the left most set bit*/
+/* This function returns and clear the position(Square) from the left most set bit */
 inline Square popLastSquareOf(Bitmap& bitmap) noexcept {
 	if (bitmap == 0UL) return NONE_SQUARE;
 	unsigned long i;
@@ -151,14 +151,14 @@ inline Square popLastSquareOf(Bitmap& bitmap) noexcept {
 	bitmap &= ~(SQUARE_MASK << i);
 	return static_cast<Square>(i);
 }
-/*this function returns the position(Square) of the right most set bit*/
+/* This function returns the position(Square) from the right most set bit */
 inline Square getFirstSquareOf(const Bitmap bitmap) noexcept {
 	if (bitmap == 0UL) return NONE_SQUARE;
 	unsigned long i;
 	_BitScanForward64(&i, bitmap);
 	return static_cast<Square>(i);
 }
-/*this function returns and clear the position (Square) of the right most set bit*/
+/* This function returns and clear the position (Square) from the right most set bit */
 inline Square popFirstSquareOf(Bitmap& bitmap) noexcept {
 	if (bitmap == 0UL) return NONE_SQUARE;
 	unsigned long i;
@@ -166,7 +166,7 @@ inline Square popFirstSquareOf(Bitmap& bitmap) noexcept {
 	bitmap &= (bitmap - 1U);
 	return static_cast<Square>(i);
 }
-/*this function returns the number of non zero*/
+/* This function returns the number of set bits */
 inline uInt bitCount(const Bitmap bitmap) noexcept {
 	return static_cast<uInt>(__popcnt64(bitmap));
 }
@@ -178,7 +178,7 @@ inline uInt bitCount(const Bitmap bitmap) noexcept {
 #error "Compiler not supported."
 #endif
 
-/*this function return the reverse bit position*/
+/* This function returns the reverse bit position*/
 inline Bitmap reverse(Bitmap bitmap) noexcept {
 	bitmap = (bitmap & 0x5555555555555555UL) << 1 | (bitmap >> 1) & 0x5555555555555555UL;
 	bitmap = (bitmap & 0x3333333333333333UL) << 2 | (bitmap >> 2) & 0x3333333333333333UL;

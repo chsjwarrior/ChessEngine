@@ -37,7 +37,7 @@ static void setCapture(const BitBoard& bitBoard, Move& move, const Color color, 
 	move.score += PIECE_VALUE[capture];
 }
 
-/* This function returns a bitmap with the attack squares */
+/* This function returns a bitmap with the attacked squares */
 template<MoveType moveType>
 static Bitmap getPiecesMoves(const BitBoard& bitBoard, const Piece piece, const Color color, const Square square) {
 	Bitmap attacks = 0UL;
@@ -146,7 +146,7 @@ static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece pie
 	}
 }
 
-/* This function generate the move type you need, illegals included */
+/* This function generates the moves with the move type you need */
 template<MoveType moveType>
 static uShort generateMoves(const BitBoard& bitBoard, Move moves[]) {
 	const Color color = bitBoard.getColorTime();

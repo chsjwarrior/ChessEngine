@@ -35,11 +35,11 @@ struct TranspositionTableEntry {
 inline SearchInfo info;
 
 inline TranspositionTableEntry transpositionTable[0x100000];
-
+/* This function clear the transposition table */
 void clearTranspositionTable();
-
+/* This function includes a value in the transposition table */
 void storeTranspositionTableEntry(uLong hash, short depth, int score, NodeType nodeType, Move bestMove);
-
+/* This function retrieves a value from the trasposition table */
 TranspositionTableEntry* retrieveTranspositionTableEntry(uLong hash);
 /* This function undo the last move */
 void makeUndo(BitBoard& bitBoard);
