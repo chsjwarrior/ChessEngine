@@ -8,7 +8,7 @@ static uLong perft(BitBoard& bitBoard, const short depth) {
 		return 1UL;
 
 	Move moves[MAX_MOVES];
-	uShort movesCount = moveGenerator::generateAllLegalMoves(bitBoard, moves);
+	uShort movesCount = moveGenerator::generateAllMoves(bitBoard, moves);
 	uLong nodes = 0UL;
 
 	for (Move* move = moves; move != moves + movesCount; ++move) {
@@ -27,7 +27,7 @@ static uLong perft(BitBoard& bitBoard, const short depth) {
 
 void perftTest(BitBoard& bitBoard) {
 	Move moves[MAX_MOVES];
-	uShort movesCount = moveGenerator::generateAllLegalMoves(bitBoard, moves);
+	uShort movesCount = moveGenerator::generateAllMoves(bitBoard, moves);
 	uLong nodes;
 
 	for (Move* move = moves; move != moves + movesCount; ++move) {

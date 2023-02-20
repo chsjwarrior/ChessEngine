@@ -10,8 +10,6 @@ namespace moveGenerator {
 	uShort generateQuietMoves(const BitBoard& bitBoard, Move moves[]);
 	/* This function generate only capture moves, illegals included */
 	uShort generateCaptureMoves(const BitBoard& bitBoard, Move moves[]);
-	/* This function generate all legal moves */
-	uShort generateAllLegalMoves(BitBoard& bitBoard, Move moves[]);
 	/* This function verify if the move exists and is legal */
 	bool moveExists(BitBoard& bitBoard, const Move move);
 };

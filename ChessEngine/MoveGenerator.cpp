@@ -204,20 +204,6 @@ uShort moveGenerator::generateCaptureMoves(const BitBoard& bitBoard, Move moves[
 	return generateMoves<CAPTURES>(bitBoard, moves);
 }
 
-uShort moveGenerator::generateAllLegalMoves(BitBoard& bitBoard, Move moves[]) {
-	generateMoves<ALL>(bitBoard, moves);
-
-	for (uShort i = 0U; i < movesCount; ++i) {
-		if (!makeMove(bitBoard, moves[i])) {
-			moves[i]();
-			continue;
-		}
-		makeUndo(bitBoard);
-	}
-
-	return movesCount;
-}
-
 bool moveGenerator::moveExists(BitBoard& bitBoard, const Move move) {
 	Move moves[MAX_MOVES];
 	generateAllMoves(bitBoard, moves, move.getFrom());
