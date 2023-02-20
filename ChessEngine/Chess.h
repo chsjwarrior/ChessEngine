@@ -17,6 +17,9 @@ struct SearchInfo {
 	uLong infinite;
 	bool ponderMode;
 	bool stop;
+
+	float fh;//fail high;
+	float fhf;//fail high first;
 };
 
 enum NodeType { HFNONE, HFALPHA, HFBETA, HFEXACT };
@@ -31,7 +34,10 @@ struct TranspositionTableEntry {
 
 inline SearchInfo info;
 
-inline TranspositionTableEntry transpositionTable[1000000];
+inline Move searchHistory[NONE_PIECE][2][NONE_PIECE];
+inline Move searchKiller[2][NONE_PIECE];
+
+inline TranspositionTableEntry transpositionTable[0x100000];
 
 void clearTranspositionTable();
 
@@ -42,7 +48,7 @@ TranspositionTableEntry* retrieveTranspositionTableEntry(uLong hash);
 void makeUndo(BitBoard& bitBoard);
 /* This function make a move */
 bool makeMove(BitBoard& bitBoard, const Move& move);
-
+/* This function make the search */
 void searchPosition(BitBoard& bitBoard);
-
+/*This function make a perft test */
 void perftTest(BitBoard& bitBoard);

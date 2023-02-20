@@ -1,5 +1,9 @@
 #include "chess.h"
 
+static int getIndex(uLong hash) {
+	return hash % 0x100000;
+}
+
 void clearTranspositionTable() {
 	for (TranspositionTableEntry& t : transpositionTable) {
 		t.hash = 0;
@@ -8,10 +12,6 @@ void clearTranspositionTable() {
 		t.nodeType = HFNONE;
 		t.move();
 	}
-}
-
-static int getIndex(uLong hash) {
-	return hash % 1000000;
 }
 
 void storeTranspositionTableEntry(uLong hash, short depth, int score, NodeType nodeType, Move bestMove) {

@@ -14,7 +14,7 @@ Move Uci::findMove(const BitBoard& bitBoard, const char* entry) const {
 	target.parseEntry(entry);
 
 	Move moves[MAX_MOVES];
-	uShort moveCount = moveGenerator::generateMoves(bitBoard, moves);
+	uShort moveCount = moveGenerator::generateAllMoves(bitBoard, moves);
 
 	for (Move* move = moves; move != moves + moveCount; ++move)
 		if (move->getFrom() == target.getFrom() && move->getTo() == target.getTo()) {

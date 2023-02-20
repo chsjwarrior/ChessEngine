@@ -70,11 +70,11 @@ static void evaluatePosition(const BitBoard& bitBoard, const Color color, int& m
 		while (pieceBitmap) {
 			s = popSquareOf(pieceBitmap);
 
-			if (bitBoard.isBlackTime()) {
-				materialWeight += -PIECE_VALUE[p];
+			if (bitBoard.isWhiteTime()) {
+				materialWeight += PIECE_VALUE[p];
 				s = ~s;
 			} else
-				materialWeight += PIECE_VALUE[p];
+				materialWeight += -PIECE_VALUE[p];
 
 			materialWeight += SQUARE_VALUE[p][s];
 

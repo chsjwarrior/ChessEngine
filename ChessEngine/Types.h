@@ -13,9 +13,11 @@ inline constexpr int PIECE_VALUE[] = { 10,30,30,50,90,900,0 };
 
 inline constexpr int INFINIT = 30000;
 
+inline constexpr int MATE = 29000;
+
 inline constexpr Bitmap SQUARE_MASK = 0x1UL;
 
-inline constexpr uChar MAX_MOVES = 255U;
+inline constexpr uChar MAX_MOVES = 128U;
 
 inline constexpr uChar MAX_DEPTH = 64U;
 
