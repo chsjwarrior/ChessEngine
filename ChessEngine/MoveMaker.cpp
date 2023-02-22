@@ -114,7 +114,11 @@ void makeUndo(BitBoard& bitBoard) {
 		printBits("History.flags:", bitBoard.history[bitBoard.historyCount].flags);
 		bitBoard.flags = bitBoard.history[bitBoard.historyCount].flags;
 		bitBoard.key = bitBoard.history[bitBoard.historyCount].key;
-		//exit(EXIT_FAILURE);
+		/* print the history to know the moves sequence */
+		for (uShort i = 0; i < bitBoard.historyCount; ++i)
+			std::cout << bitBoard.history[i].move << " ";
+		std::cout << std::endl;
+		exit(EXIT_FAILURE);
 	}
 }
 

@@ -35,17 +35,17 @@ uChar BitBoard::Undo::getCastlePermission() const noexcept {
 }
 
 //0=============================BITBOARD===============================0
-BitBoard::BitBoard() : key(0UL), flags(BITBOARD_FLAGS_EMPTY), fiftyMove(0U), ply(0U), historyCount(0U), whiteTime(false), hashKeys() {
-	for (Piece p = PAWN; p != NONE_PIECE; ++p) {
-		bitMaps[p][0] = 0UL;
-		bitMaps[p][1] = 0UL;
+BitBoard::BitBoard() : ALL_PIECES(6U), key(0UL), flags(BITBOARD_FLAGS_EMPTY), fiftyMove(0U), ply(0U), historyCount(0U), whiteTime(false), hashKeys() {
+	for (auto& b : bitMaps) {
+		b[0] = 0UL;
+		b[1] = 0UL;
 	}
 }
 
 void BitBoard::operator()() noexcept {
-	for (Piece p = PAWN; p != NONE_PIECE; ++p) {
-		bitMaps[p][0] = 0UL;
-		bitMaps[p][1] = 0UL;
+	for (auto& b : bitMaps) {
+		b[0] = 0UL;
+		b[1] = 0UL;
 	}
 	key = 0UL;
 	flags = BITBOARD_FLAGS_EMPTY;
@@ -59,17 +59,23 @@ void BitBoard::operator()() noexcept {
 }
 
 void BitBoard::setPieceOnSquare(const Piece piece, const Color color, const Square square) noexcept {
-	bitMaps[piece][color] |= getBitmapOf(square);
+	const Bitmap squareBitmap = getBitmapOf(square);
+	bitMaps[piece][color] |= squareBitmap;
+	bitMaps[ALL_PIECES][color] |= squareBitmap;
 	key ^= hashKeys.pieceKey[square][piece][color];
 }
 
 void BitBoard::unsetPieceOnSquare(const Piece piece, const Color color, const Square square) noexcept {
-	bitMaps[piece][color] &= ~getBitmapOf(square);
+	const Bitmap squareBitmap = ~getBitmapOf(square);
+	bitMaps[piece][color] &= squareBitmap;
+	bitMaps[ALL_PIECES][color] &= squareBitmap;
 	key ^= hashKeys.pieceKey[square][piece][color];
 }
 
 Piece BitBoard::getPieceFromSquare(const Color color, const Square square) const noexcept {
 	const Bitmap squareBitmap = getBitmapOf(square);
+
+	if ((bitMaps[ALL_PIECES][color] & squareBitmap) == 0) return NONE_PIECE;
 
 	Piece piece = PAWN;
 	while (piece != NONE_PIECE && (bitMaps[piece][color] & squareBitmap) == 0)

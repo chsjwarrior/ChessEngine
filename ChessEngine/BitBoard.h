@@ -2,7 +2,8 @@
 #include "Move.h"
 
 class BitBoard {
-	Bitmap bitMaps[6][2];
+	const uChar ALL_PIECES;/* A const value for the last position of the array */
+	Bitmap bitMaps[7][2];/* The last position ist the union of all previous */
 	uLong key;
 	/*
 	flags uint16_t

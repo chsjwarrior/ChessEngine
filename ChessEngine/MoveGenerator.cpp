@@ -4,8 +4,6 @@ static Bitmap friendPieces;
 static Bitmap enemyPieces;
 static uShort movesCount;
 
-enum MoveType { QUIETS, CAPTURES, ALL };
-
 /* This function tests if is possible to make King castle */
 static bool canMakeKingCastle(const BitBoard& bitBoard, const Color color) {
 	if (color == WHITE && bitBoard.hasCastlePermission(WHITE_KING_CASTLE) ||
@@ -37,6 +35,7 @@ static void setCapture(const BitBoard& bitBoard, Move& move, const Color color, 
 	move.score += PIECE_VALUE[capture];
 }
 
+enum MoveType { QUIETS, CAPTURES, ALL };
 /* This function returns a bitmap with the attacked squares */
 template<MoveType moveType>
 static Bitmap getPiecesMoves(const BitBoard& bitBoard, const Piece piece, const Color color, const Square square) {
@@ -50,10 +49,13 @@ static Bitmap getPiecesMoves(const BitBoard& bitBoard, const Piece piece, const 
 
 		if (piece == PAWN) {
 			attacks = attacks::getPawnMoves(allPieces, color, getBitmapOf(bitBoard.getEnPassantSquare()), getBitmapOf(square));
+			attacks &= ~friendPieces;//remove friend bitmap
 			if (moveType == QUIETS)
 				return attacks & ~enemyPieces | getBitmapOf(bitBoard.getEnPassantSquare());
 			else if (moveType == CAPTURES)
 				return attacks & enemyPieces | getBitmapOf(bitBoard.getEnPassantSquare());
+			else
+				return attacks;
 		} else {
 			const File file = getFileOf(square);
 			const Rank rank = getRankOf(square);

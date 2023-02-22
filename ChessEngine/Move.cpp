@@ -50,7 +50,8 @@ Piece Move::getPromotionPiece() const noexcept {
 }
 
 void Move::setPromotionPiece(const Piece piece) noexcept {
-	flags = 0xFF0FFFFFU & flags | piece << 20U;
+	if (piece > PAWN && piece < KING)
+		flags = 0xFF0FFFFFU & flags | piece << 20U;
 }
 
 bool Move::isPawnPromotion() const noexcept {
