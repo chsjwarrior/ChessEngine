@@ -7,7 +7,6 @@ The number of double-checks in depth 5 is discussed in Talkchess and may be 2645
 
 r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -
 
-Fails in depth 4
 Depth	Nodes		Captures	E.p.	Castles		Promotions	Checks		Discov. Checks	Dbl. Checks	Checkmates
 1		48			8			0		2			0			0			0				0			0
 2		2039		351			1		91			0			3			0				0			0

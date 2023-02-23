@@ -82,17 +82,16 @@ void makeUndo(BitBoard& bitBoard) {
 	bitBoard.key ^= bitBoard.hashKeys.sideKey;
 	const Color color = bitBoard.getColorTime();
 
-	checkPawnPromotion(bitBoard, move, color, false);//this is the first thing to do
+	checkPawnPromotion(bitBoard, move, color, false);//this must be the first thing to do
 
 	const Piece piece = bitBoard.getPieceFromSquare(color, move.getTo());
 
 	if (piece == PAWN)
 		checkEnPassantCaptured(bitBoard, move, color, false);
-	else if (piece == KING) {
+	else if (piece == KING)
 		checkCastleMove(bitBoard, move, color, false);
-		bitBoard.setCastlePermission(bitBoard.history[bitBoard.historyCount].getCastlePermission());
-	} else
-		bitBoard.setCastlePermission(bitBoard.history[bitBoard.historyCount].getCastlePermission());
+	//Check castle permission must be done every move time
+	bitBoard.setCastlePermission(bitBoard.history[bitBoard.historyCount].getCastlePermission());
 
 	//set or clear en passant square
 	bitBoard.setEnPassantSquare(bitBoard.history[bitBoard.historyCount].getEnPassantSquare());
@@ -115,7 +114,7 @@ void makeUndo(BitBoard& bitBoard) {
 		bitBoard.flags = bitBoard.history[bitBoard.historyCount].flags;
 		bitBoard.key = bitBoard.history[bitBoard.historyCount].key;
 		/* print the history to know the moves sequence */
-		for (uShort i = 0; i < bitBoard.historyCount; ++i)
+		for (uShort i = 0; i < bitBoard.historyCount + 1; ++i)
 			std::cout << bitBoard.history[i].move << " ";
 		std::cout << std::endl;
 		exit(EXIT_FAILURE);

@@ -73,10 +73,9 @@ void BitBoard::unsetPieceOnSquare(const Piece piece, const Color color, const Sq
 }
 
 Piece BitBoard::getPieceFromSquare(const Color color, const Square square) const noexcept {
+	if ((bitMaps[ALL_PIECES][color] & getBitmapOf(square)) == 0) return NONE_PIECE;
+
 	const Bitmap squareBitmap = getBitmapOf(square);
-
-	if ((bitMaps[ALL_PIECES][color] & squareBitmap) == 0) return NONE_PIECE;
-
 	Piece piece = PAWN;
 	while (piece != NONE_PIECE && (bitMaps[piece][color] & squareBitmap) == 0)
 		++piece;
@@ -84,11 +83,8 @@ Piece BitBoard::getPieceFromSquare(const Color color, const Square square) const
 	return piece;
 }
 
-Bitmap BitBoard::getBitmapAllPieces(const Color color) const noexcept {
-	const Bitmap bitmap = bitMaps[PAWN][color] | bitMaps[KNIGHT][color] |
-		bitMaps[BISHOP][color] | bitMaps[ROOK][color] |
-		bitMaps[QUEEN][color] | bitMaps[KING][color];
-	return bitmap;
+Bitmap BitBoard::getBitmapAllPieces(const Color color) const noexcept {	
+	return bitMaps[ALL_PIECES][color];
 }
 
 Square BitBoard::getEnPassantSquare() const noexcept {
