@@ -17,7 +17,7 @@ static void swapForBestMove(const uShort index, Move moves[], const uShort size)
 	int bestScore = -INFINIT;
 	uShort bestIndex = 0;
 
-	for (uShort i = index; i < size; ++i)
+	for (uShort i = index; i < size; ++i)		
 		if (moves[i].score > bestScore) {
 			bestScore = moves[i].score;
 			bestIndex = i;
