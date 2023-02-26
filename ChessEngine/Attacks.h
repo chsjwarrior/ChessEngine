@@ -12,10 +12,12 @@ namespace attacks {
 	Bitmap getKnightAttacks(const Bitmap squareBitmap);
 	/* This function returns a bitmap with all squares reached by king */
 	Bitmap getKingAttacks(const Bitmap squareBitmap);
-	/* This function returns a bitmap with the Pawn attacks mask */
-	Bitmap getPawnAttacks(const Bitmap allPieces, const Color color, const Bitmap enPassantBitmap, const Bitmap squareBitmap);
 	/* This function returns a bitmap with the Pawn quiet moves mask */
 	Bitmap getPawnMoves(const Bitmap allPieces, const Color color, const Bitmap squareBitmap);
+	/* This function returns a bitmap with the Pawn attacks mask */
+	Bitmap getPawnAttacks(const Bitmap allPieces, const Color color, const Bitmap squareBitmap);
+	/* This function returns a bitmap with the Pawn En Passant attack mask */
+	Bitmap getPawnEnPassantAttack(const Color color, const Bitmap enPassantBitmap, const Bitmap squareBitmap);
 	/* This function tests if the square is under attack by color */
 	bool isSquareAttacked(const BitBoard& bitBoard, const Color color, const Square square);
 }

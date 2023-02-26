@@ -77,38 +77,38 @@ Bitmap attacks::getKingAttacks(const Bitmap squareBitmap) {
 	return moves;
 }
 
-Bitmap attacks::getPawnAttacks(const Bitmap allPieces, const Color color, const Bitmap enPassantBitmap, const Bitmap squareBitmap) {
+Bitmap attacks::getPawnMoves(const Bitmap allPieces, const Color color, const Bitmap squareBitmap) {
 	Bitmap moves = 0UL;
 	if (color == WHITE) {
-		//capture move
-		moves |= squareBitmap << 7 & allPieces & ~FILES[FILE_H];
-		moves |= squareBitmap << 9 & allPieces & ~FILES[FILE_A];
-		//en passant capture move
-		moves |= squareBitmap << 7 & enPassantBitmap & RANKS[RANK_6] & ~FILES[FILE_H];
-		moves |= squareBitmap << 9 & enPassantBitmap & RANKS[RANK_6] & ~FILES[FILE_A];
+		moves |= squareBitmap << 8 & ~allPieces;//normal move		
+		moves |= squareBitmap << 16 & ~allPieces & ~allPieces << 8 & RANKS[RANK_4];//start move
 	} else {
-		//capture move
-		moves |= squareBitmap >> 7 & allPieces & ~FILES[FILE_A];
-		moves |= squareBitmap >> 9 & allPieces & ~FILES[FILE_H];
-		//en passant capture move
-		moves |= squareBitmap >> 7 & enPassantBitmap & RANKS[RANK_3] & ~FILES[FILE_A];
-		moves |= squareBitmap >> 9 & enPassantBitmap & RANKS[RANK_3] & ~FILES[FILE_H];
+		moves |= squareBitmap >> 8 & ~allPieces;//normal move		
+		moves |= squareBitmap >> 16 & ~allPieces & ~allPieces >> 8 & RANKS[RANK_5];//start move
 	}
 	return moves;
 }
 
-Bitmap attacks::getPawnMoves(const Bitmap allPieces, const Color color, const Bitmap squareBitmap) {
+Bitmap attacks::getPawnAttacks(const Bitmap allPieces, const Color color, const Bitmap squareBitmap) {
 	Bitmap moves = 0UL;
 	if (color == WHITE) {
-		//normal move
-		moves |= squareBitmap << 8 & ~allPieces;
-		//start move
-		moves |= squareBitmap << 16 & ~allPieces & ~allPieces << 8 & RANKS[RANK_4];
+		moves |= squareBitmap << 7 & allPieces & ~FILES[FILE_H];
+		moves |= squareBitmap << 9 & allPieces & ~FILES[FILE_A];
 	} else {
-		//normal move
-		moves |= squareBitmap >> 8 & ~allPieces;
-		//start move
-		moves |= squareBitmap >> 16 & ~allPieces & ~allPieces >> 8 & RANKS[RANK_5];
+		moves |= squareBitmap >> 7 & allPieces & ~FILES[FILE_A];
+		moves |= squareBitmap >> 9 & allPieces & ~FILES[FILE_H];
+	}
+	return moves;
+}
+
+Bitmap attacks::getPawnEnPassantAttack(const Color color, const Bitmap enPassantBitmap, const Bitmap squareBitmap) {
+	Bitmap moves = 0UL;
+	if (color == WHITE) {
+		moves |= squareBitmap << 7 & enPassantBitmap & RANKS[RANK_6] & ~FILES[FILE_H];
+		moves |= squareBitmap << 9 & enPassantBitmap & RANKS[RANK_6] & ~FILES[FILE_A];
+	} else {
+		moves |= squareBitmap >> 7 & enPassantBitmap & RANKS[RANK_3] & ~FILES[FILE_A];
+		moves |= squareBitmap >> 9 & enPassantBitmap & RANKS[RANK_3] & ~FILES[FILE_H];
 	}
 	return moves;
 }

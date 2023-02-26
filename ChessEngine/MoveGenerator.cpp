@@ -41,12 +41,15 @@ static Bitmap getPieceAttacks(const BitBoard& bitBoard, const Piece piece, const
 		const Bitmap allPieces = friendPieces | enemyPieces;
 
 		if (piece == PAWN) {
-			if (moveType == ALL)
-				attacks = attacks::getPawnMoves(allPieces, color, getBitmapOf(square)) | attacks::getPawnAttacks(enemyPieces, color, getBitmapOf(bitBoard.getEnPassantSquare()), getBitmapOf(square));
-			else if (moveType == QUIETS)
+			if (moveType == ALL) {
 				attacks = attacks::getPawnMoves(allPieces, color, getBitmapOf(square));
-			else if (moveType == CAPTURES)
-				attacks = attacks::getPawnAttacks(enemyPieces, color, getBitmapOf(bitBoard.getEnPassantSquare()), getBitmapOf(square));
+				attacks |= attacks::getPawnAttacks(enemyPieces, color, getBitmapOf(square));
+				attacks |= attacks::getPawnEnPassantAttack(color, getBitmapOf(bitBoard.getEnPassantSquare()), getBitmapOf(square));
+			} else if (moveType == CAPTURES) {
+				attacks = attacks::getPawnAttacks(enemyPieces, color, getBitmapOf(square));
+				attacks |= attacks::getPawnEnPassantAttack(color, getBitmapOf(bitBoard.getEnPassantSquare()), getBitmapOf(square));
+			} else if (moveType == QUIETS)
+				attacks = attacks::getPawnMoves(allPieces, color, getBitmapOf(square));
 			return attacks;
 		} else {
 			const File file = getFileOf(square);
