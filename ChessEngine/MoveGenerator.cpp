@@ -57,7 +57,7 @@ static Bitmap getPieceAttacks(const BitBoard& bitBoard, const Piece piece, const
 			else if (piece == ROOK)
 				attacks = attacks::getRookAttacks(allPieces, file, rank, getBitmapOf(square));
 			else if (piece == QUEEN)
-				attacks = attacks::getBishopAttacks(allPieces, file, rank, getBitmapOf(square)) | attacks::getRookAttacks(allPieces, file, rank, getBitmapOf(square));
+				attacks = attacks::getQueenAttacks(allPieces, file, rank, getBitmapOf(square));
 		}
 	}
 	attacks &= ~friendPieces;//remove friend bitmap

@@ -16,6 +16,10 @@ static const Bitmap ANTI_DIAGONAL[15] = { 0x0000000000000080UL, 0x00000000000080
 									0x4020100804020100UL, 0x2010080402010000UL, 0x1008040201000000UL, 0x0804020100000000UL,
 									0x0402010000000000UL, 0x0201000000000000UL, 0x0100000000000000UL };
 
+Bitmap attacks::getQueenAttacks(const Bitmap allPieces, const File file, const Rank rank, const Bitmap squareBitmap) {
+	return getBishopAttacks(allPieces, file, rank, squareBitmap) | getRookAttacks(allPieces, file, rank, squareBitmap);
+}
+
 Bitmap attacks::getBishopAttacks(const Bitmap allPieces, const File file, const Rank rank, const Bitmap squareBitmap) {
 	const Bitmap reverseSquareBitmap = reverse(squareBitmap);
 
@@ -73,19 +77,19 @@ Bitmap attacks::getKingAttacks(const Bitmap squareBitmap) {
 	return moves;
 }
 
-Bitmap attacks::getPawnAttacks(const Bitmap enemyPieces, const Color color, const Bitmap enPassantBitmap, const Bitmap squareBitmap) {
+Bitmap attacks::getPawnAttacks(const Bitmap allPieces, const Color color, const Bitmap enPassantBitmap, const Bitmap squareBitmap) {
 	Bitmap moves = 0UL;
 	if (color == WHITE) {
 		//capture move
-		moves |= squareBitmap << 7 & enemyPieces & ~FILES[FILE_H];
-		moves |= squareBitmap << 9 & enemyPieces & ~FILES[FILE_A];
+		moves |= squareBitmap << 7 & allPieces & ~FILES[FILE_H];
+		moves |= squareBitmap << 9 & allPieces & ~FILES[FILE_A];
 		//en passant capture move
 		moves |= squareBitmap << 7 & enPassantBitmap & RANKS[RANK_6] & ~FILES[FILE_H];
 		moves |= squareBitmap << 9 & enPassantBitmap & RANKS[RANK_6] & ~FILES[FILE_A];
 	} else {
 		//capture move
-		moves |= squareBitmap >> 7 & enemyPieces & ~FILES[FILE_A];
-		moves |= squareBitmap >> 9 & enemyPieces & ~FILES[FILE_H];
+		moves |= squareBitmap >> 7 & allPieces & ~FILES[FILE_A];
+		moves |= squareBitmap >> 9 & allPieces & ~FILES[FILE_H];
 		//en passant capture move
 		moves |= squareBitmap >> 7 & enPassantBitmap & RANKS[RANK_3] & ~FILES[FILE_A];
 		moves |= squareBitmap >> 9 & enPassantBitmap & RANKS[RANK_3] & ~FILES[FILE_H];
