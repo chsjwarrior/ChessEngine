@@ -1,4 +1,5 @@
 #include "Evaluator.h"
+#include <algorithm>
 
 static const int SQUARE_VALUE[6][64] = {
 		{//PAWN
@@ -55,6 +56,22 @@ static const int SQUARE_VALUE[6][64] = {
 			-10,-20,-20,-20,-20,-20,-20,-10,
 			 20, 20,  0,  0,  0,  0, 20, 20,
 			 20, 30, 10,  0,  0, 10, 30, 20} };
+
+static const int PIECE_VALUE[] = { 10,30,30,50,90,900,0 };
+
+/* This function set a score to a move and sort the list */
+void sortMoves(const BitBoard& bitBoard, Move moves[], const uShort movesCount) {
+	uShort i;
+	for (i = 0; i < movesCount; ++i) {
+		if (moves[i].isCapture()) {
+			moves[i].score += PIECE_VALUE[moves[i].getCaptured()] + 6 - (PIECE_VALUE[bitBoard.getPieceFromSquare(moves[i].getColor(), moves[i].getFrom())] / 10) + 1000;
+		} else if (moves[i].isEnPassantCapture()) {
+			moves[i].score += +PIECE_VALUE[PAWN] + 5 + 1000;
+		}
+	}
+	std::sort(moves, moves + movesCount, [](const Move& left, const Move& right) -> int {
+		return std::cmp_less_equal<int, int>(left.score, right.score); });
+}
 
 static void evaluatePosition(const BitBoard& bitBoard, const Color color, int& materialWeight, int& numPieces) {
 	Bitmap pieceBitmap;

@@ -31,7 +31,7 @@ static bool canMakeQueenCastle(const BitBoard& bitBoard, const Color color) {
 enum MoveType { QUIETS, CAPTURES, ALL };
 /* This function returns a bitmap with the attacked squares */
 template<MoveType moveType>
-static Bitmap getPiecesAttacks(const BitBoard& bitBoard, const Piece piece, const Color color, const Square square) {
+static Bitmap getPieceAttacks(const BitBoard& bitBoard, const Piece piece, const Color color, const Square square) {
 	Bitmap attacks = 0UL;
 	if (piece == KING)
 		attacks = attacks::getKingAttacks(getBitmapOf(square));
@@ -90,13 +90,6 @@ static void catalogCastleMoves(const BitBoard& bitBoard, Move moves[], const Col
 	}
 }
 
-/* This function sets the captured piece in the Move if any */
-static inline void setCapture(const BitBoard& bitBoard, Move& move, const Piece piece, const Color color, const Square to) {
-	const Piece capture = bitBoard.getPieceFromSquare(~color, to);
-	move.setCaptured(capture);
-	move.score += PIECE_VALUE[capture] + 6 - (PIECE_VALUE[piece] / 10) + 1000;
-}
-
 /* This function populates an array with the moves */
 static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece piece, const Color color, const Square from, Bitmap attacks) {
 	Square to;
@@ -114,7 +107,7 @@ static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece pie
 			move.setFrom(from);
 			move.setTo(to);
 			move.setColor(color);
-			setCapture(bitBoard, move, piece, color, to);
+			move.setCaptured(bitBoard.getPieceFromSquare(~color, to));
 
 			if (color == WHITE && getRankOf(to) == RANK_8 ||
 				color == BLACK && getRankOf(to) == RANK_1) {
@@ -125,16 +118,14 @@ static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece pie
 				continue;
 			}
 			if (!move.isCapture())
-				if (to == bitBoard.getEnPassantSquare()) {
-					move.setEnPassantCapture();
-					move.score += +PIECE_VALUE[PAWN] + 5 + 1000;
-				} else if (color == WHITE && move.getTo() - move.getFrom() == 16 ||
-						   color == BLACK && move.getFrom() - move.getTo() == 16)
+				if (color == WHITE && move.getTo() - move.getFrom() == 16 ||
+					color == BLACK && move.getFrom() - move.getTo() == 16)
 					move.setPawnStart();
+				else if (to == bitBoard.getEnPassantSquare())
+					move.setEnPassantCapture();
 
-
-				moves[movesCount++] = move;
-				move();
+			moves[movesCount++] = move;
+			move();
 		}
 	} else if (piece == KING) {
 		while (attacks) {
@@ -146,7 +137,7 @@ static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece pie
 			move.setFrom(from);
 			move.setTo(to);
 			move.setColor(color);
-			setCapture(bitBoard, move, piece, color, to);
+			move.setCaptured(bitBoard.getPieceFromSquare(~color, to));
 
 			moves[movesCount++] = move;
 			move();
@@ -158,7 +149,7 @@ static void catalogMoves(const BitBoard& bitBoard, Move moves[], const Piece pie
 			move.setFrom(from);
 			move.setTo(to);
 			move.setColor(color);
-			setCapture(bitBoard, move, piece, color, to);
+			move.setCaptured(bitBoard.getPieceFromSquare(~color, to));
 
 			moves[movesCount++] = move;
 			move();
@@ -177,15 +168,17 @@ static uShort generateMoves(const BitBoard& bitBoard, Move moves[]) {
 	Bitmap attacks;
 	Bitmap pieceBitmap;
 	Square square;
-	Square(*popSquareOf)(Bitmap&) = popFirstSquareOf;
-	if (color == BLACK)
+	Square(*popSquareOf)(Bitmap&);
+	if (color == WHITE)
+		popSquareOf = popFirstSquareOf;
+	else
 		popSquareOf = popLastSquareOf;
 
 	for (Piece p = PAWN; p != NONE_PIECE; ++p) {
 		pieceBitmap = bitBoard.getBitmapPiece(p, color);
 		while (pieceBitmap) {
 			square = popSquareOf(pieceBitmap);
-			attacks = getPiecesAttacks<moveType>(bitBoard, p, color, square);
+			attacks = getPieceAttacks<moveType>(bitBoard, p, color, square);
 			catalogMoves(bitBoard, moves, p, color, square, attacks);
 		}
 	}
@@ -205,7 +198,7 @@ uShort moveGenerator::generateAllMoves(const BitBoard& bitBoard, Move moves[], c
 	enemyPieces = bitBoard.getBitmapAllPieces(~color);
 	movesCount = 0U;
 
-	Bitmap attacks = getPiecesAttacks<ALL>(bitBoard, piece, color, square);
+	Bitmap attacks = getPieceAttacks<ALL>(bitBoard, piece, color, square);
 	catalogMoves(bitBoard, moves, piece, color, square, attacks);
 	if (piece == KING)
 		catalogCastleMoves(bitBoard, moves, color);

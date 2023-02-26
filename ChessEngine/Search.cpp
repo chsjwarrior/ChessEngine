@@ -13,19 +13,6 @@ static void clearSearch() {
 	info.fhf = 0;
 }
 
-static void swapForBestMove(const uShort index, Move moves[], const uShort size) {
-	int bestScore = -INFINIT;
-	uShort bestIndex = 0;
-
-	for (uShort i = index; i < size; ++i)		
-		if (moves[i].score > bestScore) {
-			bestScore = moves[i].score;
-			bestIndex = i;
-		}
-
-	std::swap(moves[index], moves[bestIndex]);
-}
-
 static int quiesce(BitBoard& bitBoard, int alpha, int beta) {
 	if (info.nodes >= 2047)
 		checkUp();
@@ -47,12 +34,11 @@ static int quiesce(BitBoard& bitBoard, int alpha, int beta) {
 		alpha = score;
 
 	Move moves[MAX_MOVES];
-	uShort moveCount = moveGenerator::generateCaptureMoves(bitBoard, moves);
+	uShort movesCount = moveGenerator::generateCaptureMoves(bitBoard, moves);
+	sortMoves(bitBoard, moves, movesCount);
 	uInt legal = 0U;
 
-	for (uShort i = 0; i < moveCount; ++i) {
-		swapForBestMove(i, moves, moveCount);
-
+	for (uShort i = 0; i < movesCount; ++i) {
 		if (!makeMove(bitBoard, moves[i]))
 			continue;
 
@@ -117,14 +103,13 @@ static int alphaBeta(BitBoard& bitBoard, short depth, int alpha, int beta) {
 		++depth;
 
 	Move moves[MAX_MOVES];
-	uShort moveCount = moveGenerator::generateAllMoves(bitBoard, moves);
+	uShort movesCount = moveGenerator::generateAllMoves(bitBoard, moves);
+	sortMoves(bitBoard, moves, movesCount);
 	uInt legal = 0U;
 	int score, oldAlpha = alpha, bestScore = -INFINIT;
 	Move bestMove;
 
-	for (uShort i = 0; i < moveCount; ++i) {
-		swapForBestMove(i, moves, moveCount);
-
+	for (uShort i = 0; i < movesCount; ++i) {
 		if (!makeMove(bitBoard, moves[i]))
 			continue;
 

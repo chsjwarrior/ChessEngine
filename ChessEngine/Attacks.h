@@ -2,13 +2,13 @@
 #include "BitBoard.h"
 
 namespace attacks {
-	/* This function returns a bitmap with the Bishop attacks mask */
+	/* This function returns a bitmap with all squares reached by bishop */
 	Bitmap getBishopAttacks(const Bitmap allPieces, const File file, const Rank rank, const Bitmap squareBitmap);
-	/* This function returns a bitmap with the Rook attacks mask */
+	/* This function returns a bitmap with all squares reached by rook */
 	Bitmap getRookAttacks(const Bitmap allPieces, const File file, const Rank rank, const Bitmap squareBitmap);
-	/* This function returns a bitmap with the Knight attacks mask */
+	/* This function returns a bitmap with all squares reached by knight */
 	Bitmap getKnightAttacks(const Bitmap squareBitmap);
-	/* This function returns a bitmap with the King attacks mask */
+	/* This function returns a bitmap with all squares reached by king */
 	Bitmap getKingAttacks(const Bitmap squareBitmap);
 	/* This function returns a bitmap with the Pawn attacks mask */
 	Bitmap getPawnAttacks(const Bitmap enemyPieces, const Color color, const Bitmap enPassantBitmap, const Bitmap squareBitmap);
