@@ -1,7 +1,6 @@
 #pragma once
 #include <chrono>
 #include "MoveGenerator.h"
-#include "MoveMaker.h"
 
 struct SearchInfo {
 	long long startTime;
@@ -42,10 +41,10 @@ void storeTranspositionTableEntry(uLong hash, short depth, int score, NodeType n
 /* This function retrieves a value from the trasposition table */
 TranspositionTableEntry* retrieveTranspositionTableEntry(uLong hash);
 /* This function undo the last move */
-void makeUndo(BitBoard& bitBoard);
+void makeUndo(Board& board);
 /* This function make a move */
-bool makeMove(BitBoard& bitBoard, const Move& move);
+bool makeMove(Board& board, const Move& move);
 /* This function make the search */
-void searchPosition(BitBoard& bitBoard);
+void searchPosition(Board& board);
 /*This function make a perft test */
-void perftTest(BitBoard& bitBoard);
+void perftTest(Board& board);

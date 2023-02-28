@@ -49,10 +49,10 @@ class Uci {
 	const char* PRINT = "print";
 
 	long long getMilliseconds() const;
-	Move findMove(const BitBoard& bitBoard, const char* entry) const;
-	void position(BitBoard& bitBoard, std::istringstream& iss) const;
-	void go(BitBoard& bitBoard, std::istringstream& iss) const;
-	void debugAnalysisTest(BitBoard& bitBoard, std::istringstream& iss) const;
+	Move findMove(const Board& board, const char* entry) const;
+	void position(Board& board, std::istringstream& iss) const;
+	void go(Board& board, std::istringstream& iss) const;
+	void debugAnalysisTest(Board& board, std::istringstream& iss) const;
 	void uci() const;
 	void setOption() const;
 

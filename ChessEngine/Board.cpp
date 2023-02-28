@@ -1,9 +1,9 @@
-#include "BitBoard.h"
+#include "Board.h"
 
-static const uShort BITBOARD_FLAGS_EMPTY = 0X0040U;
+static const uShort BOARD_FLAGS_EMPTY = 0X0040U;
 
 //0===============================HASHKEY==============================0
-BitBoard::Zobrist::Zobrist() {
+Board::Zobrist::Zobrist() {
 	for (Square s = A1; s < NONE_SQUARE; ++s)
 		for (Piece p = PAWN; p < NONE_PIECE; ++p) {
 			pieceKey[s][p][0] = static_cast<uLong>(std::rand()) << 32 | static_cast<uLong>(std::rand()) << 16 | std::rand();
@@ -17,38 +17,38 @@ BitBoard::Zobrist::Zobrist() {
 }
 
 //0===========================BITBOARD::UNDO===========================0
-BitBoard::Undo::Undo() noexcept : move(), flags(BITBOARD_FLAGS_EMPTY), fiftyMove(0U), key(0UL) {}
+Board::Undo::Undo() noexcept : move(), flags(BOARD_FLAGS_EMPTY), fiftyMove(0U), key(0UL) {}
 
-void BitBoard::Undo::operator()() noexcept {
+void Board::Undo::operator()() noexcept {
 	move();
-	flags = BITBOARD_FLAGS_EMPTY;
+	flags = BOARD_FLAGS_EMPTY;
 	fiftyMove = 0U;
 	key = 0UL;
 }
 
-Square BitBoard::Undo::getEnPassantSquare() const noexcept {
+Square Board::Undo::getEnPassantSquare() const noexcept {
 	return static_cast<Square>(flags & 0x00FFU);
 }
 
-uChar BitBoard::Undo::getCastlePermission() const noexcept {
+uChar Board::Undo::getCastlePermission() const noexcept {
 	return flags >> 8U;
 }
 
 //0=============================BITBOARD===============================0
-BitBoard::BitBoard() : ALL_PIECES(6U), key(0UL), flags(BITBOARD_FLAGS_EMPTY), fiftyMove(0U), ply(0U), historyCount(0U), whiteTime(false), hashKeys() {
+Board::Board() : ALL_PIECES(6U), key(0UL), flags(BOARD_FLAGS_EMPTY), fiftyMove(0U), ply(0U), historyCount(0U), whiteTime(false), hashKeys() {
 	for (auto& b : bitMaps) {
 		b[0] = 0UL;
 		b[1] = 0UL;
 	}
 }
 
-void BitBoard::operator()() noexcept {
+void Board::operator()() noexcept {
 	for (auto& b : bitMaps) {
 		b[0] = 0UL;
 		b[1] = 0UL;
 	}
 	key = 0UL;
-	flags = BITBOARD_FLAGS_EMPTY;
+	flags = BOARD_FLAGS_EMPTY;
 	fiftyMove = 0U;
 	ply = fiftyMove;
 	historyCount = ply;
@@ -58,21 +58,21 @@ void BitBoard::operator()() noexcept {
 		h();
 }
 
-void BitBoard::setPieceOnSquare(const Piece piece, const Color color, const Square square) noexcept {
+void Board::setPieceOnSquare(const Piece piece, const Color color, const Square square) noexcept {
 	const Bitmap squareBitmap = getBitmapOf(square);
 	bitMaps[piece][color] |= squareBitmap;
 	bitMaps[ALL_PIECES][color] |= squareBitmap;
 	key ^= hashKeys.pieceKey[square][piece][color];
 }
 
-void BitBoard::unsetPieceOnSquare(const Piece piece, const Color color, const Square square) noexcept {
+void Board::unsetPieceOnSquare(const Piece piece, const Color color, const Square square) noexcept {
 	const Bitmap squareBitmap = ~getBitmapOf(square);
 	bitMaps[piece][color] &= squareBitmap;
 	bitMaps[ALL_PIECES][color] &= squareBitmap;
 	key ^= hashKeys.pieceKey[square][piece][color];
 }
 
-Piece BitBoard::getPieceFromSquare(const Color color, const Square square) const noexcept {
+Piece Board::getPieceFromSquare(const Color color, const Square square) const noexcept {
 	if ((bitMaps[ALL_PIECES][color] & getBitmapOf(square)) == 0)
 		return NONE_PIECE;
 
@@ -84,15 +84,15 @@ Piece BitBoard::getPieceFromSquare(const Color color, const Square square) const
 	return piece;
 }
 
-Bitmap BitBoard::getBitmapAllPieces(const Color color) const noexcept {
+Bitmap Board::getBitmapAllPieces(const Color color) const noexcept {
 	return bitMaps[ALL_PIECES][color];
 }
 
-Square BitBoard::getEnPassantSquare() const noexcept {
+Square Board::getEnPassantSquare() const noexcept {
 	return static_cast<Square>(flags & 0x00FFU);
 }
 
-void BitBoard::setEnPassantSquare(const Square square) noexcept {
+void Board::setEnPassantSquare(const Square square) noexcept {
 	if ((flags & 0x00FFU) != NONE_SQUARE)
 		key ^= hashKeys.enPassantColumn[getFileOf(getEnPassantSquare())];
 	flags = 0xFF00U & flags | square;
@@ -100,58 +100,58 @@ void BitBoard::setEnPassantSquare(const Square square) noexcept {
 		key ^= hashKeys.enPassantColumn[getFileOf(square)];
 }
 
-bool BitBoard::hasCastlePermission(const uChar castleFlag) const noexcept {
+bool Board::hasCastlePermission(const uChar castleFlag) const noexcept {
 	return (flags >> 8U & castleFlag) == castleFlag;
 }
 
-void BitBoard::setCastlePermission(const uChar castleFlag) noexcept {
+void Board::setCastlePermission(const uChar castleFlag) noexcept {
 	key ^= hashKeys.castleKey[flags >> 8U];
 	flags |= castleFlag << 8U;
 	key ^= hashKeys.castleKey[flags >> 8U];
 }
 
-void BitBoard::unsetCastlePermission(const uChar castleFlag) noexcept {
+void Board::unsetCastlePermission(const uChar castleFlag) noexcept {
 	key ^= hashKeys.castleKey[flags >> 8U];
 	flags &= ~(castleFlag << 8U);
 	key ^= hashKeys.castleKey[flags >> 8U];
 }
 
-bool BitBoard::isRepetition() const noexcept {
+bool Board::isRepetition() const noexcept {
 	for (uShort i = historyCount - fiftyMove; i < historyCount; ++i)
 		if (key == history[i].key)
 			return true;
 	return false;
 }
 
-Bitmap BitBoard::getBitmapPiece(const Piece piece, const Color color) const noexcept {
+Bitmap Board::getBitmapPiece(const Piece piece, const Color color) const noexcept {
 	return bitMaps[piece][color];
 }
 
-uLong BitBoard::getHashkey() const noexcept {
+uLong Board::getHashkey() const noexcept {
 	return key;
 }
 
-uShort BitBoard::getFiftyMove() const noexcept {
+uShort Board::getFiftyMove() const noexcept {
 	return fiftyMove;
 }
 
-uShort BitBoard::getPly() const noexcept {
+uShort Board::getPly() const noexcept {
 	return ply;
 }
 
-bool BitBoard::isWhiteTime() const noexcept {
+bool Board::isWhiteTime() const noexcept {
 	return whiteTime;
 }
 
-bool BitBoard::isBlackTime() const noexcept {
+bool Board::isBlackTime() const noexcept {
 	return !whiteTime;
 }
 
-Color BitBoard::getColorTime() const noexcept {
+Color Board::getColorTime() const noexcept {
 	return whiteTime ? WHITE : BLACK;
 }
 
-const std::string BitBoard::getFEN() const {
+const std::string Board::getFEN() const {
 	std::string fen;
 	uChar count = 0;
 	Square s = NONE_SQUARE;
@@ -225,7 +225,7 @@ const std::string BitBoard::getFEN() const {
 	return fen;
 }
 
-void BitBoard::parseFEN(const char* fen) {
+void Board::parseFEN(const char* fen) {
 	File file = FILE_A;
 	Rank rank = RANK_8;
 	(*this)();
@@ -308,8 +308,8 @@ void BitBoard::parseFEN(const char* fen) {
 	}
 }
 
-std::ostream& operator<<(std::ostream& os, const BitBoard& bitBoard) {
-	os << "BitBoard" << std::endl;
+std::ostream& operator<<(std::ostream& os, const Board& board) {
+	os << "Board" << std::endl;
 	Square s;
 	Color c;
 	Piece p;
@@ -322,10 +322,10 @@ std::ostream& operator<<(std::ostream& os, const BitBoard& bitBoard) {
 			s = getSquareOf(f, r);
 
 			c = WHITE;
-			p = bitBoard.getPieceFromSquare(c, s);
+			p = board.getPieceFromSquare(c, s);
 			if (p == NONE_PIECE) {
 				c = BLACK;
-				p = bitBoard.getPieceFromSquare(c, s);
+				p = board.getPieceFromSquare(c, s);
 			}
 
 			os << "  ";
@@ -341,15 +341,15 @@ std::ostream& operator<<(std::ostream& os, const BitBoard& bitBoard) {
 		os << "  " << f;
 	os << std::endl;
 
-	os << "Color Time: " << (bitBoard.whiteTime ? "White " : "Black ");
-	os << "Fifty move: " << bitBoard.fiftyMove << " ply: " << bitBoard.ply << std::endl;
-	os << "En Passant: " << bitBoard.getEnPassantSquare() << std::endl;
+	os << "Color Time: " << (board.whiteTime ? "White " : "Black ");
+	os << "Fifty move: " << board.fiftyMove << " ply: " << board.ply << std::endl;
+	os << "En Passant: " << board.getEnPassantSquare() << std::endl;
 	os << "castle permission: ";
-	if (bitBoard.hasCastlePermission(WHITE_KING_CASTLE)) os << 'K'; else os << '-';
-	if (bitBoard.hasCastlePermission(WHITE_QUEEN_CASTLE)) os << 'Q'; else os << '-';
-	if (bitBoard.hasCastlePermission(BLACK_KING_CASTLE)) os << 'k'; else os << '-';
-	if (bitBoard.hasCastlePermission(BLACK_QUEEN_CASTLE)) os << 'q'; else os << '-';
-	os << std::endl << "Key: " << bitBoard.key << std::endl;
+	if (board.hasCastlePermission(WHITE_KING_CASTLE)) os << 'K'; else os << '-';
+	if (board.hasCastlePermission(WHITE_QUEEN_CASTLE)) os << 'Q'; else os << '-';
+	if (board.hasCastlePermission(BLACK_KING_CASTLE)) os << 'k'; else os << '-';
+	if (board.hasCastlePermission(BLACK_QUEEN_CASTLE)) os << 'q'; else os << '-';
+	os << std::endl << "Key: " << board.key << std::endl;
 
 	return os;
 }

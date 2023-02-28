@@ -13,18 +13,18 @@ static void clearSearch() {
 	info.fhf = 0;
 }
 
-static int quiesce(BitBoard& bitBoard, int alpha, int beta) {
+static int quiesce(Board& board, int alpha, int beta) {
 	if (info.nodes >= 2047)
 		checkUp();
 
 	++info.nodes;
 
-	if (bitBoard.isRepetition() || bitBoard.getFiftyMove() >= 100)
+	if (board.isRepetition() || board.getFiftyMove() >= 100)
 		return 0;
 
-	int score = evaluatePosition(bitBoard);
+	int score = evaluatePosition(board);
 
-	if (bitBoard.getPly() > MAX_DEPTH - 1)
+	if (board.getPly() > MAX_DEPTH - 1)
 		return score;
 
 	if (score >= beta)
@@ -34,17 +34,17 @@ static int quiesce(BitBoard& bitBoard, int alpha, int beta) {
 		alpha = score;
 
 	Move moves[MAX_MOVES];
-	uShort movesCount = moveGenerator::generateCaptureMoves(bitBoard, moves);
-	sortMoves(bitBoard, moves, movesCount);
+	uShort movesCount = moveGenerator::generateCaptureMoves(board, moves);
+	sortMoves(board, moves, movesCount);
 	uInt legal = 0U;
 
 	for (uShort i = 0; i < movesCount; ++i) {
-		if (!makeMove(bitBoard, moves[i]))
+		if (!makeMove(board, moves[i]))
 			continue;
 
 		++legal;
-		score = -quiesce(bitBoard, -beta, -alpha);
-		makeUndo(bitBoard);
+		score = -quiesce(board, -beta, -alpha);
+		makeUndo(board);
 
 		if (info.stop)
 			return 0;
@@ -62,9 +62,9 @@ static int quiesce(BitBoard& bitBoard, int alpha, int beta) {
 	return alpha;
 }
 
-static int alphaBeta(BitBoard& bitBoard, short depth, int alpha, int beta) {
+static int alphaBeta(Board& board, short depth, int alpha, int beta) {
 	if (depth <= 0)
-		return evaluatePosition(bitBoard);
+		return evaluatePosition(board);
 	//return quiesce(bitBoard, alpha, beta);
 
 	if (info.nodes >= 2047U)
@@ -72,11 +72,11 @@ static int alphaBeta(BitBoard& bitBoard, short depth, int alpha, int beta) {
 
 	++info.nodes;
 
-	if (bitBoard.isRepetition() || bitBoard.getFiftyMove() >= 100 && bitBoard.getPly())
+	if (board.isRepetition() || board.getFiftyMove() >= 100 && board.getPly())
 		return 0;
 
-	if (bitBoard.getPly() > MAX_DEPTH - 1)
-		return evaluatePosition(bitBoard);
+	if (board.getPly() > MAX_DEPTH - 1)
+		return evaluatePosition(board);
 	/*
 	{
 		TranspositionTableEntry* t = retrieveTranspositionTableEntry(bitBoard.getHashkey());
@@ -96,26 +96,26 @@ static int alphaBeta(BitBoard& bitBoard, short depth, int alpha, int beta) {
 		}
 	}
 	*/
-	const Color color = bitBoard.getColorTime();
-	const bool inCheck = attacks::isSquareAttacked(bitBoard, ~color, getFirstSquareOf(bitBoard.getBitmapPiece(KING, color)));
+	const Color color = board.getColorTime();
+	const bool inCheck = attacks::isSquareAttacked(board, ~color, getFirstSquareOf(board.getBitmapPiece(KING, color)));
 
 	if (inCheck)
 		++depth;
 
 	Move moves[MAX_MOVES];
-	uShort movesCount = moveGenerator::generateAllMoves(bitBoard, moves);
-	sortMoves(bitBoard, moves, movesCount);
+	uShort movesCount = moveGenerator::generateAllMoves(board, moves);
+	sortMoves(board, moves, movesCount);
 	uInt legal = 0U;
 	int score, oldAlpha = alpha, bestScore = -INFINIT;
 	Move bestMove;
 
 	for (uShort i = 0; i < movesCount; ++i) {
-		if (!makeMove(bitBoard, moves[i]))
+		if (!makeMove(board, moves[i]))
 			continue;
 
 		++legal;
-		score = -alphaBeta(bitBoard, depth - 1, -beta, -alpha);
-		makeUndo(bitBoard);
+		score = -alphaBeta(board, depth - 1, -beta, -alpha);
+		makeUndo(board);
 
 		if (info.stop == true)
 			return 0;
@@ -128,7 +128,7 @@ static int alphaBeta(BitBoard& bitBoard, short depth, int alpha, int beta) {
 					if (legal == 1)
 						++info.fhf;
 					++info.fh;
-					storeTranspositionTableEntry(bitBoard.getHashkey(), depth, beta, HFBETA, bestMove);
+					storeTranspositionTableEntry(board.getHashkey(), depth, beta, HFBETA, bestMove);
 					return beta;
 				}
 				alpha = score;
@@ -138,18 +138,18 @@ static int alphaBeta(BitBoard& bitBoard, short depth, int alpha, int beta) {
 
 	if (legal == 0) {
 		if (inCheck)
-			return -INFINIT + bitBoard.getPly();
+			return -INFINIT + board.getPly();
 		return 0;
 	}
 	if (alpha != oldAlpha)
-		storeTranspositionTableEntry(bitBoard.getHashkey(), depth, bestScore, HFEXACT, bestMove);
+		storeTranspositionTableEntry(board.getHashkey(), depth, bestScore, HFEXACT, bestMove);
 	else
-		storeTranspositionTableEntry(bitBoard.getHashkey(), depth, alpha, HFALPHA, bestMove);
+		storeTranspositionTableEntry(board.getHashkey(), depth, alpha, HFALPHA, bestMove);
 	return alpha;
 }
 
-static uShort generatePvLine(BitBoard& bitBoard, Move moves[], short depth) {
-	TranspositionTableEntry* t = retrieveTranspositionTableEntry(bitBoard.getHashkey());
+static uShort generatePvLine(Board& board, Move moves[], short depth) {
+	TranspositionTableEntry* t = retrieveTranspositionTableEntry(board.getHashkey());
 	int count = 0;
 	Move move;
 
@@ -157,27 +157,27 @@ static uShort generatePvLine(BitBoard& bitBoard, Move moves[], short depth) {
 		move = t->move;
 
 	while (move.isEmpty() == false && count < depth) {
-		if (moveGenerator::moveExists(bitBoard, move)) {
-			makeMove(bitBoard, move);
+		if (moveGenerator::moveExists(board, move)) {
+			makeMove(board, move);
 			moves[count++] = move;
 		} else
 			break;
 
-		t = retrieveTranspositionTableEntry(bitBoard.getHashkey());
+		t = retrieveTranspositionTableEntry(board.getHashkey());
 		if (t == nullptr)
 			move();
 		else
 			move = t->move;
 	}
-	while (bitBoard.getPly() > 0)
-		makeUndo(bitBoard);
+	while (board.getPly() > 0)
+		makeUndo(board);
 
 	return count;
 }
 
-void searchPosition(BitBoard& bitBoard) {
+void searchPosition(Board& board) {
 	clearSearch();
-	bitBoard.ply = 0U;
+	board.ply = 0U;
 
 	Move bestMove;
 	Move pvLine[MAX_DEPTH];
@@ -185,12 +185,12 @@ void searchPosition(BitBoard& bitBoard) {
 	int score;
 
 	for (short d = 1; d <= info.depth; ++d) {
-		score = alphaBeta(bitBoard, d, -INFINIT, INFINIT);
+		score = alphaBeta(board, d, -INFINIT, INFINIT);
 
 		if (info.stop)
 			d = info.depth;
 
-		pvSize = generatePvLine(bitBoard, pvLine, d);
+		pvSize = generatePvLine(board, pvLine, d);
 		bestMove = pvLine[0];
 
 		std::cout << "info score " << score << " depth " << d << " nodes " << info.nodes << std::endl;

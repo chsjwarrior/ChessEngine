@@ -113,35 +113,35 @@ Bitmap attacks::getPawnEnPassantAttack(const Color color, const Bitmap enPassant
 	return moves;
 }
 
-bool attacks::isSquareAttacked(const BitBoard& bitBoard, const Color color, const Square square) {
+bool attacks::isSquareAttacked(const Board& board, const Color color, const Square square) {
 	const Bitmap squareBitmap = getBitmapOf(square);
 	//King
 	Bitmap attacks = getKingAttacks(squareBitmap);
-	if (attacks & bitBoard.getBitmapPiece(KING, color))
+	if (attacks & board.getBitmapPiece(KING, color))
 		return true;
 	//Knight
 	attacks = getKnightAttacks(squareBitmap);
-	if (attacks & bitBoard.getBitmapPiece(KNIGHT, color))
+	if (attacks & board.getBitmapPiece(KNIGHT, color))
 		return true;
 	//Pawn
 	if (color == WHITE)
 		attacks = squareBitmap >> 7 & ~FILES[FILE_A] | squareBitmap >> 9 & ~FILES[FILE_H];
 	else
 		attacks = squareBitmap << 7 & ~FILES[FILE_H] | squareBitmap << 9 & ~FILES[FILE_A];
-	if (attacks & bitBoard.getBitmapPiece(PAWN, color))
+	if (attacks & board.getBitmapPiece(PAWN, color))
 		return true;
 
 	const File file = getFileOf(square);
 	const Rank rank = getRankOf(square);
-	const Bitmap allPieces = bitBoard.getBitmapAllPieces(WHITE) | bitBoard.getBitmapAllPieces(BLACK);
+	const Bitmap allPieces = board.getBitmapAllPieces(WHITE) | board.getBitmapAllPieces(BLACK);
 
 	//Bishop
 	attacks = getBishopAttacks(allPieces, file, rank, squareBitmap);
-	if (attacks & bitBoard.getBitmapPiece(BISHOP, color) || attacks & bitBoard.getBitmapPiece(QUEEN, color))
+	if (attacks & board.getBitmapPiece(BISHOP, color) || attacks & board.getBitmapPiece(QUEEN, color))
 		return true;
 	//Rook
 	attacks = getRookAttacks(allPieces, file, rank, squareBitmap);
-	if (attacks & bitBoard.getBitmapPiece(ROOK, color) || attacks & bitBoard.getBitmapPiece(QUEEN, color))
+	if (attacks & board.getBitmapPiece(ROOK, color) || attacks & board.getBitmapPiece(QUEEN, color))
 		return true;
 	return false;
 }

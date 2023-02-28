@@ -1,7 +1,7 @@
 #pragma once
 #include "Move.h"
 
-class BitBoard {
+class Board {
 	const uChar ALL_PIECES;/* A const value for the last position of the array */
 	Bitmap bitMaps[7][2];/* The last position ist the union of all previous */
 	uLong key;
@@ -54,19 +54,19 @@ class BitBoard {
 		uChar getCastlePermission() const noexcept;
 	} history[MAX_MOVES];
 
-	friend void makeUndo(BitBoard& bitBoard);
-	friend bool makeMove(BitBoard& bitBoard, const Move& move);
-	friend void searchPosition(BitBoard& bitBoard);
+	friend void makeUndo(Board& board);
+	friend bool makeMove(Board& board, const Move& move);
+	friend void searchPosition(Board& board);
 public:
-	friend std::ostream& operator<<(std::ostream& os, const BitBoard& bitBoard);
+	friend std::ostream& operator<<(std::ostream& os, const Board& board);
 
-	BitBoard();
-	~BitBoard() = default;
+	Board();
+	~Board() = default;
 
-	BitBoard(const BitBoard&) = delete;
-	BitBoard(BitBoard&&) = delete;
-	BitBoard& operator=(const BitBoard&) = delete;
-	BitBoard& operator=(BitBoard&&) = delete;
+	Board(const Board&) = delete;
+	Board(Board&&) = delete;
+	Board& operator=(const Board&) = delete;
+	Board& operator=(Board&&) = delete;
 
 	void operator()() noexcept;
 

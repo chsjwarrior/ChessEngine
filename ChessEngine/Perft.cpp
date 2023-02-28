@@ -1,6 +1,6 @@
 #include "Chess.h"
 
-static uLong perft(BitBoard& bitBoard, const short depth) {
+static uLong perft(Board& board, const short depth) {
 	if (depth <= 0)
 		return 1UL;
 
@@ -8,15 +8,15 @@ static uLong perft(BitBoard& bitBoard, const short depth) {
 		return 1UL;
 
 	Move moves[MAX_MOVES];
-	uShort movesCount = moveGenerator::generateAllMoves(bitBoard, moves);
+	uShort movesCount = moveGenerator::generateAllMoves(board, moves);
 	uLong nodes = 0UL;
 
 	for (Move* move = moves; move != moves + movesCount; ++move) {
-		if (!makeMove(bitBoard, *move))
+		if (!makeMove(board, *move))
 			continue;
 
-		nodes += perft(bitBoard, depth - 1);
-		makeUndo(bitBoard);
+		nodes += perft(board, depth - 1);
+		makeUndo(board);
 
 		if (info.stop == true)
 			break;
@@ -25,19 +25,19 @@ static uLong perft(BitBoard& bitBoard, const short depth) {
 	return nodes;
 }
 
-void perftTest(BitBoard& bitBoard) {
+void perftTest(Board& board) {
 	Move moves[MAX_MOVES];
-	uShort movesCount = moveGenerator::generateAllMoves(bitBoard, moves);
+	uShort movesCount = moveGenerator::generateAllMoves(board, moves);
 	uLong nodes;
 
 	for (Move* move = moves; move != moves + movesCount; ++move) {
-		if (!makeMove(bitBoard, *move))
+		if (!makeMove(board, *move))
 			continue;
 
-		nodes = perft(bitBoard, info.depth - 1);
+		nodes = perft(board, info.depth - 1);
 		info.nodes += nodes;
 
-		makeUndo(bitBoard);
+		makeUndo(board);
 		std::cout << *move << ": " << nodes << std::endl;
 
 		if (info.stop)

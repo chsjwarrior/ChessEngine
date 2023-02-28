@@ -1,6 +1,6 @@
 #pragma once
-#include "BitBoard.h"
+#include "Board.h"
 
-void sortMoves(const BitBoard& bitBoard, Move moves[], const uShort movesCount);
+void sortMoves(const Board& board, Move moves[], const uShort movesCount);
 
-int evaluatePosition(const BitBoard& bitBoard);
+int evaluatePosition(const Board& board);

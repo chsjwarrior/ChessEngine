@@ -1,5 +1,5 @@
 #pragma once
-#include "BitBoard.h"
+#include "Board.h"
 
 namespace attacks {
 	/* This function returns a bitmap with all squares reached by queen */
@@ -19,5 +19,5 @@ namespace attacks {
 	/* This function returns a bitmap with the Pawn En Passant attack mask */
 	Bitmap getPawnEnPassantAttack(const Color color, const Bitmap enPassantBitmap, const Bitmap squareBitmap);
 	/* This function tests if the square is under attack by color */
-	bool isSquareAttacked(const BitBoard& bitBoard, const Color color, const Square square);
+	bool isSquareAttacked(const Board& board, const Color color, const Square square);
 }

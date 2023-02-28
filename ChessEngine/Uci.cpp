@@ -9,12 +9,12 @@ long long Uci::getMilliseconds() const {
 	return duration.count();
 }
 
-Move Uci::findMove(const BitBoard& bitBoard, const char* entry) const {
+Move Uci::findMove(const Board& board, const char* entry) const {
 	Move target;
 	target.parseEntry(entry);
 
 	Move moves[MAX_MOVES];
-	uShort moveCount = moveGenerator::generateAllMoves(bitBoard, moves);
+	uShort moveCount = moveGenerator::generateAllMoves(board, moves);
 
 	for (Move* move = moves; move != moves + moveCount; ++move)
 		if (move->getFrom() == target.getFrom() && move->getTo() == target.getTo()) {
@@ -36,33 +36,33 @@ Move Uci::findMove(const BitBoard& bitBoard, const char* entry) const {
 	return target;
 }
 
-void Uci::position(BitBoard& bitBoard, std::istringstream& iss) const {
+void Uci::position(Board& board, std::istringstream& iss) const {
 	std::string input;
 	iss >> input;
 
 	if (input == START_POS) {
-		bitBoard.parseFEN(START_FEN);
+		board.parseFEN(START_FEN);
 		iss >> input;
 	} else if (input == FEN) {
 		std::string fen;
 		while (iss >> input && input != "moves")
 			fen += input + " ";
-		bitBoard.parseFEN(fen.c_str());
+		board.parseFEN(fen.c_str());
 	} else
 		return;
 
 	if (input == MOVES) {
 		Move move;
 		while (iss >> input) {
-			move = findMove(bitBoard, input.c_str());
+			move = findMove(board, input.c_str());
 			if (move.isEmpty())
 				break;
-			makeMove(bitBoard, move);
+			makeMove(board, move);
 		}
 	}
 }
 
-void Uci::go(BitBoard& bitBoard, std::istringstream& iss) const {
+void Uci::go(Board& board, std::istringstream& iss) const {
 	std::string input;
 
 	info.depth = -1;
@@ -130,18 +130,18 @@ void Uci::go(BitBoard& bitBoard, std::istringstream& iss) const {
 		std::cout << "true" << std::endl;
 
 	if (info.perft)
-		thread = new std::thread([&bitBoard] {
-		perftTest(bitBoard);
+		thread = new std::thread([&board] {
+		perftTest(board);
 		thread = nullptr;
 								 });
 	else
-		thread = new std::thread([&bitBoard] {
-		searchPosition(bitBoard);
+		thread = new std::thread([&board] {
+		searchPosition(board);
 		thread = nullptr;
 								 });
 }
 
-void Uci::debugAnalysisTest(BitBoard& bitBoard, std::istringstream& iss) const {
+void Uci::debugAnalysisTest(Board& board, std::istringstream& iss) const {
 	const int time = 1140000;
 	info.depth = 6;
 	info.startTime = getMilliseconds();
@@ -152,8 +152,8 @@ void Uci::debugAnalysisTest(BitBoard& bitBoard, std::istringstream& iss) const {
 	std::cout << " stop: " << info.stopTime;
 	std::cout << " depth: " << info.depth << std::endl;
 
-	thread = new std::thread([&bitBoard] {
-		searchPosition(bitBoard);
+	thread = new std::thread([&board] {
+		searchPosition(board);
 		thread = nullptr;
 							 });
 }
@@ -170,8 +170,8 @@ void Uci::setOption() const {
 }
 
 void Uci::loop() const {
-	BitBoard bitBoard;
-	bitBoard.parseFEN(START_FEN);
+	Board board;
+	board.parseFEN(START_FEN);
 
 	std::string input;
 	std::istringstream iss;
@@ -188,11 +188,11 @@ void Uci::loop() const {
 
 		if (input == POSITION) {
 			info.stop = true;
-			position(bitBoard, iss);
+			position(board, iss);
 		} else if (input == GO) {
 			info.stop = true;
 			std::cout << "Seen go.." << std::endl;
-			go(bitBoard, iss);
+			go(board, iss);
 		} else if (input == UCI_NEW_GAME) {
 
 		} else if (input == UCI)
@@ -200,7 +200,7 @@ void Uci::loop() const {
 		else if (input == SET_OPTION)
 			setOption();
 		else if (input == PRINT)
-			std::cout << bitBoard << std::endl;
+			std::cout << board << std::endl;
 		else if (input == QUIT)
 			info.stop = true;
 		else if (input == STOP)

@@ -144,7 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Attacks.cpp" />
-    <ClCompile Include="BitBoard.cpp" />
+    <ClCompile Include="Board.cpp" />
     <ClCompile Include="ChessEngine.cpp" />
     <ClCompile Include="Evaluator.cpp" />
     <ClCompile Include="Move.cpp" />
@@ -157,8 +157,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Attacks.h" />
-    <ClInclude Include="BitBoard.h" />
+    <ClInclude Include="Board.h" />
     <ClInclude Include="Chess.h" />
+    <ClInclude Include="Defs.h" />
     <ClInclude Include="Evaluator.h" />
     <ClInclude Include="Move.h" />
     <ClInclude Include="MoveGenerator.h" />
