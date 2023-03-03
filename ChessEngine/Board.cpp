@@ -59,26 +59,24 @@ void Board::operator()() noexcept {
 }
 
 void Board::setPieceOnSquare(const Piece piece, const Color color, const Square square) noexcept {
-	const Bitmap squareBitmap = getBitmapOf(square);
-	bitMaps[piece][color] |= squareBitmap;
-	bitMaps[ALL_PIECES][color] |= squareBitmap;
+	bitMaps[piece][color] |= SQUARE_MASK[square];
+	bitMaps[ALL_PIECES][color] |= SQUARE_MASK[square];
 	key ^= hashKeys.pieceKey[square][piece][color];
 }
 
 void Board::unsetPieceOnSquare(const Piece piece, const Color color, const Square square) noexcept {
-	const Bitmap squareBitmap = ~getBitmapOf(square);
+	const Bitmap squareBitmap = ~SQUARE_MASK[square];
 	bitMaps[piece][color] &= squareBitmap;
 	bitMaps[ALL_PIECES][color] &= squareBitmap;
 	key ^= hashKeys.pieceKey[square][piece][color];
 }
 
 Piece Board::getPieceFromSquare(const Color color, const Square square) const noexcept {
-	if ((bitMaps[ALL_PIECES][color] & getBitmapOf(square)) == 0)
+	if ((bitMaps[ALL_PIECES][color] & SQUARE_MASK[square]) == 0)
 		return NONE_PIECE;
 
-	const Bitmap squareBitmap = getBitmapOf(square);
 	Piece piece = PAWN;
-	while (piece != NONE_PIECE && (bitMaps[piece][color] & squareBitmap) == 0)
+	while (piece != NONE_PIECE && (bitMaps[piece][color] & SQUARE_MASK[square]) == 0)
 		++piece;
 
 	return piece;

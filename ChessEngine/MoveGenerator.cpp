@@ -9,7 +9,7 @@ static bool canMakeKingCastle(const Board& board, const Color color) {
 	if (color == WHITE && board.hasCastlePermission(WHITE_KING_CASTLE) ||
 		color == BLACK && board.hasCastlePermission(BLACK_KING_CASTLE))
 		if (((board.getBitmapPiece(KING, color) << 1U | board.getBitmapPiece(KING, color) << 2U) & (friendPieces | enemyPieces)) == 0) { //isCastlePathClear
-			const Rank relativeRank = color == WHITE ? RANK_1 : RANK_8;
+			const Rank relativeRank = getRelativeRank(color, RANK_1);
 			if (!attacks::isSquareAttacked(board, ~color, getSquareOf(FILE_F, relativeRank)))//isCastlePathSecury
 				return !attacks::isSquareAttacked(board, ~color, getSquareOf(FILE_G, relativeRank));
 		}
@@ -21,7 +21,7 @@ static bool canMakeQueenCastle(const Board& board, const Color color) {
 	if (color == WHITE && board.hasCastlePermission(WHITE_QUEEN_CASTLE) ||
 		color == BLACK && board.hasCastlePermission(BLACK_QUEEN_CASTLE))
 		if (((board.getBitmapPiece(KING, color) >> 1U | board.getBitmapPiece(KING, color) >> 2U | board.getBitmapPiece(KING, color) >> 3U) & (friendPieces | enemyPieces)) == 0) {//isCastlePathClear
-			const Rank relativeRank = color == WHITE ? RANK_1 : RANK_8;
+			const Rank relativeRank = getRelativeRank(color, RANK_1);
 			if (!attacks::isSquareAttacked(board, ~color, getSquareOf(FILE_C, relativeRank)))//isCastlePathSecury
 				return !attacks::isSquareAttacked(board, ~color, getSquareOf(FILE_D, relativeRank));//isCastlePathSecury
 		}
@@ -34,33 +34,33 @@ template<MoveType moveType>
 static Bitmap getPieceAttacks(const Board& board, const Piece piece, const Color color, const Square square) {
 	Bitmap attacks = 0UL;
 	if (piece == KING)
-		attacks = attacks::getKingAttacks(getBitmapOf(square));
+		attacks = attacks::getKingAttacks(SQUARE_MASK[square]);
 	else if (piece == KNIGHT)
-		attacks = attacks::getKnightAttacks(getBitmapOf(square));
+		attacks = attacks::getKnightAttacks(SQUARE_MASK[square]);
 	else {
 		const Bitmap allPieces = friendPieces | enemyPieces;
 
 		if (piece == PAWN) {
 			if (moveType == ALL) {
-				attacks = attacks::getPawnMoves(allPieces, color, getBitmapOf(square));
-				attacks |= attacks::getPawnAttacks(enemyPieces, color, getBitmapOf(square));
-				attacks |= attacks::getPawnEnPassantAttack(color, getBitmapOf(board.getEnPassantSquare()), getBitmapOf(square));
+				attacks = attacks::getPawnMoves(allPieces, color, SQUARE_MASK[square]);
+				attacks |= attacks::getPawnAttacks(enemyPieces, color, SQUARE_MASK[square]);
+				attacks |= attacks::getPawnEnPassantAttack(color, SQUARE_MASK[board.getEnPassantSquare()], SQUARE_MASK[square]);
 			} else if (moveType == CAPTURES) {
-				attacks = attacks::getPawnAttacks(enemyPieces, color, getBitmapOf(square));
-				attacks |= attacks::getPawnEnPassantAttack(color, getBitmapOf(board.getEnPassantSquare()), getBitmapOf(square));
+				attacks = attacks::getPawnAttacks(enemyPieces, color, SQUARE_MASK[square]);
+				attacks |= attacks::getPawnEnPassantAttack(color, SQUARE_MASK[board.getEnPassantSquare()], SQUARE_MASK[square]);
 			} else if (moveType == QUIETS)
-				attacks = attacks::getPawnMoves(allPieces, color, getBitmapOf(square));
+				attacks = attacks::getPawnMoves(allPieces, color, SQUARE_MASK[square]);
 			return attacks;
 		} else {
 			const File file = getFileOf(square);
 			const Rank rank = getRankOf(square);
 
 			if (piece == BISHOP)
-				attacks = attacks::getBishopAttacks(allPieces, file, rank, getBitmapOf(square));
+				attacks = attacks::getBishopAttacks(allPieces, file, rank, SQUARE_MASK[square]);
 			else if (piece == ROOK)
-				attacks = attacks::getRookAttacks(allPieces, file, rank, getBitmapOf(square));
+				attacks = attacks::getRookAttacks(allPieces, file, rank, SQUARE_MASK[square]);
 			else if (piece == QUEEN)
-				attacks = attacks::getQueenAttacks(allPieces, file, rank, getBitmapOf(square));
+				attacks = attacks::getQueenAttacks(allPieces, file, rank, SQUARE_MASK[square]);
 		}
 	}
 	attacks &= ~friendPieces;//remove friend bitmap

@@ -56,6 +56,10 @@ inline Rank operator~(const Rank& r) noexcept {
 	return static_cast<Rank>(r ^ RANK_8);
 }
 
+inline Rank getRelativeRank(const Color color, const Rank rank) noexcept {
+	return color == WHITE ? rank : ~rank;
+}
+
 template <typename T>
 	requires std::integral<T>
 inline Square operator+(Square s, const T t) noexcept {

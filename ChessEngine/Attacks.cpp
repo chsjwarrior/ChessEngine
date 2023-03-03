@@ -114,7 +114,7 @@ Bitmap attacks::getPawnEnPassantAttack(const Color color, const Bitmap enPassant
 }
 
 bool attacks::isSquareAttacked(const Board& board, const Color color, const Square square) {
-	const Bitmap squareBitmap = getBitmapOf(square);
+	const Bitmap squareBitmap = SQUARE_MASK[square];
 	//King
 	Bitmap attacks = getKingAttacks(squareBitmap);
 	if (attacks & board.getBitmapPiece(KING, color))

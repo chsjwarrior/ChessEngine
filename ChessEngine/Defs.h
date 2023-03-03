@@ -1,13 +1,30 @@
 #pragma once
 #include "Types.h"
 
+inline constexpr Bitmap SQUARE_MASK[] = {
+0x1UL, 0x2UL, 0x4UL, 0x8UL,
+0x10UL, 0x20UL, 0x40UL, 0x80UL,
+0x100UL, 0x200UL, 0x400UL, 0x800UL,
+0x1000UL, 0x2000UL, 0x4000UL, 0x8000UL,
+0x10000UL, 0x20000UL, 0x40000UL, 0x80000UL,
+0x100000UL, 0x200000UL, 0x400000UL, 0x800000UL,
+0x1000000UL, 0x2000000UL, 0x4000000UL, 0x8000000UL,
+0x10000000UL, 0x20000000UL, 0x40000000UL, 0x80000000UL,
+0x100000000UL, 0x200000000UL, 0x400000000UL, 0x800000000UL,
+0x1000000000UL, 0x2000000000UL, 0x4000000000UL, 0x8000000000UL,
+0x10000000000UL, 0x20000000000UL, 0x40000000000UL, 0x80000000000UL,
+0x100000000000UL, 0x200000000000UL, 0x400000000000UL, 0x800000000000UL,
+0x1000000000000UL, 0x2000000000000UL, 0x4000000000000UL, 0x8000000000000UL,
+0x10000000000000UL, 0x20000000000000UL, 0x40000000000000UL, 0x80000000000000UL,
+0x100000000000000UL, 0x200000000000000UL, 0x400000000000000UL, 0x800000000000000UL,
+0x1000000000000000UL, 0x2000000000000000UL, 0x4000000000000000UL, 0x8000000000000000UL,
+0x0UL };
+
 inline constexpr char PIECE_CHAR[12] = { 'P', 'N', 'B', 'R', 'Q', 'K', 'p', 'n', 'b', 'r', 'q', 'k' };
 
 inline constexpr int INFINIT = 30000;
 
 inline constexpr int MATE = 29000;
-
-inline constexpr Bitmap SQUARE_MASK = 0x1UL;
 
 inline constexpr uChar MAX_MOVES = 128U;
 
@@ -28,13 +45,8 @@ inline Rank getRankOf(const Square square) noexcept {
 /* This function returns the Square of File and Rank */
 inline Square getSquareOf(const File file, const Rank rank) noexcept {
 	if (file >= NONE_FILE || rank >= NONE_RANK) return NONE_SQUARE;
-	return static_cast<Square>((rank << 3) + file);
-	// square = 8 * rank + file;
-}
-/* This function returns a Bitmap of Square */
-inline Bitmap getBitmapOf(const Square square) noexcept {
-	if (square >= NONE_SQUARE) return 0UL;
-	return SQUARE_MASK << square;
+	return static_cast<Square>(rank << 3 | file);
+	// square = 8 * rank + file; or square = (rank << 3) + file;
 }
 
 #if defined(__GNUC__) // GCC, Clang, ICC
@@ -89,7 +101,7 @@ inline Square popLastSquareOf(Bitmap& bitmap) noexcept {
 	if (bitmap == 0UL) return NONE_SQUARE;
 	unsigned long i;
 	_BitScanReverse64(&i, bitmap);
-	bitmap &= ~(SQUARE_MASK << i);
+	bitmap &= ~(SQUARE_MASK[i]);
 	return static_cast<Square>(i);
 }
 /* This function returns the position(Square) from the right most set bit */
