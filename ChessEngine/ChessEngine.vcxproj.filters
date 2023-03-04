@@ -70,7 +70,7 @@
     <ClInclude Include="Attacks.h">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
-    <ClInclude Include="Defs.h">
+    <ClInclude Include="BitBoard.h">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
   </ItemGroup>

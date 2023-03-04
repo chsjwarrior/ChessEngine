@@ -1,11 +1,28 @@
 #pragma once
 #include <iostream>
 
-using Bitmap = unsigned long long;
 using uLong = unsigned long long;
 using uInt = unsigned int;
 using uShort = unsigned short;
 using uChar = unsigned char;
+
+inline const char PIECE_CHAR[12] = { 'P', 'N', 'B', 'R', 'Q', 'K', 'p', 'n', 'b', 'r', 'q', 'k' };
+
+inline const int INFINIT = 30000;
+
+inline const int MATE = 29000;
+
+inline const uChar MAX_MOVES = 128U;
+
+inline const uChar MAX_DEPTH = 64U;
+
+inline const uChar WHITE_KING_CASTLE = 1U; //= 0001
+
+inline const uChar WHITE_QUEEN_CASTLE = 2U; //= 0010
+
+inline const uChar BLACK_KING_CASTLE = 4U; //= 0100
+
+inline const uChar BLACK_QUEEN_CASTLE = 8U; //= 1000
 
 enum File : uChar { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, NONE_FILE };
 
@@ -26,11 +43,6 @@ enum Square : uChar {
 enum Color : uChar { WHITE, BLACK };
 
 enum Piece : uChar { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, NONE_PIECE }; // NONE_PIECE = 0X6U
-
-inline constexpr uChar WHITE_KING_CASTLE = 1U; //= 0001
-inline constexpr uChar WHITE_QUEEN_CASTLE = 2U; //= 0010
-inline constexpr uChar BLACK_KING_CASTLE = 4U; //= 0100
-inline constexpr uChar BLACK_QUEEN_CASTLE = 8U; //= 1000
 
 inline File& operator++(File& f) noexcept {
 	return f = static_cast<File>((static_cast<uInt>(f) + 1U) % 9U);
@@ -93,4 +105,65 @@ inline Piece& operator--(Piece& p) noexcept {
 
 inline Color operator~(const Color& color) noexcept {
 	return static_cast<Color>(color ^ BLACK);
+}
+
+/* This function returns the File of Square */
+inline File getFileOf(const Square square) noexcept {
+	if (square >= NONE_SQUARE) return NONE_FILE;
+	return static_cast<File>(square & 7U);
+	// file = square % 8; or file = square & 7;
+}
+
+/* This function returns the Rank of Square */
+inline Rank getRankOf(const Square square) noexcept {
+	if (square >= NONE_SQUARE) return NONE_RANK;
+	return static_cast<Rank>(square >> 3);
+	// rank = square / 8; or rank = square >> 3;
+}
+
+/* This function returns the Square of File and Rank */
+inline Square getSquareOf(const File file, const Rank rank) noexcept {
+	if (file >= NONE_FILE || rank >= NONE_RANK) return NONE_SQUARE;
+	return static_cast<Square>(rank << 3 | file);
+	// square = 8 * rank + file; or square = (rank << 3) + file;
+}
+
+inline std::ostream& operator<<(std::ostream& os, const File& file) {
+	if (file < NONE_FILE)
+		os << static_cast<uChar>(file + 97U);
+	else
+		os << "NONE FILE";
+	return os;
+}
+
+inline std::ostream& operator<<(std::ostream& os, const Rank& rank) {
+	if (rank < NONE_RANK)
+		os << static_cast<uChar>(rank + 49U);
+	else
+		os << "NONE RANK";
+	return os;
+}
+
+inline std::ostream& operator<<(std::ostream& os, const Square& square) {
+	if (square < NONE_SQUARE) {
+		const File file = getFileOf(square);
+		const Rank rank = getRankOf(square);
+		os << file << rank;
+	} else
+		os << "NONE SQUARE";
+	return os;
+}
+
+template <typename T>
+	requires std::integral<T>
+inline void printBits(const char* title, const T t) {
+	std::cout << title << std::endl;
+	const uInt size = sizeof(T) * 8;
+
+	for (uInt i = 0U, j = size - 1U; i < size; ++i, --j) {
+		std::cout << (t >> j & 1);
+		if (j % 8 == 0U)
+			std::cout << ' ';
+	}
+	std::cout << std::endl;
 }

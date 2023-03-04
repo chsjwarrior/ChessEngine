@@ -1,9 +1,9 @@
 #pragma once
 #include "Move.h"
+#include "BitBoard.h"
 
-class Board {
-	const uChar ALL_PIECES;/* A const value for the last position of the array */
-	Bitmap bitMaps[7][2];/* The last position ist the union of all previous */
+class Board {	
+	BitBoard bitMaps[7][2];/* The last position ist the union of all previous */
 	uLong key;
 	/*
 	flags uint16_t
@@ -76,7 +76,7 @@ public:
 
 	Piece getPieceFromSquare(const Color color, const Square square) const noexcept;
 
-	Bitmap getBitmapAllPieces(const Color color) const noexcept;
+	BitBoard getBitBoardOfAllPieces(const Color color) const noexcept;
 
 	Square getEnPassantSquare() const noexcept;
 
@@ -90,7 +90,7 @@ public:
 
 	bool isRepetition() const noexcept;
 
-	Bitmap getBitmapPiece(const Piece piece, const Color color) const noexcept;
+	BitBoard getBitBoardOfPiece(const Piece piece, const Color color) const noexcept;
 
 	uLong getHashkey() const noexcept;
 

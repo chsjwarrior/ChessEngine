@@ -1,5 +1,5 @@
 #pragma once
-#include "Defs.h"
+#include "Types.h"
 
 class Move {
 	/*

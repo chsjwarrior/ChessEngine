@@ -1,7 +1,5 @@
 #include "Board.h"
 
-static const uShort BOARD_FLAGS_EMPTY = 0X0040U;
-
 //0===============================HASHKEY==============================0
 Board::Zobrist::Zobrist() {
 	for (Square s = A1; s < NONE_SQUARE; ++s)
@@ -16,7 +14,9 @@ Board::Zobrist::Zobrist() {
 	sideKey = static_cast<uLong>(std::rand()) << 32 | static_cast<uLong>(std::rand()) << 16 | std::rand();
 }
 
-//0===========================BITBOARD::UNDO===========================0
+//0===========================BOARD::UNDO===========================0
+static const uShort BOARD_FLAGS_EMPTY = 0X0040U;//Const value for the Board flags
+
 Board::Undo::Undo() noexcept : move(), flags(BOARD_FLAGS_EMPTY), fiftyMove(0U), key(0UL) {}
 
 void Board::Undo::operator()() noexcept {
@@ -34,8 +34,10 @@ uChar Board::Undo::getCastlePermission() const noexcept {
 	return flags >> 8U;
 }
 
-//0=============================BITBOARD===============================0
-Board::Board() : ALL_PIECES(6U), key(0UL), flags(BOARD_FLAGS_EMPTY), fiftyMove(0U), ply(0U), historyCount(0U), whiteTime(false), hashKeys() {
+//0=============================BOARD===============================0
+static const uChar ALL_PIECES = 0x6U;//Const value for the last position of the array BitBmaps
+
+Board::Board() : key(0UL), flags(BOARD_FLAGS_EMPTY), fiftyMove(0U), ply(0U), historyCount(0U), whiteTime(false), hashKeys() {
 	for (auto& b : bitMaps) {
 		b[0] = 0UL;
 		b[1] = 0UL;
@@ -65,9 +67,8 @@ void Board::setPieceOnSquare(const Piece piece, const Color color, const Square 
 }
 
 void Board::unsetPieceOnSquare(const Piece piece, const Color color, const Square square) noexcept {
-	const Bitmap squareBitmap = ~SQUARE_MASK[square];
-	bitMaps[piece][color] &= squareBitmap;
-	bitMaps[ALL_PIECES][color] &= squareBitmap;
+	bitMaps[piece][color] &= ~SQUARE_MASK[square];
+	bitMaps[ALL_PIECES][color] &= ~SQUARE_MASK[square];
 	key ^= hashKeys.pieceKey[square][piece][color];
 }
 
@@ -82,7 +83,7 @@ Piece Board::getPieceFromSquare(const Color color, const Square square) const no
 	return piece;
 }
 
-Bitmap Board::getBitmapAllPieces(const Color color) const noexcept {
+BitBoard Board::getBitBoardOfAllPieces(const Color color) const noexcept {
 	return bitMaps[ALL_PIECES][color];
 }
 
@@ -121,7 +122,7 @@ bool Board::isRepetition() const noexcept {
 	return false;
 }
 
-Bitmap Board::getBitmapPiece(const Piece piece, const Color color) const noexcept {
+BitBoard Board::getBitBoardOfPiece(const Piece piece, const Color color) const noexcept {
 	return bitMaps[piece][color];
 }
 
@@ -155,7 +156,7 @@ const std::string Board::getFEN() const {
 	Square s = NONE_SQUARE;
 	Piece p = NONE_PIECE;
 	Color c;
-	Bitmap allPieces = getBitmapAllPieces(WHITE) | getBitmapAllPieces(BLACK);
+	BitBoard allPieces = bitMaps[ALL_PIECES][WHITE] | bitMaps[ALL_PIECES][BLACK];
 
 	for (Rank r = RANK_8; r != NONE_RANK; --r) {
 		for (File f = FILE_A; f < NONE_FILE; ++f) {

@@ -3,21 +3,21 @@
 
 namespace attacks {
 	/* This function returns a bitmap with all squares reached by queen */
-	Bitmap getQueenAttacks(const Bitmap allPieces, const File file, const Rank rank, const Bitmap squareBitmap);
+	BitBoard getQueenAttacks(const BitBoard allPieces, const File file, const Rank rank, const BitBoard square);
 	/* This function returns a bitmap with all squares reached by bishop */
-	Bitmap getBishopAttacks(const Bitmap allPieces, const File file, const Rank rank, const Bitmap squareBitmap);
+	BitBoard getBishopAttacks(const BitBoard allPieces, const File file, const Rank rank, const BitBoard square);
 	/* This function returns a bitmap with all squares reached by rook */
-	Bitmap getRookAttacks(const Bitmap allPieces, const File file, const Rank rank, const Bitmap squareBitmap);
+	BitBoard getRookAttacks(const BitBoard allPieces, const File file, const Rank rank, const BitBoard square);
 	/* This function returns a bitmap with all squares reached by knight */
-	Bitmap getKnightAttacks(const Bitmap squareBitmap);
+	BitBoard getKnightAttacks(const BitBoard square);
 	/* This function returns a bitmap with all squares reached by king */
-	Bitmap getKingAttacks(const Bitmap squareBitmap);
+	BitBoard getKingAttacks(const BitBoard square);
 	/* This function returns a bitmap with the Pawn quiet moves mask */
-	Bitmap getPawnMoves(const Bitmap allPieces, const Color color, const Bitmap squareBitmap);
+	BitBoard getPawnMoves(const BitBoard allPieces, const Color color, const BitBoard square);
 	/* This function returns a bitmap with the Pawn attacks mask */
-	Bitmap getPawnAttacks(const Bitmap allPieces, const Color color, const Bitmap squareBitmap);
+	BitBoard getPawnAttacks(const BitBoard allPieces, const Color color, const BitBoard square);
 	/* This function returns a bitmap with the Pawn En Passant attack mask */
-	Bitmap getPawnEnPassantAttack(const Color color, const Bitmap enPassantBitmap, const Bitmap squareBitmap);
+	BitBoard getPawnEnPassantAttack(const Color color, const BitBoard enPassant, const BitBoard square);
 	/* This function tests if the square is under attack by color */
 	bool isSquareAttacked(const Board& board, const Color color, const Square square);
 }

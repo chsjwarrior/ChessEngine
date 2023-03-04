@@ -74,18 +74,18 @@ void sortMoves(const Board& board, Move moves[], const uShort movesCount) {
 }
 
 static void evaluatePosition(const Board& board, const Color color, int& materialWeight, int& numPieces) {
-	Bitmap pieceBitmap;
+	BitBoard pieceBitBoard;
 	Square s;
-	Square(*popSquareOf)(Bitmap&);
+	Square(*popSquareOf)(BitBoard&);
 	if (color == WHITE)
 		popSquareOf = popFirstSquareOf;
 	else
 		popSquareOf = popLastSquareOf;
 
 	for (Piece p = PAWN; p != NONE_PIECE; ++p) {
-		pieceBitmap = board.getBitmapPiece(p, color);
-		while (pieceBitmap) {
-			s = popSquareOf(pieceBitmap);
+		pieceBitBoard = board.getBitBoardOfPiece(p, color);
+		while (pieceBitBoard) {
+			s = popSquareOf(pieceBitBoard);
 
 			if (board.isWhiteTime()) {
 				materialWeight += PIECE_VALUE[p];
