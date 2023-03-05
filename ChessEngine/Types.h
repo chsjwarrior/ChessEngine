@@ -77,6 +77,7 @@ template <typename T>
 inline Square operator+(Square s, const T t) noexcept {
 	return static_cast<Square>((static_cast<T>(s) + t) % 65U);
 }
+
 template <typename T>
 	requires std::integral<T>
 inline Square operator-(Square s, const T t) noexcept {

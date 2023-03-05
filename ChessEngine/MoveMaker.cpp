@@ -156,7 +156,7 @@ bool makeMove(Board& board, const Move& move) {
 	else if (board.getEnPassantSquare() != NONE_SQUARE)//clear the en passant square
 		board.setEnPassantSquare(NONE_SQUARE);
 
-	if (piece == PAWN) {//if si pawn move then
+	if (piece == PAWN) {//if is pawn move then
 		board.fiftyMove = 0U;//reset fifty move counter
 		checkEnPassantCaptured(board, move, color, true);
 		checkPawnPromotion(board, move, color, true);

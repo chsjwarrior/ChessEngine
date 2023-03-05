@@ -95,24 +95,24 @@ void Move::parseEntry(const char* entry) {
 
 	const size_t length = strlen(entry);
 	if (length < 4) {
-		std::cerr << "Entry size: " << length << std::endl;
+		std::cerr << "Move::parseNetry() Entry size: " << length << std::endl;
 		return;
 	}
 
 	if (entry[0] > 'h' || entry[0] < 'a') {
-		std::cerr << "Entry error at index 0" << std::endl;
+		std::cerr << "Move::parseNetry() Entry error at index 0" << std::endl;
 		return;
 	}
 	if (entry[1] > '8' || entry[1] < '1') {
-		std::cerr << "Entry error at index 1" << std::endl;
+		std::cerr << "Move::parseNetry() Entry error at index 1" << std::endl;
 		return;
 	}
 	if (entry[2] > 'h' || entry[2] < 'a') {
-		std::cerr << "Entry error at index 2" << std::endl;
+		std::cerr << "Move::parseNetry() Entry error at index 2" << std::endl;
 		return;
 	}
 	if (entry[3] > '8' || entry[3] < '1') {
-		std::cerr << "Entry error at index 3" << std::endl;
+		std::cerr << "Move::parseNetry() Entry error at index 3" << std::endl;
 		return;
 	}
 

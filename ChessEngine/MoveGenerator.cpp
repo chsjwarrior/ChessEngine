@@ -112,8 +112,7 @@ static void catalogMoves(const Board& board, Move moves[], const Piece piece, co
 			move.setColor(color);
 			move.setCaptured(board.getPieceFromSquare(~color, to));
 
-			if (color == WHITE && getRankOf(to) == RANK_8 ||
-				color == BLACK && getRankOf(to) == RANK_1) {
+			if (getRelativeRank(color, RANK_8) == getRankOf(to)) {
 				for (Piece p = QUEEN; p > PAWN; --p) {
 					move.setPromotionPiece(p);
 					moves[movesCount++] = move;
