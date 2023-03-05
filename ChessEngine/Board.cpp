@@ -243,14 +243,14 @@ void Board::parseFEN(const char* fen) {
 		case 'R': setPieceOnSquare(ROOK, WHITE, getSquareOf(file, rank)); ++file; break;
 		case 'Q': setPieceOnSquare(QUEEN, WHITE, getSquareOf(file, rank)); ++file; break;
 		case 'K': setPieceOnSquare(KING, WHITE, getSquareOf(file, rank)); ++file; break;
-		case '1': file = static_cast<File>(file + 1); break;
-		case '2': file = static_cast<File>(file + 2); break;
-		case '3': file = static_cast<File>(file + 3); break;
-		case '4': file = static_cast<File>(file + 4); break;
-		case '5': file = static_cast<File>(file + 5); break;
-		case '6': file = static_cast<File>(file + 6); break;
-		case '7': file = static_cast<File>(file + 7); break;
-		case '8': file = static_cast<File>(file + 8); break;
+		case '1': file = static_cast<File>(file + 1U); break;
+		case '2': file = static_cast<File>(file + 2U); break;
+		case '3': file = static_cast<File>(file + 3U); break;
+		case '4': file = static_cast<File>(file + 4U); break;
+		case '5': file = static_cast<File>(file + 5U); break;
+		case '6': file = static_cast<File>(file + 6U); break;
+		case '7': file = static_cast<File>(file + 7U); break;
+		case '8': file = static_cast<File>(file + 8U); break;
 		case '/':
 		case ' ':
 			--rank;

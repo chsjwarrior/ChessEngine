@@ -1,5 +1,4 @@
 #include "Evaluator.h"
-#include <algorithm>
 
 static const int SQUARE_VALUE[6][64] = {
 		{//PAWN

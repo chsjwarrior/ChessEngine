@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <algorithm>
 
 using uLong = unsigned long long;
 using uInt = unsigned int;
