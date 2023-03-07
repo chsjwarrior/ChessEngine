@@ -24,15 +24,15 @@ BitBoard attacks::getBishopAttacks(const BitBoard allPieces, const File file, co
 	const BitBoard reverseSquare = reverse(square);
 
 	uShort index = rank + file;
-
-	BitBoard aux1 = (allPieces & DIAGONAL[index]) - 2 * square;
-	BitBoard aux2 = reverse(allPieces & DIAGONAL[index]) - 2 * reverseSquare;
+	// Hyperbola Quintessence Algorithm.
+	BitBoard aux1 = (allPieces & DIAGONAL[index]) - square * 2;
+	BitBoard aux2 = reverse(allPieces & DIAGONAL[index]) - reverseSquare * 2;
 	const BitBoard ldMoves = (aux1 ^ reverse(aux2)) & DIAGONAL[index];
 
 	index = rank + 7 - file;
-
-	aux1 = (allPieces & ANTI_DIAGONAL[index]) - 2 * square;
-	aux2 = reverse(allPieces & ANTI_DIAGONAL[index]) - 2 * reverseSquare;
+	// Hyperbola Quintessence Algorithm.
+	aux1 = (allPieces & ANTI_DIAGONAL[index]) - square * 2;
+	aux2 = reverse(allPieces & ANTI_DIAGONAL[index]) - reverseSquare * 2;
 	const BitBoard dlMoves = (aux1 ^ reverse(aux2)) & ANTI_DIAGONAL[index];
 
 	return ldMoves | dlMoves;
@@ -40,13 +40,13 @@ BitBoard attacks::getBishopAttacks(const BitBoard allPieces, const File file, co
 
 BitBoard attacks::getRookAttacks(const BitBoard allPieces, const File file, const Rank rank, const BitBoard square) {
 	const BitBoard reverseSquare = reverse(square);
-
-	BitBoard aux1 = allPieces - 2 * square;
-	BitBoard aux2 = reverse(allPieces) - 2 * reverseSquare;
+	// Hyperbola Quintessence Algorithm.
+	BitBoard aux1 = allPieces - square * 2;
+	BitBoard aux2 = reverse(allPieces) - reverseSquare * 2;
 	const BitBoard hMoves = (aux1 ^ reverse(aux2)) & RANKS[rank];
-
-	aux1 = (allPieces & FILES[file]) - 2 * square;
-	aux2 = reverse(allPieces & FILES[file]) - 2 * reverseSquare;
+	// Hyperbola Quintessence Algorithm.
+	aux1 = (allPieces & FILES[file]) - square * 2;
+	aux2 = reverse(allPieces & FILES[file]) - reverseSquare * 2;
 	const BitBoard vMoves = (aux1 ^ reverse(aux2)) & FILES[file];
 
 	return hMoves | vMoves;
