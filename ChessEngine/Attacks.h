@@ -15,6 +15,8 @@ namespace attacks {
 	/* This function returns a bitmap with the Pawn quiet moves mask */
 	BitBoard getPawnMoves(const BitBoard allPieces, const Color color, const BitBoard square);
 	/* This function returns a bitmap with the Pawn attacks mask */
+	BitBoard getPawnAttacks(const Color color, const BitBoard square);
+	/* This function returns a bitmap with the Pawn attacks mask */
 	BitBoard getPawnAttacks(const BitBoard allPieces, const Color color, const BitBoard square);
 	/* This function returns a bitmap with the Pawn En Passant attack mask */
 	BitBoard getPawnEnPassantAttack(const Color color, const BitBoard enPassant, const BitBoard square);

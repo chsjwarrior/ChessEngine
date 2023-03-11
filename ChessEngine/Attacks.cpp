@@ -89,28 +89,25 @@ BitBoard attacks::getPawnMoves(const BitBoard allPieces, const Color color, cons
 	return moves;
 }
 
-BitBoard attacks::getPawnAttacks(const BitBoard allPieces, const Color color, const BitBoard square) {
+BitBoard attacks::getPawnAttacks(const Color color, const BitBoard square) {
 	BitBoard moves = 0UL;
 	if (color == WHITE) {
-		moves |= square << 7 & allPieces & ~FILES[FILE_H];
-		moves |= square << 9 & allPieces & ~FILES[FILE_A];
+		moves |= square << 7 & ~FILES[FILE_H];
+		moves |= square << 9 & ~FILES[FILE_A];
 	} else {
-		moves |= square >> 7 & allPieces & ~FILES[FILE_A];
-		moves |= square >> 9 & allPieces & ~FILES[FILE_H];
+		moves |= square >> 7 & ~FILES[FILE_A];
+		moves |= square >> 9 & ~FILES[FILE_H];
 	}
 	return moves;
 }
 
+BitBoard attacks::getPawnAttacks(const BitBoard allPieces, const Color color, const BitBoard square) {
+	return getPawnAttacks(color, square) & allPieces;
+}
+
 BitBoard attacks::getPawnEnPassantAttack(const Color color, const BitBoard enPassant, const BitBoard square) {
-	BitBoard moves = 0UL;
-	if (color == WHITE) {
-		moves |= square << 7 & enPassant & RANKS[RANK_6] & ~FILES[FILE_H];
-		moves |= square << 9 & enPassant & RANKS[RANK_6] & ~FILES[FILE_A];
-	} else {
-		moves |= square >> 7 & enPassant & RANKS[RANK_3] & ~FILES[FILE_A];
-		moves |= square >> 9 & enPassant & RANKS[RANK_3] & ~FILES[FILE_H];
-	}
-	return moves;
+	//relative rank: 6 for White and 3 for Black
+	return getPawnAttacks(color, square) & enPassant & RANKS[getRelativeRankOf(color, RANK_6)];
 }
 
 bool attacks::isSquareAttacked(const Board& board, const Color color, const Square square) {
@@ -123,10 +120,7 @@ bool attacks::isSquareAttacked(const Board& board, const Color color, const Squa
 	if (attacks & board.getBitBoardOfPiece(KNIGHT, color))
 		return true;
 	//Pawn
-	if (color == WHITE)
-		attacks = SQUARE_MASK[square] >> 7 & ~FILES[FILE_A] | SQUARE_MASK[square] >> 9 & ~FILES[FILE_H];
-	else
-		attacks = SQUARE_MASK[square] << 7 & ~FILES[FILE_H] | SQUARE_MASK[square] << 9 & ~FILES[FILE_A];
+	attacks = getPawnAttacks(~color, SQUARE_MASK[square]);
 	if (attacks & board.getBitBoardOfPiece(PAWN, color))
 		return true;
 

@@ -77,7 +77,7 @@ void Uci::go(Board& board, std::istringstream& iss) const {
 	while (iss >> input) {
 		if (input == SEARCH_MOVES)
 			while (iss >> input)
-				;//limits.searchmoves.push_back(UCI::to_move(pos, token));
+				;// limits.searchmoves.push_back(UCI::to_move(pos, token));
 		else if (input == MOVE_TIME)
 			iss >> info.moveTime;
 		else if (input == W_TIME)
@@ -166,7 +166,7 @@ void Uci::uci() const {
 }
 
 void Uci::setOption() const {
-	//set options
+	// set options
 }
 
 void Uci::loop() const {

@@ -65,7 +65,7 @@ static int quiesce(Board& board, int alpha, int beta) {
 static int alphaBeta(Board& board, short depth, int alpha, int beta) {
 	if (depth <= 0)
 		return evaluatePosition(board);
-	//return quiesce(bitBoard, alpha, beta);
+	// return quiesce(bitBoard, alpha, beta);
 
 	if (info.nodes >= 2047U)
 		checkUp();

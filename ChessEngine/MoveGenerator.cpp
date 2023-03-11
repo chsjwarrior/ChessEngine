@@ -10,7 +10,7 @@ static bool canMakeKingCastle(const Board& board, const Color color) {
 		color == BLACK && board.hasCastlePermission(BLACK_KING_CASTLE))
 		if (((board.getBitBoardOfPiece(KING, color) << 1U | board.getBitBoardOfPiece(KING, color) << 2U) & (friendPieces | enemyPieces)) == 0) { //isCastlePathClear
 			const Rank relativeRank = getRelativeRankOf(color, RANK_1);
-			if (!attacks::isSquareAttacked(board, ~color, getSquareOf(FILE_F, relativeRank)))//isCastlePathSecury
+			if (!attacks::isSquareAttacked(board, ~color, getSquareOf(FILE_F, relativeRank)))// isCastlePathSecury
 				return !attacks::isSquareAttacked(board, ~color, getSquareOf(FILE_G, relativeRank));
 		}
 	return false;
@@ -22,8 +22,8 @@ static bool canMakeQueenCastle(const Board& board, const Color color) {
 		color == BLACK && board.hasCastlePermission(BLACK_QUEEN_CASTLE))
 		if (((board.getBitBoardOfPiece(KING, color) >> 1U | board.getBitBoardOfPiece(KING, color) >> 2U | board.getBitBoardOfPiece(KING, color) >> 3U) & (friendPieces | enemyPieces)) == 0) {//isCastlePathClear
 			const Rank relativeRank = getRelativeRankOf(color, RANK_1);
-			if (!attacks::isSquareAttacked(board, ~color, getSquareOf(FILE_C, relativeRank)))//isCastlePathSecury
-				return !attacks::isSquareAttacked(board, ~color, getSquareOf(FILE_D, relativeRank));//isCastlePathSecury
+			if (!attacks::isSquareAttacked(board, ~color, getSquareOf(FILE_C, relativeRank)))// isCastlePathSecury
+				return !attacks::isSquareAttacked(board, ~color, getSquareOf(FILE_D, relativeRank));// isCastlePathSecury
 		}
 	return false;
 }
@@ -63,18 +63,18 @@ static BitBoard getPieceAttacks(const Board& board, const Piece piece, const Col
 				attacks = attacks::getQueenAttacks(allPieces, file, rank, SQUARE_MASK[square]);
 		}
 	}
-	attacks &= ~friendPieces;//remove friend bitmap
+	attacks &= ~friendPieces;// remove friend bitmap
 	if (moveType == QUIETS)
-		attacks &= ~enemyPieces;//remove enemy bitmap
+		attacks &= ~enemyPieces;// remove enemy bitmap
 	else if (moveType == CAPTURES)
-		attacks &= enemyPieces;//keep enemy bitmap
+		attacks &= enemyPieces;// keep enemy bitmap
 	return attacks;
 }
 
 /* This function populates an array with the castle moves */
 static void catalogCastleMoves(const Board& board, Move moves[], const Color color) {
 	Square kingSquare = getFirstSquareOf(board.getBitBoardOfPiece(KING, color));
-	if (!attacks::isSquareAttacked(board, ~color, kingSquare)) {//if King is not in check
+	if (!attacks::isSquareAttacked(board, ~color, kingSquare)) {// if King is not in check
 		Move move;
 		if (canMakeKingCastle(board, color)) {
 			move.setFrom(kingSquare);
@@ -225,8 +225,8 @@ bool moveGenerator::moveExists(Board& board, const Move move) {
 
 	uShort i = 0U;
 	while (i < movesCount) {
-		if (move == moves[i])//if found
-			if (makeMove(board, moves[i])) {//if is valid move
+		if (move == moves[i])// if found
+			if (makeMove(board, moves[i])) {// if is valid move
 				makeUndo(board);
 				break;
 			}

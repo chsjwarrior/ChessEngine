@@ -15,7 +15,7 @@ Board::Zobrist::Zobrist() {
 }
 
 //0===========================BOARD::UNDO===========================0
-static const uShort BOARD_FLAGS_EMPTY = 0X0040U;//Const value for the Board flags
+static const uShort BOARD_FLAGS_EMPTY = 0X0040U;// Const value for the Board flags
 
 Board::Undo::Undo() noexcept : move(), flags(BOARD_FLAGS_EMPTY), fiftyMove(0U), key(0UL) {}
 
@@ -35,7 +35,7 @@ uChar Board::Undo::getCastlePermission() const noexcept {
 }
 
 //0=============================BOARD===============================0
-static const uChar ALL_PIECES = 0x6U;//Const value for the last position of the array BitBmaps
+static const uChar ALL_PIECES = 0x6U;// Const value for the last position of the array BitBmaps
 
 Board::Board() : key(0UL), flags(BOARD_FLAGS_EMPTY), fiftyMove(0U), ply(0U), historyCount(0U), whiteTime(false), hashKeys() {
 	for (auto& b : bitMaps) {
@@ -54,7 +54,7 @@ void Board::operator()() noexcept {
 	fiftyMove = 0U;
 	ply = fiftyMove;
 	historyCount = ply;
-	whiteTime = false;//checkMate = true;
+	whiteTime = false;// checkMate = true;
 
 	for (Undo& h : history)
 		h();
@@ -263,13 +263,13 @@ void Board::parseFEN(const char* fen) {
 		++fen;
 	}
 
-	//color time
+	// color time
 	whiteTime = *fen == 'w';
 	if (whiteTime)
 		key ^= hashKeys.sideKey;
 	fen += 2;
 
-	//castle permission
+	// castle permission
 	if (*fen != '-') {
 		uChar castleFlag = 0U;
 		for (uChar i = 0; i < 4U; ++i) {
@@ -291,7 +291,7 @@ void Board::parseFEN(const char* fen) {
 		++fen;
 
 	++fen;
-	//en passant
+	// en passant
 	if (*fen != '-') {
 		file = static_cast<File>(*fen - 'a');
 		++fen;

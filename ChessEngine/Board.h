@@ -2,8 +2,8 @@
 #include "Move.h"
 #include "BitBoard.h"
 
-class Board {	
-	BitBoard bitMaps[7][2];/* The last position ist the union of all previous */
+class Board {
+	BitBoard bitMaps[7][2];// The last position ist the union of all previous
 	uLong key;
 	/*
 	flags uint16_t

@@ -17,8 +17,8 @@ struct SearchInfo {
 	bool ponderMode;
 	bool stop;
 
-	float fh;//fail high;
-	float fhf;//fail high first;
+	float fh;// fail high;
+	float fhf;// fail high first;
 };
 
 enum NodeType { HFNONE, HFALPHA, HFBETA, HFEXACT };
@@ -46,5 +46,5 @@ void makeUndo(Board& board);
 bool makeMove(Board& board, const Move& move);
 /* This function make the search */
 void searchPosition(Board& board);
-/*This function make a perft test */
+/* This function make a perft test */
 void perftTest(Board& board);

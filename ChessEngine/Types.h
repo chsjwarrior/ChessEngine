@@ -17,13 +17,13 @@ inline const uShort MAX_MOVES = 256U;
 
 inline const uChar MAX_DEPTH = 64U;
 
-inline const uChar WHITE_KING_CASTLE = 1U; //= 0001
+inline const uChar WHITE_KING_CASTLE = 1U; // = 0001
 
-inline const uChar WHITE_QUEEN_CASTLE = 2U; //= 0010
+inline const uChar WHITE_QUEEN_CASTLE = 2U; // = 0010
 
-inline const uChar BLACK_KING_CASTLE = 4U; //= 0100
+inline const uChar BLACK_KING_CASTLE = 4U; // = 0100
 
-inline const uChar BLACK_QUEEN_CASTLE = 8U; //= 1000
+inline const uChar BLACK_QUEEN_CASTLE = 8U; // = 1000
 
 enum File : uChar { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, NONE_FILE };
 
@@ -38,7 +38,7 @@ enum Square : uChar {
 	A6, B6, C6, D6, E6, F6, G6, H6,
 	A7, B7, C7, D7, E7, F7, G7, H7,
 	A8, B8, C8, D8, E8, F8, G8, H8,
-	NONE_SQUARE //= 0X40U = 64
+	NONE_SQUARE // = 0X40U = 64
 };
 
 enum Color : uChar { WHITE, BLACK };
@@ -152,26 +152,26 @@ inline uChar getAntiDiagonalOf(const Square square) noexcept {
 
 /* this function return true if two squares are in same diagonal */
 inline bool squaresOnSameDiagonal(const Square square1, const Square square2) noexcept {
-	return ((square2 - square1) % 9) == 0;//if the square difference is divisible by 9 
-	// return ((square2 - square1) & 7) == ((square2 >> 3) - (square1 >> 3));//if their file distance equals the rank distance
+	return ((square2 - square1) % 9) == 0;// if the square difference is divisible by 9 
+	// return ((square2 - square1) & 7) == ((square2 >> 3) - (square1 >> 3));// if their file distance equals the rank distance
 }
 
 /* this function return true if two squares are in same anti-diagonal */
 inline bool squaresOnSameAntiDiagonal(const Square square1, const Square square2) noexcept {
-	return ((square2 - square1) % 7) == 0;//if the square difference is divisible by 7 
-	// return ((sq2 - sq1) & 7) + ((sq2>>3) - (sq1>>3)) == 0;//if sum of file and rank distance is zero
+	return ((square2 - square1) % 7) == 0;// if the square difference is divisible by 7 
+	// return ((sq2 - sq1) & 7) + ((sq2>>3) - (sq1>>3)) == 0;// if sum of file and rank distance is zero
 }
 
 /* this function return true if two squares are in same File */
 inline bool squaresOnSameFile(const Square square1, const Square square2) {
-	return ((square1 ^ square2) & 7) == 0;//The Symmetric difference\xor is zero
-	//return ((square2 - square1) & 7) == 0;//if their file distance is zero.
+	return ((square1 ^ square2) & 7) == 0;// The Symmetric difference\xor is zero
+	// return ((square2 - square1) & 7) == 0;// if their file distance is zero.
 }
 
 /* this function return true if two squares are in same Rank */
-bool squaresOnSameRank(const Square square1, const Square square2) {
-	return ((square1 ^ square2) & 56) == 0;//The Symmetric difference\xor is zero
-	//return ((square2 >> 3) - (square1 >> 3)) == 0;//if their Rank distance is zero
+inline bool squaresOnSameRank(const Square square1, const Square square2) {
+	return ((square1 ^ square2) & 56) == 0;// The Symmetric difference\xor is zero
+	// return ((square2 >> 3) - (square1 >> 3)) == 0;// if their Rank distance is zero
 }
 
 inline std::ostream& operator<<(std::ostream& os, const File& file) {

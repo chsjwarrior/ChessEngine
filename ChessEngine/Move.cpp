@@ -119,7 +119,7 @@ void Move::parseEntry(const char* entry) {
 	setFrom(getSquareOf(static_cast<File>(entry[0] - 'a'), static_cast<Rank>(entry[1] - '1')));
 	setTo(getSquareOf(static_cast<File>(entry[2] - 'a'), static_cast<Rank>(entry[3] - '1')));
 
-	if (length == 5) { //if (entry[4] != '\0')
+	if (length == 5) { // if (entry[4] != '\0')
 		switch (entry[4]) {
 		case 'q':
 			setPromotionPiece(QUEEN);
@@ -143,6 +143,6 @@ std::ostream& operator<<(std::ostream& os, const Move& move) {
 		if (move.isPawnPromotion())
 			os << PIECE_CHAR[move.getPromotionPiece() + move.getColor() * 6];
 	} else
-		os << "0000";//"MOVE EMPTY"
+		os << "0000";// MOVE EMPTY
 	return os;
 }

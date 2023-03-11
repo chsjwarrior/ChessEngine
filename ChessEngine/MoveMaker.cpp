@@ -27,7 +27,7 @@ static void checkPawnPromotion(Board& board, const Move& move, const Color color
 static void checkCastleMove(Board& board, const Move& move, const Color color, const bool isDoMove) {
 	if (move.isCastle()) {
 		Square from, to;
-		if (move.getTo() > move.getFrom()) {//king side
+		if (move.getTo() > move.getFrom()) {// king side
 			if (isDoMove) {
 				from = move.getFrom() + 3U;
 				to = move.getFrom() + 1U;
@@ -35,7 +35,7 @@ static void checkCastleMove(Board& board, const Move& move, const Color color, c
 				from = move.getFrom() + 1U;
 				to = move.getFrom() + 3U;
 			}
-		} else {//queen side
+		} else {// queen side
 			if (isDoMove) {
 				from = move.getFrom() - 4U;
 				to = move.getFrom() - 1U;
@@ -82,7 +82,7 @@ void makeUndo(Board& board) {
 	board.key ^= board.hashKeys.sideKey;
 	const Color color = board.getColorTime();
 
-	checkPawnPromotion(board, move, color, false);//this must be the first thing to do
+	checkPawnPromotion(board, move, color, false);// this must be the first thing to do
 
 	const Piece piece = board.getPieceFromSquare(color, move.getTo());
 
@@ -90,16 +90,16 @@ void makeUndo(Board& board) {
 		checkEnPassantCaptured(board, move, color, false);
 	else if (piece == KING)
 		checkCastleMove(board, move, color, false);
-	//Check castle permission must be done every move time
+	// Check castle permission must be done every move time
 	board.setCastlePermission(board.history[board.historyCount].getCastlePermission());
 
-	//set or clear en passant square
+	// set or clear en passant square
 	board.setEnPassantSquare(board.history[board.historyCount].getEnPassantSquare());
 
 	board.unsetPieceOnSquare(piece, color, move.getTo());
 	board.setPieceOnSquare(piece, color, move.getFrom());
 
-	if (move.isCapture()) //if is a capture move than put the piece back			
+	if (move.isCapture()) // if is a capture move than put the piece back			
 		board.setPieceOnSquare(move.getCaptured(), ~color, move.getTo());
 
 	if (!board.whiteTime)
@@ -143,21 +143,21 @@ bool makeMove(Board& board, const Move& move) {
 	//0=====================================================================0
 
 	++board.fiftyMove;
-	if (move.isCapture()) {//if is a capture move then 
-		board.fiftyMove = 0U;//reset fifty move counter
-		board.unsetPieceOnSquare(move.getCaptured(), ~color, move.getTo());//remove the captured piece
+	if (move.isCapture()) {// if is a capture move then 
+		board.fiftyMove = 0U;// reset fifty move counter
+		board.unsetPieceOnSquare(move.getCaptured(), ~color, move.getTo());// remove the captured piece
 	}
 
 	board.unsetPieceOnSquare(piece, color, move.getFrom());
 	board.setPieceOnSquare(piece, color, move.getTo());
 
-	if (move.isPawnStart())//if is pawn start then set the  en passant square
+	if (move.isPawnStart())// if is pawn start then set the  en passant square
 		board.setEnPassantSquare(color == WHITE ? move.getTo() - 8U : move.getTo() + 8U);
-	else if (board.getEnPassantSquare() != NONE_SQUARE)//clear the en passant square
+	else if (board.getEnPassantSquare() != NONE_SQUARE)// clear the en passant square
 		board.setEnPassantSquare(NONE_SQUARE);
 
-	if (piece == PAWN) {//if is pawn move then
-		board.fiftyMove = 0U;//reset fifty move counter
+	if (piece == PAWN) {// if is pawn move then
+		board.fiftyMove = 0U;// reset fifty move counter
 		checkEnPassantCaptured(board, move, color, true);
 		checkPawnPromotion(board, move, color, true);
 	} else if (piece == KING)

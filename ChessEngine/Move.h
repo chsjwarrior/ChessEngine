@@ -58,7 +58,8 @@ public:
 	Color getColor() const noexcept;
 	void setColor(const Color color) noexcept;
 
-	/*This function creates an incomplet Move without some flags like:
+	/*
+	* This function creates an incomplet Move without some flags like:
 	* if is capture move
 	* if is pawn start
 	* if is en passant move
