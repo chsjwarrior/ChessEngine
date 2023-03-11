@@ -9,7 +9,7 @@ static bool canMakeKingCastle(const Board& board, const Color color) {
 	if (color == WHITE && board.hasCastlePermission(WHITE_KING_CASTLE) ||
 		color == BLACK && board.hasCastlePermission(BLACK_KING_CASTLE))
 		if (((board.getBitBoardOfPiece(KING, color) << 1U | board.getBitBoardOfPiece(KING, color) << 2U) & (friendPieces | enemyPieces)) == 0) { //isCastlePathClear
-			const Rank relativeRank = getRelativeRank(color, RANK_1);
+			const Rank relativeRank = getRelativeRankOf(color, RANK_1);
 			if (!attacks::isSquareAttacked(board, ~color, getSquareOf(FILE_F, relativeRank)))//isCastlePathSecury
 				return !attacks::isSquareAttacked(board, ~color, getSquareOf(FILE_G, relativeRank));
 		}
@@ -21,7 +21,7 @@ static bool canMakeQueenCastle(const Board& board, const Color color) {
 	if (color == WHITE && board.hasCastlePermission(WHITE_QUEEN_CASTLE) ||
 		color == BLACK && board.hasCastlePermission(BLACK_QUEEN_CASTLE))
 		if (((board.getBitBoardOfPiece(KING, color) >> 1U | board.getBitBoardOfPiece(KING, color) >> 2U | board.getBitBoardOfPiece(KING, color) >> 3U) & (friendPieces | enemyPieces)) == 0) {//isCastlePathClear
-			const Rank relativeRank = getRelativeRank(color, RANK_1);
+			const Rank relativeRank = getRelativeRankOf(color, RANK_1);
 			if (!attacks::isSquareAttacked(board, ~color, getSquareOf(FILE_C, relativeRank)))//isCastlePathSecury
 				return !attacks::isSquareAttacked(board, ~color, getSquareOf(FILE_D, relativeRank));//isCastlePathSecury
 		}
@@ -112,7 +112,7 @@ static void catalogMoves(const Board& board, Move moves[], const Piece piece, co
 			move.setColor(color);
 			move.setCaptured(board.getPieceFromSquare(~color, to));
 
-			if (getRelativeRank(color, RANK_8) == getRankOf(to)) {
+			if (getRelativeRankOf(color, RANK_8) == getRankOf(to)) {
 				for (Piece p = QUEEN; p > PAWN; --p) {
 					move.setPromotionPiece(p);
 					moves[movesCount++] = move;

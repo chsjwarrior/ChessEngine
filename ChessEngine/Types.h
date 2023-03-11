@@ -13,7 +13,7 @@ inline const int INFINIT = 30000;
 
 inline const int MATE = 29000;
 
-inline const uChar MAX_MOVES = 128U;
+inline const uShort MAX_MOVES = 256U;
 
 inline const uChar MAX_DEPTH = 64U;
 
@@ -69,10 +69,6 @@ inline Rank operator~(const Rank& r) noexcept {
 	return static_cast<Rank>(r ^ RANK_8);
 }
 
-inline Rank getRelativeRank(const Color color, const Rank rank) noexcept {
-	return color == WHITE ? rank : ~rank;
-}
-
 template <typename T>
 	requires std::integral<T>
 inline Square operator+(Square s, const T t) noexcept {
@@ -109,6 +105,11 @@ inline Color operator~(const Color& color) noexcept {
 	return static_cast<Color>(color ^ BLACK);
 }
 
+/* This function return the relative Rank of color */
+inline Rank getRelativeRankOf(const Color color, const Rank rank) noexcept {
+	return color == WHITE ? rank : ~rank;
+}
+
 /* This function returns the File of Square */
 inline File getFileOf(const Square square) noexcept {
 	if (square >= NONE_SQUARE) return NONE_FILE;
@@ -123,11 +124,54 @@ inline Rank getRankOf(const Square square) noexcept {
 	// rank = square / 8; or rank = square >> 3;
 }
 
-/* This function returns the Square of File and Rank */
+/* This function returns the Square of File and Rank intersection */
 inline Square getSquareOf(const File file, const Rank rank) noexcept {
 	if (file >= NONE_FILE || rank >= NONE_RANK) return NONE_SQUARE;
 	return static_cast<Square>(rank << 3 | file);
 	// square = 8 * rank + file; or square = (rank << 3) + file;
+}
+/* This function return the index of the diagonal from intersection of File and Rank */
+inline uChar getDiagonalOf(const File file, const Rank rank) noexcept {
+	return rank + 7 - file;
+}
+
+/* This function return the index of the diagonal from square */
+inline uChar getDiagonalOf(const Square square) noexcept {
+	return getDiagonalOf(getFileOf(square), getRankOf(square));
+}
+
+/* This function return the index of the anti-diagonal from intersection of File and Rank */
+inline uChar getAntiDiagonalOf(const File file, const Rank rank) noexcept {
+	return rank + file;
+}
+
+/* This function return the index of the anti-diagonal from square */
+inline uChar getAntiDiagonalOf(const Square square) noexcept {
+	return getAntiDiagonalOf(getFileOf(square), getRankOf(square));
+}
+
+/* this function return true if two squares are in same diagonal */
+inline bool squaresOnSameDiagonal(const Square square1, const Square square2) noexcept {
+	return ((square2 - square1) % 9) == 0;//if the square difference is divisible by 9 
+	// return ((square2 - square1) & 7) == ((square2 >> 3) - (square1 >> 3));//if their file distance equals the rank distance
+}
+
+/* this function return true if two squares are in same anti-diagonal */
+inline bool squaresOnSameAntiDiagonal(const Square square1, const Square square2) noexcept {
+	return ((square2 - square1) % 7) == 0;//if the square difference is divisible by 7 
+	// return ((sq2 - sq1) & 7) + ((sq2>>3) - (sq1>>3)) == 0;//if sum of file and rank distance is zero
+}
+
+/* this function return true if two squares are in same File */
+inline bool squaresOnSameFile(const Square square1, const Square square2) {
+	return ((square1 ^ square2) & 7) == 0;//The Symmetric difference\xor is zero
+	//return ((square2 - square1) & 7) == 0;//if their file distance is zero.
+}
+
+/* this function return true if two squares are in same Rank */
+bool squaresOnSameRank(const Square square1, const Square square2) {
+	return ((square1 ^ square2) & 56) == 0;//The Symmetric difference\xor is zero
+	//return ((square2 >> 3) - (square1 >> 3)) == 0;//if their Rank distance is zero
 }
 
 inline std::ostream& operator<<(std::ostream& os, const File& file) {

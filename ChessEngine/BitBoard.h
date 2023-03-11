@@ -122,3 +122,15 @@ inline BitBoard reverse(BitBoard bitBoard) noexcept {
 		((bitBoard >> 16) & 0xFFFF0000UL) | (bitBoard >> 48);
 	return bitBoard;
 }
+
+inline void printBitBoard(const char* title, const BitBoard bitBoard) {
+	std::cout << title << std::endl;
+	for (int i = 56, j; i >= 0; i = i - 8) {
+		for (j = 0; j < 8; j++)
+			if ((bitBoard >> (i + j) & 1) != 0)
+				std::cout << 1;
+			else
+				std::cout << 0;
+		std::cout << std::endl;
+	}
+}
