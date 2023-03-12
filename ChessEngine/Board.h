@@ -3,7 +3,7 @@
 #include "BitBoard.h"
 
 class Board {
-	BitBoard bitMaps[7][2];// The last position ist the union of all previous
+	BitBoard bitMaps[7][2] = { 0x0UL };// The last position ist the union of all previous
 	uLong key;
 	/*
 	flags uint16_t
@@ -52,7 +52,7 @@ class Board {
 		void operator()() noexcept;
 		Square getEnPassantSquare() const noexcept;
 		uChar getCastlePermission() const noexcept;
-	} history[MAX_MOVES];
+	} history[MAX_DEPTH << 1U];// 64 * 2
 
 	friend void makeUndo(Board& board);
 	friend bool makeMove(Board& board, const Move& move);

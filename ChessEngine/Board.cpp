@@ -37,25 +37,17 @@ uChar Board::Undo::getCastlePermission() const noexcept {
 //0=============================BOARD===============================0
 static const uChar ALL_PIECES = 0x6U;// Const value for the last position of the array BitBmaps
 
-Board::Board() : key(0UL), flags(BOARD_FLAGS_EMPTY), fiftyMove(0U), ply(0U), historyCount(0U), whiteTime(false), hashKeys() {
-	for (auto& b : bitMaps) {
-		b[0] = 0UL;
-		b[1] = 0UL;
-	}
-}
+Board::Board() : key(0UL), flags(BOARD_FLAGS_EMPTY), fiftyMove(0U), ply(0U), historyCount(0U), whiteTime(false), hashKeys() {}
 
 void Board::operator()() noexcept {
-	for (auto& b : bitMaps) {
-		b[0] = 0UL;
-		b[1] = 0UL;
-	}
+	for (auto& b : bitMaps)
+		b[0] = 0UL, b[1] = 0UL;
 	key = 0UL;
 	flags = BOARD_FLAGS_EMPTY;
 	fiftyMove = 0U;
 	ply = fiftyMove;
 	historyCount = ply;
 	whiteTime = false;// checkMate = true;
-
 	for (Undo& h : history)
 		h();
 }

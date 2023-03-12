@@ -17,7 +17,6 @@ static const BitBoard ANTI_DIAGONAL[15] = { 0x0000000000000001UL, 0x000000000000
 									0x0204081020408000UL, 0x0408102040800000UL, 0x0810204080000000UL, 0x1020408000000000UL,
 									0x2040800000000000UL, 0x4080000000000000UL, 0x8000000000000000UL };
 
-
 BitBoard attacks::getQueenAttacks(const BitBoard occupieds, const File file, const Rank rank, const BitBoard square) {
 	return getBishopAttacks(occupieds, file, rank, square) | getRookAttacks(occupieds, file, rank, square);
 }
@@ -97,7 +96,7 @@ BitBoard attacks::getPawnAttacks(const Color color, const BitBoard square) {
 }
 
 BitBoard attacks::getPawnAttacks(const BitBoard occupieds, const Color color, const BitBoard square) {
-	return getPawnAttacks(color, square) & occupieds;/// Pawn moves to diagonal only if has occupied square
+	return getPawnAttacks(color, square) & occupieds;/// Pawn moves to diagonal only if the square is occupied
 }
 
 BitBoard attacks::getPawnEnPassantAttack(const Color color, const BitBoard enPassant, const BitBoard square) {
