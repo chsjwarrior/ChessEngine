@@ -90,6 +90,7 @@ void makeUndo(Board& board) {
 		checkEnPassantCaptured(board, move, color, false);
 	else if (piece == KING)
 		checkCastleMove(board, move, color, false);
+
 	// Check castle permission must be done every move time
 	board.setCastlePermission(board.history[board.historyCount].getCastlePermission());
 

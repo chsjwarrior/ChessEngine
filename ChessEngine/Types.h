@@ -101,8 +101,8 @@ inline Piece& operator--(Piece& p) noexcept {
 	return p = p == PAWN ? NONE_PIECE : static_cast<Piece>(static_cast<uInt>(p) - 1U);
 }
 
-inline Color operator~(const Color& color) noexcept {
-	return static_cast<Color>(color ^ BLACK);
+inline Color operator~(const Color& c) noexcept {
+	return static_cast<Color>(c ^ BLACK);
 }
 
 /* This function return the relative Rank of color */
@@ -112,24 +112,22 @@ inline Rank getRelativeRankOf(const Color color, const Rank rank) noexcept {
 
 /* This function returns the File of Square */
 inline File getFileOf(const Square square) noexcept {
-	if (square >= NONE_SQUARE) return NONE_FILE;
 	return static_cast<File>(square & 7U);
 	// file = square % 8; or file = square & 7;
 }
 
 /* This function returns the Rank of Square */
 inline Rank getRankOf(const Square square) noexcept {
-	if (square >= NONE_SQUARE) return NONE_RANK;
 	return static_cast<Rank>(square >> 3);
 	// rank = square / 8; or rank = square >> 3;
 }
 
 /* This function returns the Square of File and Rank intersection */
 inline Square getSquareOf(const File file, const Rank rank) noexcept {
-	if (file >= NONE_FILE || rank >= NONE_RANK) return NONE_SQUARE;
 	return static_cast<Square>(rank << 3 | file);
 	// square = 8 * rank + file; or square = (rank << 3) + file;
 }
+
 /* This function return the index of the diagonal from intersection of File and Rank */
 inline uChar getDiagonalOf(const File file, const Rank rank) noexcept {
 	return rank + 7 - file;

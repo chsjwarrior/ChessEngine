@@ -97,11 +97,7 @@ static void catalogCastleMoves(const Board& board, Move moves[], const Color col
 static void catalogMoves(const Board& board, Move moves[], const Piece piece, const Color color, const Square from, BitBoard attacks) {
 	Square to;
 	Move move;
-	Square(*popSquareOf)(BitBoard&);
-	if (color == WHITE)
-		popSquareOf = popFirstSquareOf;
-	else
-		popSquareOf = popLastSquareOf;
+	Square(*popSquareOf)(BitBoard&) = color == WHITE ? popFirstSquareOf : popLastSquareOf;
 
 	if (piece == PAWN) {
 		while (attacks) {
@@ -170,11 +166,7 @@ static uShort generateMoves(const Board& board, Move moves[]) {
 	BitBoard attacks;
 	BitBoard pieceBitBoard;
 	Square square;
-	Square(*popSquareOf)(BitBoard&);
-	if (color == WHITE)
-		popSquareOf = popFirstSquareOf;
-	else
-		popSquareOf = popLastSquareOf;
+	Square(*popSquareOf)(BitBoard&) = color == WHITE ? popFirstSquareOf : popLastSquareOf;
 
 	for (Piece p = PAWN; p != NONE_PIECE; ++p) {
 		pieceBitBoard = board.getBitBoardOf(p, color);

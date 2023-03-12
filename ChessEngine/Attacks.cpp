@@ -22,7 +22,7 @@ BitBoard attacks::getQueenAttacks(const BitBoard occupieds, const File file, con
 	return getBishopAttacks(occupieds, file, rank, square) | getRookAttacks(occupieds, file, rank, square);
 }
 
-static BitBoard hyperbolaQuintessence(const BitBoard occupieds, const BitBoard mask, const BitBoard square) {
+static inline BitBoard hyperbolaQuintessence(const BitBoard occupieds, const BitBoard mask, const BitBoard square) {
 	BitBoard forward = occupieds & mask;
 	BitBoard reverse = getReverse(forward);
 	forward -= (square << 1U);
