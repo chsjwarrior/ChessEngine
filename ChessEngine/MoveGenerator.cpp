@@ -1,14 +1,14 @@
 #include "MoveGenerator.h"
 
-static BitBoard friendPieces;
-static BitBoard enemyPieces;
+static BitBoard friendBitBoard;
+static BitBoard enemyBitBoard;
 static uShort movesCount;
 
 /* This function tests if is possible to make King castle */
 static bool canMakeKingCastle(const Board& board, const Color color) {
 	if (color == WHITE && board.hasCastlePermission(WHITE_KING_CASTLE) ||
 		color == BLACK && board.hasCastlePermission(BLACK_KING_CASTLE))
-		if (((board.getBitBoardOfPiece(KING, color) << 1U | board.getBitBoardOfPiece(KING, color) << 2U) & (friendPieces | enemyPieces)) == 0) { //isCastlePathClear
+		if (((board.getBitBoardOf(KING, color) << 1U | board.getBitBoardOf(KING, color) << 2U) & (friendBitBoard | enemyBitBoard)) == 0) { //isCastlePathClear
 			const Rank relativeRank = getRelativeRankOf(color, RANK_1);
 			if (!attacks::isSquareAttacked(board, ~color, getSquareOf(FILE_F, relativeRank)))// isCastlePathSecury
 				return !attacks::isSquareAttacked(board, ~color, getSquareOf(FILE_G, relativeRank));
@@ -20,7 +20,7 @@ static bool canMakeKingCastle(const Board& board, const Color color) {
 static bool canMakeQueenCastle(const Board& board, const Color color) {
 	if (color == WHITE && board.hasCastlePermission(WHITE_QUEEN_CASTLE) ||
 		color == BLACK && board.hasCastlePermission(BLACK_QUEEN_CASTLE))
-		if (((board.getBitBoardOfPiece(KING, color) >> 1U | board.getBitBoardOfPiece(KING, color) >> 2U | board.getBitBoardOfPiece(KING, color) >> 3U) & (friendPieces | enemyPieces)) == 0) {//isCastlePathClear
+		if (((board.getBitBoardOf(KING, color) >> 1U | board.getBitBoardOf(KING, color) >> 2U | board.getBitBoardOf(KING, color) >> 3U) & (friendBitBoard | enemyBitBoard)) == 0) {//isCastlePathClear
 			const Rank relativeRank = getRelativeRankOf(color, RANK_1);
 			if (!attacks::isSquareAttacked(board, ~color, getSquareOf(FILE_C, relativeRank)))// isCastlePathSecury
 				return !attacks::isSquareAttacked(board, ~color, getSquareOf(FILE_D, relativeRank));// isCastlePathSecury
@@ -38,42 +38,42 @@ static BitBoard getPieceAttacks(const Board& board, const Piece piece, const Col
 	else if (piece == KNIGHT)
 		attacks = attacks::getKnightAttacks(SQUARE_MASK[square]);
 	else {
-		const BitBoard allPieces = friendPieces | enemyPieces;
+		const BitBoard occupieds = friendBitBoard | enemyBitBoard;
 
 		if (piece == PAWN) {
 			if (moveType == ALL) {
-				attacks = attacks::getPawnMoves(allPieces, color, SQUARE_MASK[square]);
-				attacks |= attacks::getPawnAttacks(enemyPieces, color, SQUARE_MASK[square]);
+				attacks = attacks::getPawnMoves(occupieds, color, SQUARE_MASK[square]);
+				attacks |= attacks::getPawnAttacks(enemyBitBoard, color, SQUARE_MASK[square]);
 				attacks |= attacks::getPawnEnPassantAttack(color, SQUARE_MASK[board.getEnPassantSquare()], SQUARE_MASK[square]);
 			} else if (moveType == CAPTURES) {
-				attacks = attacks::getPawnAttacks(enemyPieces, color, SQUARE_MASK[square]);
+				attacks = attacks::getPawnAttacks(enemyBitBoard, color, SQUARE_MASK[square]);
 				attacks |= attacks::getPawnEnPassantAttack(color, SQUARE_MASK[board.getEnPassantSquare()], SQUARE_MASK[square]);
 			} else if (moveType == QUIETS)
-				attacks = attacks::getPawnMoves(allPieces, color, SQUARE_MASK[square]);
+				attacks = attacks::getPawnMoves(occupieds, color, SQUARE_MASK[square]);
 			return attacks;
 		} else {
 			const File file = getFileOf(square);
 			const Rank rank = getRankOf(square);
 
 			if (piece == BISHOP)
-				attacks = attacks::getBishopAttacks(allPieces, file, rank, SQUARE_MASK[square]);
+				attacks = attacks::getBishopAttacks(occupieds, file, rank, SQUARE_MASK[square]);
 			else if (piece == ROOK)
-				attacks = attacks::getRookAttacks(allPieces, file, rank, SQUARE_MASK[square]);
+				attacks = attacks::getRookAttacks(occupieds, file, rank, SQUARE_MASK[square]);
 			else if (piece == QUEEN)
-				attacks = attacks::getQueenAttacks(allPieces, file, rank, SQUARE_MASK[square]);
+				attacks = attacks::getQueenAttacks(occupieds, file, rank, SQUARE_MASK[square]);
 		}
 	}
-	attacks &= ~friendPieces;// remove friend bitmap
+	attacks &= ~friendBitBoard;// remove friend bitmap
 	if (moveType == QUIETS)
-		attacks &= ~enemyPieces;// remove enemy bitmap
+		attacks &= ~enemyBitBoard;// remove enemy bitmap
 	else if (moveType == CAPTURES)
-		attacks &= enemyPieces;// keep enemy bitmap
+		attacks &= enemyBitBoard;// keep enemy bitmap
 	return attacks;
 }
 
 /* This function populates an array with the castle moves */
 static void catalogCastleMoves(const Board& board, Move moves[], const Color color) {
-	Square kingSquare = getFirstSquareOf(board.getBitBoardOfPiece(KING, color));
+	Square kingSquare = getFirstSquareOf(board.getBitBoardOf(KING, color));
 	if (!attacks::isSquareAttacked(board, ~color, kingSquare)) {// if King is not in check
 		Move move;
 		if (canMakeKingCastle(board, color)) {
@@ -163,8 +163,8 @@ static void catalogMoves(const Board& board, Move moves[], const Piece piece, co
 template<MoveType moveType>
 static uShort generateMoves(const Board& board, Move moves[]) {
 	const Color color = board.getColorTime();
-	friendPieces = board.getBitBoardOfAllPieces(color);
-	enemyPieces = board.getBitBoardOfAllPieces(~color);
+	friendBitBoard = board.getBitBoardOf(color);
+	enemyBitBoard = board.getBitBoardOf(~color);
 	movesCount = 0U;
 
 	BitBoard attacks;
@@ -177,7 +177,7 @@ static uShort generateMoves(const Board& board, Move moves[]) {
 		popSquareOf = popLastSquareOf;
 
 	for (Piece p = PAWN; p != NONE_PIECE; ++p) {
-		pieceBitBoard = board.getBitBoardOfPiece(p, color);
+		pieceBitBoard = board.getBitBoardOf(p, color);
 		while (pieceBitBoard) {
 			square = popSquareOf(pieceBitBoard);
 			attacks = getPieceAttacks<moveType>(board, p, color, square);
@@ -196,8 +196,8 @@ uShort moveGenerator::generateAllMoves(const Board& board, Move moves[], const S
 	if (piece == NONE_PIECE)
 		return 0U;
 
-	friendPieces = board.getBitBoardOfAllPieces(color);
-	enemyPieces = board.getBitBoardOfAllPieces(~color);
+	friendBitBoard = board.getBitBoardOf(color);
+	enemyBitBoard = board.getBitBoardOf(~color);
 	movesCount = 0U;
 
 	BitBoard attacks = getPieceAttacks<ALL>(board, piece, color, square);

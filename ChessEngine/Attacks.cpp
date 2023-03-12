@@ -18,37 +18,32 @@ static const BitBoard ANTI_DIAGONAL[15] = { 0x0000000000000001UL, 0x000000000000
 									0x2040800000000000UL, 0x4080000000000000UL, 0x8000000000000000UL };
 
 
-BitBoard attacks::getQueenAttacks(const BitBoard allPieces, const File file, const Rank rank, const BitBoard square) {
-	return getBishopAttacks(allPieces, file, rank, square) | getRookAttacks(allPieces, file, rank, square);
+BitBoard attacks::getQueenAttacks(const BitBoard occupieds, const File file, const Rank rank, const BitBoard square) {
+	return getBishopAttacks(occupieds, file, rank, square) | getRookAttacks(occupieds, file, rank, square);
 }
 
-BitBoard attacks::getBishopAttacks(const BitBoard allPieces, const File file, const Rank rank, const BitBoard square) {
-	const BitBoard reverseSquare = reverse(square);
-	// Hyperbola Quintessence Algorithm.
-	uShort index = getDiagonalOf(file, rank);
-	BitBoard aux1 = (allPieces & DIAGONAL[index]) - 2 * square;
-	BitBoard aux2 = reverse(allPieces & DIAGONAL[index]) - 2 * reverseSquare;
-	const BitBoard dMoves = (aux1 ^ reverse(aux2)) & DIAGONAL[index];
-	// Hyperbola Quintessence Algorithm.
-	index = getAntiDiagonalOf(file, rank);
-	aux1 = (allPieces & ANTI_DIAGONAL[index]) - 2 * square;
-	aux2 = reverse(allPieces & ANTI_DIAGONAL[index]) - 2 * reverseSquare;
-	const BitBoard adMoves = (aux1 ^ reverse(aux2)) & ANTI_DIAGONAL[index];
+static BitBoard hyperbolaQuintessence(const BitBoard occupieds, const BitBoard mask, const BitBoard square) {
+	BitBoard forward = occupieds & mask;
+	BitBoard reverse = getReverse(forward);
+	forward -= (square << 1U);
+	reverse -= (getReverse(square) << 1U);
+	reverse = getReverse(reverse);
+	return (forward ^ reverse) & mask;
+}
 
+BitBoard attacks::getBishopAttacks(const BitBoard occupieds, const File file, const Rank rank, const BitBoard square) {
+	const BitBoard dMoves = hyperbolaQuintessence(occupieds, DIAGONAL[getDiagonalOf(file, rank)], square);
+	const BitBoard adMoves = hyperbolaQuintessence(occupieds, ANTI_DIAGONAL[getAntiDiagonalOf(file, rank)], square);
 	return dMoves | adMoves;
 }
 
-BitBoard attacks::getRookAttacks(const BitBoard allPieces, const File file, const Rank rank, const BitBoard square) {
-	const BitBoard reverseSquare = reverse(square);
-	// Hyperbola Quintessence Algorithm.
-	BitBoard aux1 = allPieces - 2 * square;
-	BitBoard aux2 = reverse(allPieces) - 2 * reverseSquare;
-	const BitBoard hMoves = (aux1 ^ reverse(aux2)) & RANKS[rank];
-	// Hyperbola Quintessence Algorithm.
-	aux1 = (allPieces & FILES[file]) - 2 * square;
-	aux2 = reverse(allPieces & FILES[file]) - 2 * reverseSquare;
-	const BitBoard vMoves = (aux1 ^ reverse(aux2)) & FILES[file];
-
+BitBoard attacks::getRookAttacks(const BitBoard occupieds, const File file, const Rank rank, const BitBoard square) {
+	BitBoard forward = occupieds - (square << 1U);
+	BitBoard reverse = getReverse(occupieds);
+	reverse -= (getReverse(square) << 1U);
+	reverse = getReverse(reverse);
+	const BitBoard hMoves = (forward ^ reverse) & RANKS[rank];
+	const BitBoard vMoves = hyperbolaQuintessence(occupieds, FILES[file], square);
 	return hMoves | vMoves;
 }
 
@@ -77,14 +72,14 @@ BitBoard attacks::getKingAttacks(const BitBoard square) {
 	return moves;
 }
 
-BitBoard attacks::getPawnMoves(const BitBoard allPieces, const Color color, const BitBoard square) {
+BitBoard attacks::getPawnMoves(const BitBoard occupieds, const Color color, const BitBoard square) {
 	BitBoard moves = 0UL;
 	if (color == WHITE) {
-		moves |= square << 8 & ~allPieces;//normal move		
-		moves |= square << 16 & ~allPieces & ~allPieces << 8 & RANKS[RANK_4];//start move
+		moves |= square << 8 & ~occupieds;//normal move		
+		moves |= square << 16 & ~occupieds & ~occupieds << 8 & RANKS[RANK_4];//start move
 	} else {
-		moves |= square >> 8 & ~allPieces;//normal move		
-		moves |= square >> 16 & ~allPieces & ~allPieces >> 8 & RANKS[RANK_5];//start move
+		moves |= square >> 8 & ~occupieds;//normal move		
+		moves |= square >> 16 & ~occupieds & ~occupieds >> 8 & RANKS[RANK_5];//start move
 	}
 	return moves;
 }
@@ -101,40 +96,40 @@ BitBoard attacks::getPawnAttacks(const Color color, const BitBoard square) {
 	return moves;
 }
 
-BitBoard attacks::getPawnAttacks(const BitBoard allPieces, const Color color, const BitBoard square) {
-	return getPawnAttacks(color, square) & allPieces;
+BitBoard attacks::getPawnAttacks(const BitBoard occupieds, const Color color, const BitBoard square) {
+	return getPawnAttacks(color, square) & occupieds;/// Pawn moves to diagonal only if has occupied square
 }
 
 BitBoard attacks::getPawnEnPassantAttack(const Color color, const BitBoard enPassant, const BitBoard square) {
-	//relative rank: 6 for White and 3 for Black
+	// relative rank: 6 for White and 3 for Black
 	return getPawnAttacks(color, square) & enPassant & RANKS[getRelativeRankOf(color, RANK_6)];
 }
 
 bool attacks::isSquareAttacked(const Board& board, const Color color, const Square square) {
-	//King
+	// King
 	BitBoard attacks = getKingAttacks(SQUARE_MASK[square]);
-	if (attacks & board.getBitBoardOfPiece(KING, color))
+	if (attacks & board.getBitBoardOf(KING, color))
 		return true;
-	//Knight
+	// Knight
 	attacks = getKnightAttacks(SQUARE_MASK[square]);
-	if (attacks & board.getBitBoardOfPiece(KNIGHT, color))
+	if (attacks & board.getBitBoardOf(KNIGHT, color))
 		return true;
-	//Pawn
+	// Pawn
 	attacks = getPawnAttacks(~color, SQUARE_MASK[square]);
-	if (attacks & board.getBitBoardOfPiece(PAWN, color))
+	if (attacks & board.getBitBoardOf(PAWN, color))
 		return true;
 
 	const File file = getFileOf(square);
 	const Rank rank = getRankOf(square);
-	const BitBoard allPieces = board.getBitBoardOfAllPieces(WHITE) | board.getBitBoardOfAllPieces(BLACK);
+	const BitBoard occupieds = board.getBitBoardOf(WHITE) | board.getBitBoardOf(BLACK);
 
-	//Bishop
-	attacks = getBishopAttacks(allPieces, file, rank, SQUARE_MASK[square]);
-	if (attacks & board.getBitBoardOfPiece(BISHOP, color) || attacks & board.getBitBoardOfPiece(QUEEN, color))
+	// Bishop
+	attacks = getBishopAttacks(occupieds, file, rank, SQUARE_MASK[square]);
+	if (attacks & board.getBitBoardOf(BISHOP, color) || attacks & board.getBitBoardOf(QUEEN, color))
 		return true;
-	//Rook
-	attacks = getRookAttacks(allPieces, file, rank, SQUARE_MASK[square]);
-	if (attacks & board.getBitBoardOfPiece(ROOK, color) || attacks & board.getBitBoardOfPiece(QUEEN, color))
+	// Rook
+	attacks = getRookAttacks(occupieds, file, rank, SQUARE_MASK[square]);
+	if (attacks & board.getBitBoardOf(ROOK, color) || attacks & board.getBitBoardOf(QUEEN, color))
 		return true;
 	return false;
 }

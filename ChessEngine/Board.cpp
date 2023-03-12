@@ -83,10 +83,6 @@ Piece Board::getPieceFromSquare(const Color color, const Square square) const no
 	return piece;
 }
 
-BitBoard Board::getBitBoardOfAllPieces(const Color color) const noexcept {
-	return bitMaps[ALL_PIECES][color];
-}
-
 Square Board::getEnPassantSquare() const noexcept {
 	return static_cast<Square>(flags & 0x00FFU);
 }
@@ -122,7 +118,12 @@ bool Board::isRepetition() const noexcept {
 	return false;
 }
 
-BitBoard Board::getBitBoardOfPiece(const Piece piece, const Color color) const noexcept {
+BitBoard Board::getBitBoardOf(const Color color) const noexcept {
+	return bitMaps[ALL_PIECES][color];
+}
+
+
+BitBoard Board::getBitBoardOf(const Piece piece, const Color color) const noexcept {
 	return bitMaps[piece][color];
 }
 

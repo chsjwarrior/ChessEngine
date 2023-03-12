@@ -76,8 +76,6 @@ public:
 
 	Piece getPieceFromSquare(const Color color, const Square square) const noexcept;
 
-	BitBoard getBitBoardOfAllPieces(const Color color) const noexcept;
-
 	Square getEnPassantSquare() const noexcept;
 
 	void setEnPassantSquare(const Square square) noexcept;
@@ -90,7 +88,9 @@ public:
 
 	bool isRepetition() const noexcept;
 
-	BitBoard getBitBoardOfPiece(const Piece piece, const Color color) const noexcept;
+	BitBoard getBitBoardOf(const Color color) const noexcept;
+
+	BitBoard getBitBoardOf(const Piece piece, const Color color) const noexcept;
 
 	uLong getHashkey() const noexcept;
 

@@ -113,7 +113,7 @@ inline uChar bitCount(const BitBoard bitBoard) noexcept {
 #endif
 
 /* This function returns the reverse bit position */
-inline BitBoard reverse(BitBoard bitBoard) noexcept {
+inline BitBoard getReverse(BitBoard bitBoard) noexcept {
 	bitBoard = (bitBoard & 0x5555555555555555UL) << 1 | (bitBoard >> 1) & 0x5555555555555555UL;
 	bitBoard = (bitBoard & 0x3333333333333333UL) << 2 | (bitBoard >> 2) & 0x3333333333333333UL;
 	bitBoard = (bitBoard & 0x0F0F0F0F0F0F0F0FUL) << 4 | (bitBoard >> 4) & 0x0F0F0F0F0F0F0F0FUL;

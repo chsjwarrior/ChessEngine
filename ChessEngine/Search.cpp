@@ -97,7 +97,7 @@ static int alphaBeta(Board& board, short depth, int alpha, int beta) {
 	}
 	*/
 	const Color color = board.getColorTime();
-	const bool inCheck = attacks::isSquareAttacked(board, ~color, getFirstSquareOf(board.getBitBoardOfPiece(KING, color)));
+	const bool inCheck = attacks::isSquareAttacked(board, ~color, getFirstSquareOf(board.getBitBoardOf(KING, color)));
 
 	if (inCheck)
 		++depth;

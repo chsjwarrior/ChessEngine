@@ -82,7 +82,7 @@ static void evaluatePosition(const Board& board, const Color color, int& materia
 		popSquareOf = popLastSquareOf;
 
 	for (Piece p = PAWN; p != NONE_PIECE; ++p) {
-		pieceBitBoard = board.getBitBoardOfPiece(p, color);
+		pieceBitBoard = board.getBitBoardOf(p, color);
 		while (pieceBitBoard) {
 			s = popSquareOf(pieceBitBoard);
 
