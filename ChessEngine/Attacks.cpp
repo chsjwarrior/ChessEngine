@@ -1,22 +1,5 @@
 #include "Attacks.h"
 
-//files Bitmap
-static const BitBoard FILES[8] = { 0x0101010101010101UL, 0x0202020202020202UL , 0x0404040404040404UL, 0x0808080808080808UL,
-								0x1010101010101010UL, 0x2020202020202020UL, 0x4040404040404040UL, 0x8080808080808080UL };
-//ranks Bitmap
-static const BitBoard RANKS[8] = { 0x00000000000000FFUL, 0x000000000000FF00UL, 0x0000000000FF0000UL, 0x00000000FF000000UL,
-								0x000000FF00000000UL, 0x0000FF0000000000UL, 0x00FF000000000000UL, 0xFF00000000000000UL };
-
-static const BitBoard DIAGONAL[15] = { 0x0000000000000080UL, 0x0000000000008040UL, 0x0000000000804020UL, 0x0000000080402010UL,
-									0x0000008040201008UL, 0x0000804020100804UL, 0x0080402010080402UL, 0x8040201008040201UL,
-									0x4020100804020100UL, 0x2010080402010000UL, 0x1008040201000000UL, 0x0804020100000000UL,
-									0x0402010000000000UL, 0x0201000000000000UL, 0x0100000000000000UL };
-
-static const BitBoard ANTI_DIAGONAL[15] = { 0x0000000000000001UL, 0x0000000000000102UL, 0x0000000000010204UL, 0x0000000001020408UL,
-									0x0000000102040810UL, 0x0000010204081020UL, 0x0001020408102040UL, 0x0102040810204080UL,
-									0x0204081020408000UL, 0x0408102040800000UL, 0x0810204080000000UL, 0x1020408000000000UL,
-									0x2040800000000000UL, 0x4080000000000000UL, 0x8000000000000000UL };
-
 BitBoard attacks::getQueenAttacks(const BitBoard occupieds, const File file, const Rank rank, const BitBoard square) {
 	return getBishopAttacks(occupieds, file, rank, square) | getRookAttacks(occupieds, file, rank, square);
 }
@@ -24,8 +7,8 @@ BitBoard attacks::getQueenAttacks(const BitBoard occupieds, const File file, con
 static inline BitBoard hyperbolaQuintessence(const BitBoard occupieds, const BitBoard mask, const BitBoard square) {
 	BitBoard forward = occupieds & mask;
 	BitBoard reverse = getReverse(forward);
-	forward -= (square << 1U);
-	reverse -= (getReverse(square) << 1U);
+	forward -= (square << 1U);// 2 * square
+	reverse -= (getReverse(square) << 1U);// 2 * reverse square
 	reverse = getReverse(reverse);
 	return (forward ^ reverse) & mask;
 }
@@ -37,9 +20,9 @@ BitBoard attacks::getBishopAttacks(const BitBoard occupieds, const File file, co
 }
 
 BitBoard attacks::getRookAttacks(const BitBoard occupieds, const File file, const Rank rank, const BitBoard square) {
-	BitBoard forward = occupieds - (square << 1U);
+	BitBoard forward = occupieds - (square << 1U);// 2 * square
 	BitBoard reverse = getReverse(occupieds);
-	reverse -= (getReverse(square) << 1U);
+	reverse -= (getReverse(square) << 1U);// 2 * reverse square
 	reverse = getReverse(reverse);
 	const BitBoard hMoves = (forward ^ reverse) & RANKS[rank];
 	const BitBoard vMoves = hyperbolaQuintessence(occupieds, FILES[file], square);
@@ -96,7 +79,7 @@ BitBoard attacks::getPawnAttacks(const Color color, const BitBoard square) {
 }
 
 BitBoard attacks::getPawnAttacks(const BitBoard occupieds, const Color color, const BitBoard square) {
-	return getPawnAttacks(color, square) & occupieds;/// Pawn moves to diagonal only if the square is occupied
+	return getPawnAttacks(color, square) & occupieds;// Pawn moves to diagonal only if the square is occupied
 }
 
 BitBoard attacks::getPawnEnPassantAttack(const Color color, const BitBoard enPassant, const BitBoard square) {

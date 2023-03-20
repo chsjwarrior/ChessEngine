@@ -28,7 +28,7 @@ static bool canMakeQueenCastle(const Board& board, const Color color) {
 	return false;
 }
 
-enum MoveType { QUIETS, CAPTURES, ALL };
+enum MoveType { QUIETS, CAPTURES, ALL };// Quiet moves has not material change
 /* This function returns a bitmap with the attacked squares */
 template<MoveType moveType>
 static BitBoard getPieceAttacks(const Board& board, const Piece piece, const Color color, const Square square) {
@@ -48,8 +48,8 @@ static BitBoard getPieceAttacks(const Board& board, const Piece piece, const Col
 			} else if (moveType == CAPTURES) {
 				attacks = attacks::getPawnAttacks(enemyBitBoard, color, SQUARE_MASK[square]);
 				attacks |= attacks::getPawnEnPassantAttack(color, SQUARE_MASK[board.getEnPassantSquare()], SQUARE_MASK[square]);
-			} else if (moveType == QUIETS)
-				attacks = attacks::getPawnMoves(occupieds, color, SQUARE_MASK[square]);
+			} else if (moveType == QUIETS)// Quiets move can not have pawn promotion
+				attacks = attacks::getPawnMoves(occupieds, color, SQUARE_MASK[square]) & ~RANKS[getRelativeRankOf(color, RANK_8)];
 			return attacks;
 		} else {
 			const File file = getFileOf(square);
