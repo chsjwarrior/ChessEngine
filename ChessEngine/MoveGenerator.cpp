@@ -7,24 +7,28 @@ static uShort movesCount;
 /* This function tests if is possible to make King castle */
 static bool canMakeKingCastle(const Board& board, const Color color) {
 	if (color == WHITE && board.hasCastlePermission(WHITE_KING_CASTLE) ||
-		color == BLACK && board.hasCastlePermission(BLACK_KING_CASTLE))
-		if (((board.getBitBoardOf(KING, color) << 1U | board.getBitBoardOf(KING, color) << 2U) & (friendBitBoard | enemyBitBoard)) == 0) { //isCastlePathClear
-			const Rank relativeRank = getRelativeRankOf(color, RANK_1);
-			if (!attacks::isSquareAttacked(board, ~color, getSquareOf(FILE_F, relativeRank)))// isCastlePathSecury
-				return !attacks::isSquareAttacked(board, ~color, getSquareOf(FILE_G, relativeRank));
-		}
+		color == BLACK && board.hasCastlePermission(BLACK_KING_CASTLE)) {
+		const Rank relativeRank = getRelativeRankOf(color, RANK_1);
+		const Square f = getSquareOf(FILE_F, relativeRank);
+		const Square g = getSquareOf(FILE_G, relativeRank);
+		if (((SQUARE_MASK[f] | SQUARE_MASK[g]) & (friendBitBoard | enemyBitBoard)) == 0)  // isCastlePathClear
+			if (!attacks::isSquareAttacked(board, ~color, f))// isCastlePathSecury
+				return !attacks::isSquareAttacked(board, ~color, g);// isCastlePathSecury
+	}
 	return false;
 }
 
 /* This function tests if is possible to make Queen castle */
 static bool canMakeQueenCastle(const Board& board, const Color color) {
 	if (color == WHITE && board.hasCastlePermission(WHITE_QUEEN_CASTLE) ||
-		color == BLACK && board.hasCastlePermission(BLACK_QUEEN_CASTLE))
-		if (((board.getBitBoardOf(KING, color) >> 1U | board.getBitBoardOf(KING, color) >> 2U | board.getBitBoardOf(KING, color) >> 3U) & (friendBitBoard | enemyBitBoard)) == 0) {//isCastlePathClear
-			const Rank relativeRank = getRelativeRankOf(color, RANK_1);
-			if (!attacks::isSquareAttacked(board, ~color, getSquareOf(FILE_C, relativeRank)))// isCastlePathSecury
-				return !attacks::isSquareAttacked(board, ~color, getSquareOf(FILE_D, relativeRank));// isCastlePathSecury
-		}
+		color == BLACK && board.hasCastlePermission(BLACK_QUEEN_CASTLE)) {
+		const Rank relativeRank = getRelativeRankOf(color, RANK_1);
+		const Square c = getSquareOf(FILE_C, relativeRank);
+		const Square d = getSquareOf(FILE_D, relativeRank);
+		if (((SQUARE_MASK[c] | SQUARE_MASK[d] | SQUARE_MASK[getSquareOf(FILE_B, relativeRank)]) & (friendBitBoard | enemyBitBoard)) == 0) // isCastlePathClear
+			if (!attacks::isSquareAttacked(board, ~color, c))// isCastlePathSecury
+				return !attacks::isSquareAttacked(board, ~color, d);// isCastlePathSecury
+	}
 	return false;
 }
 
@@ -108,7 +112,8 @@ static void catalogMoves(const Board& board, Move moves[], const Piece piece, co
 			move.setColor(color);
 			move.setCaptured(board.getPieceFromSquare(~color, to));
 
-			if (getRelativeRankOf(color, RANK_8) == getRankOf(to)) {
+			// if (getRelativeRankOf(color, RANK_8) == getRankOf(to))
+			if (RANKS[getRelativeRankOf(color, RANK_8)] & SQUARE_MASK[to]) {
 				for (Piece p = QUEEN; p > PAWN; --p) {
 					move.setPromotionPiece(p);
 					moves[movesCount++] = move;
@@ -116,8 +121,7 @@ static void catalogMoves(const Board& board, Move moves[], const Piece piece, co
 				continue;
 			}
 			if (!move.isCapture())
-				if (color == WHITE && move.getTo() - move.getFrom() == 16 ||
-					color == BLACK && move.getFrom() - move.getTo() == 16)
+				if (std::abs(move.getTo() - move.getFrom()) == 16)
 					move.setPawnStart();
 				else if (to == board.getEnPassantSquare())
 					move.setEnPassantCapture();
