@@ -152,7 +152,7 @@ bool makeMove(Board& board, const Move& move) {
 	board.unsetPieceOnSquare(piece, color, move.getFrom());
 	board.setPieceOnSquare(piece, color, move.getTo());
 
-	if (move.isPawnStart())// if is pawn start then set the  en passant square
+	if (move.isPawnStart())// if is pawn start then set the en passant square
 		board.setEnPassantSquare(color == WHITE ? move.getTo() - 8U : move.getTo() + 8U);
 	else if (board.getEnPassantSquare() != NONE_SQUARE)// clear the en passant square
 		board.setEnPassantSquare(NONE_SQUARE);

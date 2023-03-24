@@ -32,10 +32,9 @@ static bool canMakeQueenCastle(const Board& board, const Color color) {
 	return false;
 }
 
-enum MoveType { QUIETS, CAPTURES, ALL };// Quiet moves has not material change
+enum MoveType { ALL, CAPTURES, QUIETS };// Quiet moves has not material change
 /* This function returns a bitmap with the attacked squares */
-template<MoveType moveType>
-static BitBoard getPieceAttacks(const Board& board, const Piece piece, const Color color, const Square square) {
+static BitBoard getPieceAttacks(const Board& board, const Piece piece, const Color color, const Square square, const MoveType moveType) {
 	BitBoard attacks = 0UL;
 	if (piece == KING)
 		attacks = attacks::getKingAttacks(SQUARE_MASK[square]);
@@ -160,8 +159,7 @@ static void catalogMoves(const Board& board, Move moves[], const Piece piece, co
 }
 
 /* This function generates the moves with the move type you need */
-template<MoveType moveType>
-static uShort generateMoves(const Board& board, Move moves[]) {
+static uShort generateMoves(const Board& board, Move moves[], const MoveType moveType) {
 	const Color color = board.getColorTime();
 	friendBitBoard = board.getBitBoardOf(color);
 	enemyBitBoard = board.getBitBoardOf(~color);
@@ -176,7 +174,7 @@ static uShort generateMoves(const Board& board, Move moves[]) {
 		pieceBitBoard = board.getBitBoardOf(p, color);
 		while (pieceBitBoard) {
 			square = popSquareOf(pieceBitBoard);
-			attacks = getPieceAttacks<moveType>(board, p, color, square);
+			attacks = getPieceAttacks(board, p, color, square, moveType);
 			catalogMoves(board, moves, p, color, square, attacks);
 		}
 	}
@@ -196,7 +194,7 @@ uShort moveGenerator::generateAllMoves(const Board& board, Move moves[], const S
 	enemyBitBoard = board.getBitBoardOf(~color);
 	movesCount = 0U;
 
-	BitBoard attacks = getPieceAttacks<ALL>(board, piece, color, square);
+	BitBoard attacks = getPieceAttacks(board, piece, color, square, ALL);
 	catalogMoves(board, moves, piece, color, square, attacks);
 	if (piece == KING)
 		catalogCastleMoves(board, moves, color);
@@ -204,15 +202,15 @@ uShort moveGenerator::generateAllMoves(const Board& board, Move moves[], const S
 }
 
 uShort moveGenerator::generateAllMoves(const Board& board, Move moves[]) {
-	return generateMoves<ALL>(board, moves);
+	return generateMoves(board, moves, ALL);
 }
 
 uShort generateQuietMoves(const Board& board, Move moves[]) {
-	return generateMoves<QUIETS>(board, moves);
+	return generateMoves(board, moves, QUIETS);
 }
 
 uShort moveGenerator::generateCaptureMoves(const Board& board, Move moves[]) {
-	return generateMoves<CAPTURES>(board, moves);
+	return generateMoves(board, moves, CAPTURES);
 }
 
 bool moveGenerator::moveExists(Board& board, const Move move) {
