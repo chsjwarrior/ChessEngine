@@ -174,7 +174,7 @@ inline bool squaresOnSameRank(const Square square1, const Square square2) {
 
 inline std::ostream& operator<<(std::ostream& os, const File& file) {
 	if (file < NONE_FILE)
-		os << file + 1;// static_cast<uChar>(file + 97U);
+		os << static_cast<char>(file + 97);
 	else
 		os << "NONE FILE";
 	return os;
@@ -182,7 +182,7 @@ inline std::ostream& operator<<(std::ostream& os, const File& file) {
 
 inline std::ostream& operator<<(std::ostream& os, const Rank& rank) {
 	if (rank < NONE_RANK)
-		os << rank + 1;// static_cast<uChar>(rank + 49U);
+		os << rank + 1;// static_cast<char>(rank + 49);
 	else
 		os << "NONE RANK";
 	return os;
