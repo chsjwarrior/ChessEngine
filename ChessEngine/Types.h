@@ -25,11 +25,11 @@ inline const uChar BLACK_KING_CASTLE = 4U; // = 0100
 
 inline const uChar BLACK_QUEEN_CASTLE = 8U; // = 1000
 
-enum File : uChar { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, NONE_FILE };
+enum File { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, NONE_FILE };
 
-enum Rank : uChar { RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8, NONE_RANK };
+enum Rank { RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8, NONE_RANK };
 
-enum Square : uChar {
+enum Square {
 	A1, B1, C1, D1, E1, F1, G1, H1,
 	A2, B2, C2, D2, E2, F2, G2, H2,
 	A3, B3, C3, D3, E3, F3, G3, H3,
@@ -38,19 +38,19 @@ enum Square : uChar {
 	A6, B6, C6, D6, E6, F6, G6, H6,
 	A7, B7, C7, D7, E7, F7, G7, H7,
 	A8, B8, C8, D8, E8, F8, G8, H8,
-	NONE_SQUARE // = 0X40U = 64
+	NONE_SQUARE // = 0X40 = 64
 };
 
-enum Color : uChar { WHITE, BLACK };
+enum Color { WHITE, BLACK };
 
-enum Piece : uChar { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, NONE_PIECE }; // NONE_PIECE = 0X6U
+enum Piece { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, NONE_PIECE }; // NONE_PIECE = 0X6
 
 inline File& operator++(File& f) noexcept {
-	return f = static_cast<File>((static_cast<uInt>(f) + 1U) % 9U);
+	return f = static_cast<File>((f + 1) % 9);
 }
 
 inline File& operator--(File& f) noexcept {
-	return f = f == FILE_A ? NONE_FILE : static_cast<File>(static_cast<uInt>(f) - 1U);
+	return f = f == FILE_A ? NONE_FILE : static_cast<File>(f - 1);
 }
 
 inline File operator~(const File& f) noexcept {
@@ -58,11 +58,11 @@ inline File operator~(const File& f) noexcept {
 }
 
 inline Rank& operator++(Rank& r) noexcept {
-	return r = static_cast<Rank>((static_cast<uInt>(r) + 1U) % 9U);
+	return r = static_cast<Rank>((r + 1) % 9);
 }
 
 inline Rank& operator--(Rank& r) noexcept {
-	return r = r == RANK_1 ? NONE_RANK : static_cast<Rank>(static_cast<uInt>(r) - 1U);
+	return r = r == RANK_1 ? NONE_RANK : static_cast<Rank>(r - 1);
 }
 
 inline Rank operator~(const Rank& r) noexcept {
@@ -72,21 +72,21 @@ inline Rank operator~(const Rank& r) noexcept {
 template <typename T>
 	requires std::integral<T>
 inline Square operator+(Square s, const T t) noexcept {
-	return static_cast<Square>((static_cast<T>(s) + t) % 65U);
+	return static_cast<Square>((static_cast<T>(s) + t) % 65);
 }
 
 template <typename T>
 	requires std::integral<T>
 inline Square operator-(Square s, const T t) noexcept {
-	return static_cast<Square>((static_cast<T>(s) - (t % 64U)) % 64U);
+	return static_cast<Square>((static_cast<T>(s) - (t % 64)) % 64);
 }
 
 inline Square& operator++(Square& s) noexcept {
-	return s = s + 1U;
+	return s = s + 1;
 }
 
 inline Square& operator--(Square& s) noexcept {
-	return s = s - 1U;
+	return s = s - 1;
 }
 
 inline Square operator~(const Square& s) noexcept {
@@ -94,11 +94,11 @@ inline Square operator~(const Square& s) noexcept {
 }
 
 inline Piece& operator++(Piece& p) noexcept {
-	return p = static_cast<Piece>((static_cast<uChar>(p) + 1U) % 7U);
+	return p = static_cast<Piece>((p + 1) % 7);
 }
 
 inline Piece& operator--(Piece& p) noexcept {
-	return p = p == PAWN ? NONE_PIECE : static_cast<Piece>(static_cast<uInt>(p) - 1U);
+	return p = p == PAWN ? NONE_PIECE : static_cast<Piece>(p - 1);
 }
 
 inline Color operator~(const Color& c) noexcept {
@@ -106,13 +106,13 @@ inline Color operator~(const Color& c) noexcept {
 }
 
 /* This function return the relative Rank of color */
-inline Rank getRelativeRankOf(const Color color, const Rank rank) noexcept {
+inline Rank getRelativeRankOf(const Color& color, const Rank& rank) noexcept {
 	return color == WHITE ? rank : ~rank;
 }
 
 /* This function returns the File of Square */
 inline File getFileOf(const Square square) noexcept {
-	return static_cast<File>(square & 7U);
+	return static_cast<File>(square & 7);
 	// file = square % 8; or file = square & 7;
 }
 
@@ -174,7 +174,7 @@ inline bool squaresOnSameRank(const Square square1, const Square square2) {
 
 inline std::ostream& operator<<(std::ostream& os, const File& file) {
 	if (file < NONE_FILE)
-		os << static_cast<uChar>(file + 97U);
+		os << file + 1;// static_cast<uChar>(file + 97U);
 	else
 		os << "NONE FILE";
 	return os;
@@ -182,18 +182,16 @@ inline std::ostream& operator<<(std::ostream& os, const File& file) {
 
 inline std::ostream& operator<<(std::ostream& os, const Rank& rank) {
 	if (rank < NONE_RANK)
-		os << static_cast<uChar>(rank + 49U);
+		os << rank + 1;// static_cast<uChar>(rank + 49U);
 	else
 		os << "NONE RANK";
 	return os;
 }
 
 inline std::ostream& operator<<(std::ostream& os, const Square& square) {
-	if (square < NONE_SQUARE) {
-		const File file = getFileOf(square);
-		const Rank rank = getRankOf(square);
-		os << file << rank;
-	} else
+	if (square < NONE_SQUARE)
+		os << getFileOf(square) << getRankOf(square);
+	else
 		os << "NONE SQUARE";
 	return os;
 }
@@ -202,11 +200,11 @@ template <typename T>
 	requires std::integral<T>
 inline void printBits(const char* title, const T t) {
 	std::cout << title << std::endl;
-	const uInt size = sizeof(T) * 8;
+	const int size = sizeof(T) * 8;
 
-	for (uInt i = 0U, j = size - 1U; i < size; ++i, --j) {
+	for (int i = 0U, j = size - 1; i < size; ++i, --j) {
 		std::cout << (t >> j & 1);
-		if (j % 8 == 0U)
+		if (j % 8 == 0)
 			std::cout << ' ';
 	}
 	std::cout << std::endl;

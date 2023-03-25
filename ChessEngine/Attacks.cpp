@@ -7,8 +7,8 @@ BitBoard attacks::getQueenAttacks(const BitBoard occupieds, const File file, con
 static inline BitBoard hyperbolaQuintessence(const BitBoard occupieds, const BitBoard mask, const BitBoard square) {
 	BitBoard forward = occupieds & mask;
 	BitBoard reverse = getReverse(forward);
-	forward -= (square << 1U);// 2 * square
-	reverse -= (getReverse(square) << 1U);// 2 * reverse square
+	forward -= (square << 1);// 2 * square
+	reverse -= (getReverse(square) << 1);// 2 * reverse square
 	reverse = getReverse(reverse);
 	return (forward ^ reverse) & mask;
 }
@@ -20,9 +20,9 @@ BitBoard attacks::getBishopAttacks(const BitBoard occupieds, const File file, co
 }
 
 BitBoard attacks::getRookAttacks(const BitBoard occupieds, const File file, const Rank rank, const BitBoard square) {
-	BitBoard forward = occupieds - (square << 1U);// 2 * square
+	BitBoard forward = occupieds - (square << 1);// 2 * square
 	BitBoard reverse = getReverse(occupieds);
-	reverse -= (getReverse(square) << 1U);// 2 * reverse square
+	reverse -= (getReverse(square) << 1);// 2 * reverse square
 	reverse = getReverse(reverse);
 	const BitBoard hMoves = (forward ^ reverse) & RANKS[rank];
 	const BitBoard vMoves = hyperbolaQuintessence(occupieds, FILES[file], square);

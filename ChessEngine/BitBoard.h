@@ -66,14 +66,14 @@ inline Square popLastSquareOf(BitBoard& bitBoard) noexcept {
 /* This function returns the position(Square) from the right most set bit */
 inline Square getFirstSquareOf(const BitBoard bitBoard) noexcept {
 	if (bitBoard == 0UL) return NONE_SQUARE;
-	unsigned long i = 63 ^ __builtin_clzll(bitBoard);
+	unsigned long i = 63U ^ __builtin_clzll(bitBoard);
 	return static_cast<Square>(i);
 }
 
 /* This function returns and clear the position (Square) from the right most set bit */
 inline Square popFirstSquareOf(BitBoard& bitBoard) noexcept {
 	if (bitBoard == 0UL) return NONE_SQUARE;
-	unsigned long i = 63 ^ __builtin_clzll(bitBoard);
+	unsigned long i = 63U ^ __builtin_clzll(bitBoard);
 	bitmap &= (bitmap - 1U);
 	return static_cast<Square>(i);
 }
@@ -147,7 +147,7 @@ inline void printBitBoard(const char* title, const BitBoard bitBoard) {
 	std::cout << title << std::endl;
 	for (int i = 56, j; i >= 0; i = i - 8) {
 		for (j = 0; j < 8; j++)
-			if ((bitBoard >> (i + j) & 1) != 0)
+			if ((bitBoard >> (i + j) & 1))// != 0
 				std::cout << 1;
 			else
 				std::cout << 0;

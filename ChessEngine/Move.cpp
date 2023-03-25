@@ -26,36 +26,36 @@ void Move::setFrom(const Square square) noexcept {
 }
 
 Square Move::getTo() const noexcept {
-	return static_cast<Square>(flags >> 8U & 0xFFU);
+	return static_cast<Square>(flags >> 8 & 0xFFU);
 }
 
 void Move::setTo(const Square square) noexcept {
-	flags = 0xFFFF00FFU & flags | square << 8U;
+	flags = 0xFFFF00FFU & flags | square << 8;
 }
 
 Piece Move::getCaptured() const noexcept {
-	return static_cast<Piece>(flags >> 16U & 0xFU);
+	return static_cast<Piece>(flags >> 16 & 0xFU);
 }
 
 void Move::setCaptured(const Piece piece) noexcept {
-	flags = 0xFFF0FFFFU & flags | piece << 16U;
+	flags = 0xFFF0FFFFU & flags | piece << 16;
 }
 
 bool Move::isCapture() const noexcept {
-	return (flags >> 16U & 0xFU) != NONE_PIECE;
+	return (flags >> 16 & 0xFU) != NONE_PIECE;
 }
 
 Piece Move::getPromotionPiece() const noexcept {
-	return static_cast<Piece>(flags >> 20U & 0xFU);
+	return static_cast<Piece>(flags >> 20 & 0xFU);
 }
 
 void Move::setPromotionPiece(const Piece piece) noexcept {
 	if (piece > PAWN && piece < KING)
-		flags = 0xFF0FFFFFU & flags | piece << 20U;
+		flags = 0xFF0FFFFFU & flags | piece << 20;
 }
 
 bool Move::isPawnPromotion() const noexcept {
-	return (flags >> 20U & 0xFU) != NONE_PIECE;
+	return (flags >> 20 & 0xFU) != NONE_PIECE;
 }
 
 bool Move::isPawnStart() const noexcept {
@@ -83,11 +83,11 @@ void Move::setCastle() noexcept {
 }
 
 Color Move::getColor() const noexcept {
-	return static_cast<Color>(flags >> 27U);
+	return static_cast<Color>(flags >> 27);
 }
 
 void Move::setColor(const Color color) noexcept {
-	flags = 0xF7FFFFFFU & flags | static_cast<uInt>(color) << 27U;
+	flags = 0xF7FFFFFFU & flags | static_cast<uInt>(color) << 27;
 }
 
 void Move::parseEntry(const char* entry) {

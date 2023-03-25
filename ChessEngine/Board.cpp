@@ -31,7 +31,7 @@ Square Board::Undo::getEnPassantSquare() const noexcept {
 }
 
 uChar Board::Undo::getCastlePermission() const noexcept {
-	return flags >> 8U;
+	return flags >> 8;
 }
 
 //0=============================BOARD===============================0
@@ -88,19 +88,19 @@ void Board::setEnPassantSquare(const Square square) noexcept {
 }
 
 bool Board::hasCastlePermission(const uChar castleFlag) const noexcept {
-	return (flags >> 8U & castleFlag) == castleFlag;
+	return (flags >> 8 & castleFlag) == castleFlag;
 }
 
 void Board::setCastlePermission(const uChar castleFlag) noexcept {
-	key ^= hashKeys.castleKey[flags >> 8U];
-	flags |= castleFlag << 8U;
-	key ^= hashKeys.castleKey[flags >> 8U];
+	key ^= hashKeys.castleKey[flags >> 8];
+	flags |= castleFlag << 8;
+	key ^= hashKeys.castleKey[flags >> 8];
 }
 
 void Board::unsetCastlePermission(const uChar castleFlag) noexcept {
-	key ^= hashKeys.castleKey[flags >> 8U];
-	flags &= ~(castleFlag << 8U);
-	key ^= hashKeys.castleKey[flags >> 8U];
+	key ^= hashKeys.castleKey[flags >> 8];
+	flags &= ~(castleFlag << 8);
+	key ^= hashKeys.castleKey[flags >> 8];
 }
 
 bool Board::isRepetition() const noexcept {
@@ -145,7 +145,7 @@ Color Board::getColorTime() const noexcept {
 
 const std::string Board::getFEN() const {
 	std::string fen;
-	uChar count = 0;
+	uChar count = 0U;
 	Square s = NONE_SQUARE;
 	Piece p = NONE_PIECE;
 	Color c;
@@ -156,9 +156,9 @@ const std::string Board::getFEN() const {
 			s = getSquareOf(f, r);
 
 			if ((allPieces >> static_cast<uShort>(s)) & 1U) {
-				if (count > 0) {
+				if (count > 0U) {
 					fen.append(1, count + '0');
-					count = 0;
+					count = 0U;
 				}
 
 				c = WHITE;
@@ -172,13 +172,13 @@ const std::string Board::getFEN() const {
 			} else
 				++count;
 		}
-		if (count > 0) {
+		if (count > 0U) {
 			fen.append(1, count + '0');
 			count = 0;
 		}
 		fen.append("/");
 	}
-	fen.replace(fen.size() - 1, fen.size(), " ");
+	fen.replace(fen.size() - 1U, fen.size(), " ");
 	fen.append(whiteTime ? "w " : "b ");
 
 	bool castle = false;
@@ -236,14 +236,14 @@ void Board::parseFEN(const char* fen) {
 		case 'R': setPieceOnSquare(ROOK, WHITE, getSquareOf(file, rank)); ++file; break;
 		case 'Q': setPieceOnSquare(QUEEN, WHITE, getSquareOf(file, rank)); ++file; break;
 		case 'K': setPieceOnSquare(KING, WHITE, getSquareOf(file, rank)); ++file; break;
-		case '1': file = static_cast<File>(file + 1U); break;
-		case '2': file = static_cast<File>(file + 2U); break;
-		case '3': file = static_cast<File>(file + 3U); break;
-		case '4': file = static_cast<File>(file + 4U); break;
-		case '5': file = static_cast<File>(file + 5U); break;
-		case '6': file = static_cast<File>(file + 6U); break;
-		case '7': file = static_cast<File>(file + 7U); break;
-		case '8': file = static_cast<File>(file + 8U); break;
+		case '1': file = static_cast<File>(file + 1); break;
+		case '2': file = static_cast<File>(file + 2); break;
+		case '3': file = static_cast<File>(file + 3); break;
+		case '4': file = static_cast<File>(file + 4); break;
+		case '5': file = static_cast<File>(file + 5); break;
+		case '6': file = static_cast<File>(file + 6); break;
+		case '7': file = static_cast<File>(file + 7); break;
+		case '8': file = static_cast<File>(file + 8); break;
 		case '/':
 		case ' ':
 			--rank;
@@ -278,7 +278,7 @@ void Board::parseFEN(const char* fen) {
 				castleFlag |= BLACK_QUEEN_CASTLE;
 			++fen;
 		}
-		key ^= hashKeys.castleKey[flags >> 8U];
+		key ^= hashKeys.castleKey[flags >> 8];
 		setCastlePermission(castleFlag);
 	} else
 		++fen;

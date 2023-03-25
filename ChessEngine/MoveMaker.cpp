@@ -3,7 +3,7 @@
 /* This function removes the captured pawn from the bitBoard */
 static void checkEnPassantCaptured(Board& board, const Move& move, const Color color, const bool isDoMove) {
 	if (move.isEnPassantCapture()) {
-		const Square captured = color == WHITE ? move.getTo() - 8U : move.getTo() + 8U;
+		const Square captured = color == WHITE ? move.getTo() - 8 : move.getTo() + 8;
 		if (isDoMove)
 			board.unsetPieceOnSquare(PAWN, ~color, captured);
 		else
@@ -29,19 +29,19 @@ static void checkCastleMove(Board& board, const Move& move, const Color color, c
 		Square from, to;
 		if (move.getTo() > move.getFrom()) {// king side
 			if (isDoMove) {
-				from = move.getFrom() + 3U;
-				to = move.getFrom() + 1U;
+				from = move.getFrom() + 3;
+				to = move.getFrom() + 1;
 			} else {
-				from = move.getFrom() + 1U;
-				to = move.getFrom() + 3U;
+				from = move.getFrom() + 1;
+				to = move.getFrom() + 3;
 			}
 		} else {// queen side
 			if (isDoMove) {
-				from = move.getFrom() - 4U;
-				to = move.getFrom() - 1U;
+				from = move.getFrom() - 4;
+				to = move.getFrom() - 1;
 			} else {
-				from = move.getFrom() - 1U;
-				to = move.getFrom() - 4U;
+				from = move.getFrom() - 1;
+				to = move.getFrom() - 4;
 			}
 		}
 		board.unsetPieceOnSquare(ROOK, color, from);
@@ -73,7 +73,7 @@ static void checkCastlePermission(Board& board, const Square square) {
 }
 
 void makeUndo(Board& board) {
-	if (board.historyCount == 0)
+	if (board.historyCount == 0U)
 		return;
 
 	Move move = board.history[--board.historyCount].move;
@@ -153,7 +153,7 @@ bool makeMove(Board& board, const Move& move) {
 	board.setPieceOnSquare(piece, color, move.getTo());
 
 	if (move.isPawnStart())// if is pawn start then set the en passant square
-		board.setEnPassantSquare(color == WHITE ? move.getTo() - 8U : move.getTo() + 8U);
+		board.setEnPassantSquare(color == WHITE ? move.getTo() - 8 : move.getTo() + 8);
 	else if (board.getEnPassantSquare() != NONE_SQUARE)// clear the en passant square
 		board.setEnPassantSquare(NONE_SQUARE);
 
