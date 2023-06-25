@@ -71,7 +71,7 @@ void Uci::go(Board& board, std::istringstream& iss) const {
 	info.time = -1;
 	info.inc = 0;
 	info.movestogo = 30;
-	info.nodes = 0UL;
+	info.nodes = 0ULL;
 	info.stop = false;
 
 	while (iss >> input) {

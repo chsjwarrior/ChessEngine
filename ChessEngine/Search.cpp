@@ -14,7 +14,7 @@ static void clearSearch() {
 }
 
 static int quiesce(Board& board, int alpha, int beta) {
-	if (info.nodes >= 2047)
+	if (info.nodes >= 2047U)
 		checkUp();
 
 	++info.nodes;

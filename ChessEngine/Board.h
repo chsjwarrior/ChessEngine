@@ -3,7 +3,7 @@
 #include "BitBoard.h"
 
 class Board {
-	BitBoard bitMaps[7][2] = { 0x0UL };// The last position ist the union of all previous
+	BitBoard bitMaps[7][2] = { 0ULL };// The last position ist the union of all previous
 	uLong key;
 	/*
 	flags uint16_t

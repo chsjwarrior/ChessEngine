@@ -2,14 +2,14 @@
 
 static uLong perft(Board& board, const short depth) {
 	if (depth <= 0)
-		return 1UL;
+		return 1ULL;
 
 	if (info.stop)
-		return 1UL;
+		return 1ULL;
 
 	Move moves[MAX_MOVES];
 	uShort movesCount = moveGenerator::generateAllMoves(board, moves);
-	uLong nodes = 0UL;
+	uLong nodes = 0ULL;
 
 	for (Move* move = moves; move != moves + movesCount; ++move) {
 		if (!makeMove(board, *move))

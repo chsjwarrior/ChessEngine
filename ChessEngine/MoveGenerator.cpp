@@ -35,7 +35,7 @@ static bool canMakeQueenCastle(const Board& board, const Color color) {
 enum MoveType { ALL, CAPTURES, QUIETS };// Quiet moves has not material change
 /* This function returns a bitmap with the attacked squares */
 static BitBoard getPieceAttacks(const Board& board, const Piece piece, const Color color, const Square square, const MoveType moveType) {
-	BitBoard attacks = 0UL;
+	BitBoard attacks = 0ULL;
 	if (piece == KING)
 		attacks = attacks::getKingAttacks(SQUARE_MASK[square]);
 	else if (piece == KNIGHT)
@@ -205,7 +205,7 @@ uShort moveGenerator::generateAllMoves(const Board& board, Move moves[]) {
 	return generateMoves(board, moves, ALL);
 }
 
-uShort generateQuietMoves(const Board& board, Move moves[]) {
+uShort moveGenerator::generateQuietMoves(const Board& board, Move moves[]) {
 	return generateMoves(board, moves, QUIETS);
 }
 
