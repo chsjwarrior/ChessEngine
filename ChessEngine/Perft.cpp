@@ -17,8 +17,8 @@ static uLong perft(Board& board, const short depth) {
 
 		nodes += perft(board, depth - 1);
 		makeUndo(board);
-
-		if (info.stop == true)
+		
+		if (info.stop)
 			break;
 	}
 

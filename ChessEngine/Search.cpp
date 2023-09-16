@@ -47,7 +47,7 @@ static int quiesce(Board& board, int alpha, int beta) {
 		makeUndo(board);
 
 		if (info.stop)
-			return 0;
+			break; //return 0;
 
 		if (score > alpha) {
 			if (score >= beta) {
@@ -59,6 +59,10 @@ static int quiesce(Board& board, int alpha, int beta) {
 			alpha = score;
 		}
 	}
+
+	if (info.stop)
+		return 0;
+
 	return alpha;
 }
 
@@ -117,8 +121,8 @@ static int alphaBeta(Board& board, short depth, int alpha, int beta) {
 		score = -alphaBeta(board, depth - 1, -beta, -alpha);
 		makeUndo(board);
 
-		if (info.stop == true)
-			return 0;
+		if (info.stop)
+			break;//return 0;
 
 		if (score > bestScore) {
 			bestScore = score;
@@ -135,6 +139,9 @@ static int alphaBeta(Board& board, short depth, int alpha, int beta) {
 			}
 		}
 	}
+
+	if (info.stop)
+		return 0;
 
 	if (legal == 0) {
 		if (inCheck)
