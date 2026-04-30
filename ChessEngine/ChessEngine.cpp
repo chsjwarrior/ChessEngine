@@ -1,6 +1,6 @@
 #include "Uci.h"
 
-int main() {
+int main() {	
 	const Uci uci;
 	uci.loop();
 	return 0;

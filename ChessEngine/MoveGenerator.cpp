@@ -1,5 +1,6 @@
 #include "MoveGenerator.h"
 
+
 static BitBoard friendBitBoard;
 static BitBoard enemyBitBoard;
 static uShort movesCount;
@@ -37,34 +38,32 @@ enum MoveType { ALL, CAPTURES, QUIETS };// Quiet moves has not material change
 static BitBoard getPieceAttacks(const Board& board, const Piece piece, const Color color, const Square square, const MoveType moveType) {
 	BitBoard attacks = 0ULL;
 	if (piece == KING)
-		attacks = attacks::getKingAttacks(SQUARE_MASK[square]);
+		attacks = attacks::getKingAttacks(square);
 	else if (piece == KNIGHT)
-		attacks = attacks::getKnightAttacks(SQUARE_MASK[square]);
+		attacks = attacks::getKnightAttacks(square);
 	else {
 		const BitBoard occupieds = friendBitBoard | enemyBitBoard;
 
 		if (piece == PAWN) {
 			if (moveType == ALL) {
-				attacks = attacks::getPawnMoves(occupieds, color, SQUARE_MASK[square]);
-				attacks |= attacks::getPawnAttacks(enemyBitBoard, color, SQUARE_MASK[square]);
-				attacks |= attacks::getPawnEnPassantAttack(color, SQUARE_MASK[board.getEnPassantSquare()], SQUARE_MASK[square]);
-			} else if (moveType == CAPTURES) {
-				attacks = attacks::getPawnAttacks(enemyBitBoard, color, SQUARE_MASK[square]);
-				attacks |= attacks::getPawnEnPassantAttack(color, SQUARE_MASK[board.getEnPassantSquare()], SQUARE_MASK[square]);
-			} else if (moveType == QUIETS)// Quiets move can not have pawn promotion
-				attacks = attacks::getPawnMoves(occupieds, color, SQUARE_MASK[square]) & ~RANKS[getRelativeRankOf(color, RANK_8)];
+				attacks = attacks::getPawnMoves(occupieds, color, square);
+				attacks |= attacks::getPawnAttacks(enemyBitBoard, color, square);
+				attacks |= attacks::getPawnEnPassantAttack(color, board.getEnPassantSquare(), square);
+			}
+			else if (moveType == CAPTURES) {
+				attacks = attacks::getPawnAttacks(enemyBitBoard, color, square);
+				attacks |= attacks::getPawnEnPassantAttack(color, board.getEnPassantSquare(), square);
+			}
+			else if (moveType == QUIETS)// Quiets move can not have pawn promotion
+				attacks = attacks::getPawnMoves(occupieds, color, square) & ~RANKS[getRelativeRankOf(color, RANK_8)];
 			return attacks;
-		} else {
-			const File file = getFileOf(square);
-			const Rank rank = getRankOf(square);
-
-			if (piece == BISHOP)
-				attacks = attacks::getBishopAttacks(occupieds, file, rank, SQUARE_MASK[square]);
-			else if (piece == ROOK)
-				attacks = attacks::getRookAttacks(occupieds, file, rank, SQUARE_MASK[square]);
-			else if (piece == QUEEN)
-				attacks = attacks::getQueenAttacks(occupieds, file, rank, SQUARE_MASK[square]);
 		}
+		else if (piece == BISHOP)
+			attacks = attacks::getBishopAttacks(occupieds, square);
+		else if (piece == ROOK)
+			attacks = attacks::getRookAttacks(occupieds, square);
+		else if (piece == QUEEN)
+			attacks = attacks::getQueenAttacks(occupieds, square);
 	}
 	attacks &= ~friendBitBoard;// remove friend bitmap
 	if (moveType == QUIETS)
@@ -128,7 +127,8 @@ static void catalogMoves(const Board& board, Move moves[], const Piece piece, co
 			moves[movesCount++] = move;
 			move();
 		}
-	} else if (piece == KING) {
+	}
+	else if (piece == KING) {
 		while (attacks) {
 			to = popSquareOf(attacks);
 
@@ -143,7 +143,8 @@ static void catalogMoves(const Board& board, Move moves[], const Piece piece, co
 			moves[movesCount++] = move;
 			move();
 		}
-	} else {
+	}
+	else {
 		while (attacks) {
 			to = popSquareOf(attacks);
 

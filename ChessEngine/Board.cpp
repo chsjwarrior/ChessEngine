@@ -17,13 +17,13 @@ Board::Zobrist::Zobrist() {
 //0===========================BOARD::UNDO===========================0
 static const uShort BOARD_FLAGS_EMPTY = 0X0040U;// Const value for the Board flags
 
-Board::Undo::Undo() noexcept : move(), flags(BOARD_FLAGS_EMPTY), fiftyMove(0U), key(0UL) {}
+Board::Undo::Undo() noexcept : move(), flags(BOARD_FLAGS_EMPTY), fiftyMove(0U), key(0ULL) {}
 
 void Board::Undo::operator()() noexcept {
 	move();
 	flags = BOARD_FLAGS_EMPTY;
 	fiftyMove = 0U;
-	key = 0UL;
+	key = 0ULL;
 }
 
 Square Board::Undo::getEnPassantSquare() const noexcept {
@@ -37,12 +37,12 @@ uChar Board::Undo::getCastlePermission() const noexcept {
 //0=============================BOARD===============================0
 static const uChar ALL_PIECES = 0x6U;// Const value for the last position of the array BitBmaps
 
-Board::Board() : key(0UL), flags(BOARD_FLAGS_EMPTY), fiftyMove(0U), ply(0U), historyCount(0U), whiteTime(false), hashKeys() {}
+Board::Board() : key(0ULL), flags(BOARD_FLAGS_EMPTY), fiftyMove(0U), ply(0U), historyCount(0U), whiteTime(false), hashKeys() {}
 
 void Board::operator()() noexcept {
 	for (auto& b : bitMaps)
-		b[0] = 0UL, b[1] = 0UL;
-	key = 0UL;
+		b[0] = 0ULL, b[1] = 0ULL;
+	key = 0ULL;
 	flags = BOARD_FLAGS_EMPTY;
 	fiftyMove = 0U;
 	ply = fiftyMove;
@@ -169,7 +169,8 @@ const std::string Board::getFEN() const {
 				}
 
 				fen.append(1, PIECE_CHAR[p + c * 6]);
-			} else
+			}
+			else
 				++count;
 		}
 		if (count > 0U) {
@@ -207,7 +208,8 @@ const std::string Board::getFEN() const {
 		fen.append(1, getFileOf(s) + 'a');
 		fen.append(1, getRankOf(s) + '1');
 		fen.append(" ");
-	} else
+	}
+	else
 		fen.append(" - ");
 
 	fen.append(1, fiftyMove + '0');
@@ -280,7 +282,8 @@ void Board::parseFEN(const char* fen) {
 		}
 		key ^= hashKeys.castleKey[flags >> 8];
 		setCastlePermission(castleFlag);
-	} else
+	}
+	else
 		++fen;
 
 	++fen;
@@ -290,7 +293,8 @@ void Board::parseFEN(const char* fen) {
 		++fen;
 		rank = static_cast<Rank>(*fen - '1');
 		setEnPassantSquare(getSquareOf(file, rank));
-	} else if (*fen)
+	}
+	else if (*fen)
 		fen += 2;
 
 	if (*fen) {

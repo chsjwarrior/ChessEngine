@@ -1,5 +1,5 @@
 #pragma once
-#include "Board.h"
+#include "Attacks.h"
 
 void sortMoves(const Board& board, Move moves[], const uShort movesCount);
 

@@ -4,12 +4,16 @@ static const int PIECE_VALUE[] = { 10,30,30,50,90,900,0 };
 
 /* This function set a score to a move and sort the list */
 void sortMoves(const Board& board, Move moves[], const uShort movesCount) {
-	uShort i;
-	for (i = 0; i < movesCount; ++i)
-		if (moves[i].isCapture())
-			moves[i].score += PIECE_VALUE[moves[i].getCaptured()] + 6 - (PIECE_VALUE[board.getPieceFromSquare(moves[i].getColor(), moves[i].getFrom())] / 10) + 1000;
-		else if (moves[i].isEnPassantCapture())
-			moves[i].score += +PIECE_VALUE[PAWN] + 5 + 1000;
+	for (Move* move = moves; move != moves + movesCount; ++move) {
+		if (move->isCapture())
+			move->score += 10 * PIECE_VALUE[move->getCaptured()] - (PIECE_VALUE[board.getPieceFromSquare(move->getColor(), move->getFrom())]);
+		else if (moves->isEnPassantCapture())
+			move->score += 10 * PIECE_VALUE[PAWN];
+		else if (moves->isPawnPromotion())
+			move->score += PIECE_VALUE[move->getPromotionPiece()];
+		if (attacks::isSquareAttacked(board, ~move->getColor(), move->getTo()))
+			move->score -= PIECE_VALUE[board.getPieceFromSquare(move->getColor(), move->getFrom())];
+	}
 
 	std::sort(moves, moves + movesCount, [](const Move& left, const Move& right) -> int {
 		return std::cmp_less_equal<int, int>(left.score, right.score); });
@@ -84,13 +88,10 @@ static void evaluatePosition(const Board& board, const Color color, int& materia
 		pieceBitBoard = board.getBitBoardOf(p, color);
 		while (pieceBitBoard) {
 			s = popSquareOf(pieceBitBoard);
-
-			if (board.isWhiteTime()) {
-				materialWeight += PIECE_VALUE[p];
+			if (board.isWhiteTime())
 				s = ~s;
-			} else
-				materialWeight += -PIECE_VALUE[p];
 
+			materialWeight += PIECE_VALUE[p];
 			materialWeight += SQUARE_VALUE[p][s];
 
 			++numPieces;
@@ -99,13 +100,14 @@ static void evaluatePosition(const Board& board, const Color color, int& materia
 }
 
 int evaluatePosition(const Board& board) {
-	int materialWeight = 0;
-	int numWhitePieces = materialWeight;
+	int whiteMaterialWeight = 0;
+	int blackMaterialWeight = whiteMaterialWeight;
+	int numWhitePieces = blackMaterialWeight;
 	int numBlackPieces = numWhitePieces;
 
-	evaluatePosition(board, WHITE, materialWeight, numWhitePieces);
-	evaluatePosition(board, BLACK, materialWeight, numBlackPieces);
+	evaluatePosition(board, WHITE, whiteMaterialWeight, numWhitePieces);
+	evaluatePosition(board, BLACK, blackMaterialWeight, numBlackPieces);
 
 	int who2Move = board.isWhiteTime() ? 1 : -1;
-	return materialWeight * (numWhitePieces - numBlackPieces) * who2Move;
+	return (whiteMaterialWeight - blackMaterialWeight) * (numWhitePieces - numBlackPieces) * who2Move;
 }
