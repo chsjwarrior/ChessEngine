@@ -134,12 +134,12 @@ inline uChar bitCount(const BitBoard bitBoard) noexcept {
 
 /* This function returns the reverse bit position */
 inline BitBoard getReverse(BitBoard bitBoard) noexcept {
-	bitBoard = (bitBoard & 0x5555555555555555UL) << 1 | (bitBoard >> 1) & 0x5555555555555555UL;
-	bitBoard = (bitBoard & 0x3333333333333333UL) << 2 | (bitBoard >> 2) & 0x3333333333333333UL;
-	bitBoard = (bitBoard & 0x0F0F0F0F0F0F0F0FUL) << 4 | (bitBoard >> 4) & 0x0F0F0F0F0F0F0F0FUL;
-	bitBoard = (bitBoard & 0x00FF00FF00FF00FFUL) << 8 | (bitBoard >> 8) & 0x00FF00FF00FF00FFUL;
-	bitBoard = (bitBoard << 48) | ((bitBoard & 0xFFFF0000UL) << 16) |
-		((bitBoard >> 16) & 0xFFFF0000UL) | (bitBoard >> 48);
+	bitBoard = (bitBoard & 0x5555555555555555ULL) << 1 | (bitBoard >> 1) & 0x5555555555555555ULL;
+	bitBoard = (bitBoard & 0x3333333333333333ULL) << 2 | (bitBoard >> 2) & 0x3333333333333333ULL;
+	bitBoard = (bitBoard & 0x0F0F0F0F0F0F0F0FULL) << 4 | (bitBoard >> 4) & 0x0F0F0F0F0F0F0F0FULL;
+	bitBoard = (bitBoard & 0x00FF00FF00FF00FFULL) << 8 | (bitBoard >> 8) & 0x00FF00FF00FF00FFULL;
+	bitBoard = (bitBoard << 48) | ((bitBoard & 0xFFFF0000ULL) << 16) |
+		((bitBoard >> 16) & 0xFFFF0000ULL) | (bitBoard >> 48);
 	return bitBoard;
 }
 
